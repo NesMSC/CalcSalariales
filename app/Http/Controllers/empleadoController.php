@@ -139,4 +139,25 @@ class empleadoController extends Controller
 
         return ["primaProfesional" => $json_primas, "prima" => $prima];
     }
+
+    public function primaAntiguedad(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $prima = DB::table('beneficios')
+                      ->select('id')
+                      ->where('concepto', '=', 'Prima de Antiguedad')
+                      ->get();
+
+        return ["primaAntiguedad" => $prima];
+    }
+
+    public function descuentos(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $descuentos = DB::table('descuentos')->get();
+
+        return ["descuentos" => $descuentos];
+    }
 }

@@ -22,7 +22,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <button @click="accion='registrar'" type="button" class="btn btn-light">
+                <button @click="accion='registrar'; listarBeneficios();" type="button" class="btn btn-light">
                   <i class="fa fa-plus"></i>&nbsp;Nuevo
                 </button>
               </div>
@@ -200,7 +200,7 @@
                 </div>
                 <div class="col-md-4 mb-2 form-group">
                   <label for="fecha_ingreso">Fecha de ingreso</label>
-                  <input v-model="fecha_ingreso" @change="validarCampo(fecha_ingreso, 'fecha_ingreso')" type="date" min="2004-01-01" max="2021-01-01" class="form-control" id="fecha_ingreso" name="fecha_na" required>
+                  <input v-model="fecha_ingreso" @change="validarCampo(fecha_ingreso, 'fecha_ingreso'); calculaAñosServicio()" type="date" min="2004-01-01" max="2021-01-01" class="form-control" id="fecha_ingreso" name="fecha_na" required>
                   <div class="invalid-feedback">
                           *Fecha invalida
                   </div>
@@ -264,6 +264,14 @@
                         
                       </td>
                     </tr>
+                    <tr>
+                      <td colspan="4">
+                        <strong>Años de Servicio: </strong>
+                      </td>
+                      <td colspan="2">
+                        <span v-text="añosServicio"></span>
+                      </td>
+                    </tr>
                   </tbody>
 
                   <tbody>
@@ -272,12 +280,17 @@
                     </tr>
                     <tr v-for="beneficio in beneficiosEmpleado" :key="beneficio.id">
                       <td colspan="4" v-text="beneficio.concepto"></td>
-                      <td colspan="2" v-if="beneficio.tipo_valor == 'U.T'" v-text="formatoDivisa(beneficio.valor*UT)"></td>
-                      <td colspan="2" v-if="beneficio.tipo_valor == '%'" v-text="formatoDivisa(parseFloat(beneficio.valor*salarioTabla/100).toFixed(2))"></td>
+                      <td colspan="2" class="beneficio" v-if="beneficio.tipo_valor == 'U.T'" v-text="formatoDivisa(beneficio.valor*UT)"></td>
+                      <td colspan="2" class="beneficio" v-if="beneficio.tipo_valor == '%' && beneficio.concepto != 'Prima de Antiguedad'" v-text="formatoDivisa(parseFloat(beneficio.valor*salarioTabla/100).toFixed(2))"></td>
+                      <td colspan="2" class="beneficio" v-if="beneficio.concepto == 'Prima de Antiguedad'" v-text="formatoDivisa((TotalprimaAntiguedad).toFixed(2))"></td>
+                    </tr>
+                    <tr v-if="beneficiosEmpleado.length != 0">
+                      <td colspan="4"><strong>Total de Beneficios:</strong></td>
+                      <td colspan="2" v-text="formatoDivisa(sumaTotal('asig'))"></td>
                     </tr>
                     <tr>
                       <td colspan="6" align="center">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#Modal" @click="listarBeneficios()"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+                        <button class="btn btn-light" data-toggle="modal" data-target="#ModalBeneficios"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
                       </td>
                     </tr>
                   </tbody>
@@ -285,9 +298,17 @@
                     <tr style="background-color: #343a40">
                       <td colspan="6" align="center" class="text-light">DESCUENTOS</td>
                     </tr>
+                    <tr v-for="descuento in descuentosEmpleado" :key="descuento.id">
+                      <td colspan="4" v-text="descuento.concepto"></td>
+                      <td colspan="2" v-text="formatoDivisa(parseFloat(descuento.porcentaje*salarioTabla/100).toFixed(2))"></td>
+                    </tr>
+                    <tr v-if="beneficiosEmpleado.length != 0">
+                      <td colspan="4"><strong>Total de Deducciones:</strong></td>
+                      <td colspan="2" v-text="formatoDivisa(sumaTotal('deduc'))"></td>
+                    </tr>
                     <tr >
                       <td colspan="6" align="center">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#Modal"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+                        <button @click="listarDescuentos()" class="btn btn-light" data-toggle="modal" data-target="#ModalDescuentos"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
                       </td>
                     </tr>
                   </tbody>
@@ -342,206 +363,11 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid" v-if="accion=='editar'">
-        <!-- Formulario de registro de -->
-        <form>  
-          <!-- card datos personales -->      
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Editar datos personales</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
-              </div>
-            </div> 
-            <!-- /.card-header -->
-            <div class="card-body">  
-              <div class="row">
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="name">Nombres</label>
-                  <input @change="validarCampo(nombres, 'name')" type="text" class="form-control" id="name" required value="Eliezer Sandino">
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="lastname">Apellidos</label>
-                  <input @change="validarCampo(apellidos, 'lastname')" type="text" class="form-control" id="lastname" required value="Alvarez Oronoz">
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="sexo">Sexo</label>
-                  <select @change="validarCampo(sexo, 'sexo')" id="sexo" name="sexo" class="form-control" required>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Masculino" selected>Masculino</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="cedula">Cédula</label>	
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <select>
-                          <option value="V-" selected>V-</option>
-                          <option value="E-">E-</option>
-                        </select>
-                      </div>
-                    </div>
-                    <input @keyup="validarCampo(cedula, 'cedula')" id="cedula" type="number" name="cedula" class="form-control" min="4000000" required value="18947463">
-                  </div>
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="nacimiento">Fecha de nacimiento</label>
-                  <input @change="validarCampo(fecha_nacimiento, 'nacimiento')" type="date" min="1930-01-01" max="2000-01-01" class="form-control" id="nacimiento" name="fecha_na" required value="1989-12-12">
-                  <div class="invalid-feedback">
-                          *Fecha invalida
-                  </div>
-                </div>
-              </div> 
-              <div class="row">
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="correo">Correo electrónico</label>
-                  <input @change="validarCampo(correo, 'correo')" type="email" class="form-control" id="correo" required value="sandino@gmail.com">
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="telefono">Número de teléfono</label>	
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <select>
-                          <option value="0414-">0414-</option>
-                          <option value="0424-" selected>0424-</option>
-                          <option value="0416-">0416-</option>
-                          <option value="0426-">0426-</option>
-                          <option value="0412-">0412-</option>
-                          <option value="0285-">0285-</option>
-                        </select>
-                      </div>
-                    </div>
-                    <input @keyup="validarCampo(telefono, 'telefono')" id="telefono" type="number" class="form-control" required value="9531458">
-                  </div>
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-              </div> 
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-            </div>
-          </div>
-          <!-- /.card --> 
-          <!-- card datos laborales -->
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Editar datos de Empleado</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
-              </div>
-            </div> 
-            <!-- /.card-header -->
-            <div class="card-body">  
-              <div class="row">
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado</label>
-                  <select @change="validarCampo(grado, 'grado')" id="grado" class="form-control" required>
-                    
-                    <option value="Profesional" selected>Profesional</option>
-                    <option value="Técnico">Técnico</option>
-                    <option value="Apoyo">Apoyo</option>
-                  </select>
-                </div>
-                <div class="col-md-2 mb-2 form-group">
-                  <label for="nivel">Nivel</label>
-                  <select @change="validarCampo(nivel, 'nivel')" id="nivel" class="form-control" required>
-                    
-                    <option value="1" selected>1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="fecha_ingreso">Fecha de ingreso</label>
-                  <input @change="validarCampo(fecha_ingreso, 'fecha_ingreso')" type="date" min="2004-01-01" max="2021-01-01" class="form-control" id="fecha_ingreso" name="fecha_na" required value="2015-01-01">
-                  <div class="invalid-feedback">
-                          *Fecha invalida
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="departamento">Departamento</label>
-                  <select @change="validarCampo(departamento, 'departamento')" id="departamento" class="form-control" required>
-                    
-                    <option value="RR.HH">Recursos Humanos</option>
-                    <option value="Informática">Informática</option>
-                    <option value="Telemática" selected>Telemática</option>
-                    <option value="Control de estudios">Control de estudios</option>
-                    <option value="Desarrollo Estudiantil">Desarrollo Estudiantil</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado de Instrucción</label>	
-                  <select @change="validarCampo(grado_instruccion, 'grado_ins')" id="grado_ins" class="form-control" required>
-                    <option value="T.S.U">T.S.U</option>
-                    <option value="Profesional" selected>Profesional</option>
-                    <option value="Especialista">Especialista</option>
-                    <option value="Maestria">Maestria</option>
-                    <option value="Doctor">Doctor</option>
-                  </select>                  
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
-                </div>
-                
-              </div>  
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-            </div>
-          </div>
-          <!-- /.card -->  
-          <!-- card datos de salario-->      
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Editar datos de Salario</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
-              </div>
-            </div> 
-            <!-- /.card-header -->
-            <div class="card-body">  
-              <div class="row">
-                <table class="table table-bordered table-striped table-sm">
-                  <tbody>
-                    <tr style="background-color: #CEEFCF5">
-                      <td colspan="4"><strong>Salario tabla para Profesional 1:</strong></td>
-                      <td>776784,00</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>  
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-            </div>
-          </div>
-          <!-- /.card -->
-          <button @click="registrar()" type="button" class="btn btn-primary btn-lg">Registrar</button>
-        </form> 
-      </div><!-- /.container-fluid -->
       <!-- Button trigger modal -->
     </section>
     <!-- /.content -->
-    <!-- Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal Beneficios-->
+    <div class="modal fade" id="ModalBeneficios" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-body">
@@ -567,8 +393,64 @@
                                 <i class="fa fa-check text-success"></i>
                               </a>
                             </template>
+                            <template v-else-if="beneficio.concepto=='Prima de Antiguedad'"> 
+                              <a href="#" @click="agregarBeneficio({concepto:beneficio.concepto, tipo_valor:beneficio.tipo_valor, valor:beneficio.valor}, beneficio.id); primaAntiguedad()">
+                                <i class="fa fa-plus text-dark"></i>
+                              </a>
+                            </template>
                             <template v-else>
                               <a href="#" @click="agregarBeneficio({concepto:beneficio.concepto, tipo_valor:beneficio.tipo_valor, valor:beneficio.valor}, beneficio.id)">
+                                <i class="fa fa-plus text-dark"></i>
+                              </a>
+                            </template>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table> 
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.Modal -->
+    <!-- Modal Descuentos-->
+    <div class="modal fade" id="ModalDescuentos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-12">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Concepto</th>
+                          <th>Tipo</th>
+                          <th>Valor</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="descuento in arrayDescuentos" :key="descuento.id">
+                          <td v-text="descuento.concepto"></td>
+                          <td v-text="descuento.tipo"></td>
+                          <td v-text="descuento.porcentaje+'%'"></td>
+                          <td>
+                            <template v-if="id_descuentosAgregados.includes(descuento.id)">
+                              <a href="#" @click="retirarDescuento(descuento.id)">
+                                <i class="fa fa-check text-success"></i>
+                              </a>
+                            </template>
+                            <template v-else>
+                              <a href="#" @click="agregarDescuento({concepto:descuento.concepto, tipo:descuento.tipo, porcentaje:descuento.porcentaje}, descuento.id)">
                                 <i class="fa fa-plus text-dark"></i>
                               </a>
                             </template>
@@ -617,9 +499,13 @@
             salarioTabla: '',
             UT: '',
             arrayBeneficios: [],
+            arrayDescuentos: [],
             beneficiosEmpleado: [],
+            descuentosEmpleado: [],
             id_beneficiosAgregados:[],
-            descuentos: [],
+            id_descuentosAgregados: [],
+            añosServicio: 0,
+            TotalprimaAntiguedad:0,
             error: []
         }},
         methods: {
@@ -719,8 +605,8 @@
                       this.error.push(input.id);
                     }
                     else{
-                      input.classList.remove('is-invalid')
-                      input.classList.add('is-valid')
+                      input.classList.remove('is-invalid');
+                      input.classList.add('is-valid');
                     }
                   break;
               }; 
@@ -753,9 +639,18 @@
               console.log(error);
             })
           },
+          listarDescuentos(){
+            let me = this;
+            let url = 'empleados/descuentos'
+            axios.get(url).then(function(response){
+              me.arrayDescuentos = response.data.descuentos;
+            }).catch(function(error){
+              console.log(error);
+            })
+          },
           agregarBeneficio(beneficio, id){
             this.beneficiosEmpleado.push(beneficio);
-            this.id_beneficiosAgregados.push(id)
+            this.id_beneficiosAgregados.push(id);
             this.listarBeneficios();
           },
           retirarBeneficio(id){
@@ -763,6 +658,17 @@
             this.id_beneficiosAgregados.splice(beneficio_index, 1);
             this.beneficiosEmpleado.splice(beneficio_index, 1);
             this.listarBeneficios();
+          },
+          agregarDescuento(descuento, id){
+            this.descuentosEmpleado.push(descuento);
+            this.id_descuentosAgregados.push(id)
+            this.listarDescuentos();
+          },
+          retirarDescuento(id){
+            let descuento_index = this.id_descuentosAgregados.indexOf(id);
+            this.id_descuentosAgregados.splice(descuento_index, 1);
+            this.descuentosEmpleado.splice(descuento_index, 1);
+            this.listarDescuentos();
           },
           formatoDivisa(number){
            let monto = new Intl.NumberFormat('en-US').format(number);
@@ -801,14 +707,86 @@
                   me.beneficiosEmpleado[indice].valor = porcentajes.Doctor;
                 break;
               }
-              
+
+              //Asignar el porcentaje a la prima profesional en el listado
+              let beneficios = me.arrayBeneficios;
+              for (let i = 0; i < beneficios.length; i++) {
+                if (beneficios[i].id == id_prima) {
+                  beneficios[i].valor = me.beneficiosEmpleado[indice].valor;
+                };
+              };
             }).catch(function(error){
               console.log(error);
             });
-          }
+          },
+          primaAntiguedad(){
+
+            //Calcula la prima de antiguedad
+            let me = this;
+            let total = 0;
+            /*for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+                  var num = 0;
+                  if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
+                    num = me.beneficiosEmpleado[i].valor*me.UT;
+                  }else if(me.beneficiosEmpleado[i].tipo_valor == '%' && me.beneficiosEmpleado[i].concepto != 'Prima de Antiguedad'){
+                    num = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
+                  } 
+                  console.log(num)
+                   total += parseFloat(num);
+                };*/
+                
+               // let primaMonto = (((total+me.salarioTabla)*2)/100)*me.añosServicio;
+               /*let primaMonto = 0;
+                me.TotalprimaAntiguedad = primaMonto;*/
+
+                
+          },
+          calculaAñosServicio(){
+            //Calcula los años de antiguedad a partir de la fecha de ingreso
+            let ingreso = this.fecha_ingreso;
+            let me = this;
+            ingreso = new Date(ingreso);
+            let actual = new Date();
+
+            let año = ingreso.getFullYear();
+            let mes = ingreso.getMonth(); 
+
+            let antiguedad = actual.getFullYear()-año;
+            if (mes >= actual.getMonth()  && antiguedad != 0) {
+              antiguedad--;
+            };
+            me.añosServicio=antiguedad;
+          },
+          sumaTotal(suma){
+            let me = this;
+            
+            if (suma=='asig') {
+                let totalBene = 0;
+                for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+                  var bene = 0;
+                  if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
+                    bene = me.beneficiosEmpleado[i].valor*me.UT;
+                  }else if(me.beneficiosEmpleado[i].tipo_valor == '%'){
+                    bene = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
+                  } 
+                   totalBene += parseFloat(bene);
+                };
+               return me.totalBene = totalBene;
+                  
+            }else if(suma == 'deduc'){
+              let totalDeduc = 0;
+              let arrayDescuentos = me.descuentosEmpleado;
+              for (var i = 0; i < arrayDescuentos.length; i++) {
+                  var num = arrayDescuentos[i].porcentaje*me.salarioTabla/100;
+                  total += parseFloat(num);
+                };
+                return me.totalDeduc = totalDeduc;
+            }
+          
         },
         mounted() {
             this.listarEmpleado();
         }
     }
+}
 </script>

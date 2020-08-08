@@ -2500,124 +2500,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2641,9 +2523,13 @@ __webpack_require__.r(__webpack_exports__);
       salarioTabla: '',
       UT: '',
       arrayBeneficios: [],
+      arrayDescuentos: [],
       beneficiosEmpleado: [],
+      descuentosEmpleado: [],
       id_beneficiosAgregados: [],
-      descuentos: [],
+      id_descuentosAgregados: [],
+      añosServicio: 0,
+      TotalprimaAntiguedad: 0,
       error: []
     };
   },
@@ -2802,6 +2688,15 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    listarDescuentos: function listarDescuentos() {
+      var me = this;
+      var url = 'empleados/descuentos';
+      axios.get(url).then(function (response) {
+        me.arrayDescuentos = response.data.descuentos;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
     agregarBeneficio: function agregarBeneficio(beneficio, id) {
       this.beneficiosEmpleado.push(beneficio);
       this.id_beneficiosAgregados.push(id);
@@ -2812,6 +2707,17 @@ __webpack_require__.r(__webpack_exports__);
       this.id_beneficiosAgregados.splice(beneficio_index, 1);
       this.beneficiosEmpleado.splice(beneficio_index, 1);
       this.listarBeneficios();
+    },
+    agregarDescuento: function agregarDescuento(descuento, id) {
+      this.descuentosEmpleado.push(descuento);
+      this.id_descuentosAgregados.push(id);
+      this.listarDescuentos();
+    },
+    retirarDescuento: function retirarDescuento(id) {
+      var descuento_index = this.id_descuentosAgregados.indexOf(id);
+      this.id_descuentosAgregados.splice(descuento_index, 1);
+      this.descuentosEmpleado.splice(descuento_index, 1);
+      this.listarDescuentos();
     },
     formatoDivisa: function formatoDivisa(number) {
       var monto = new Intl.NumberFormat('en-US').format(number);
@@ -2859,14 +2765,96 @@ __webpack_require__.r(__webpack_exports__);
           case "Doctor":
             me.beneficiosEmpleado[indice].valor = porcentajes.Doctor;
             break;
+        } //Asignar el porcentaje a la prima profesional en el listado
+
+
+        var beneficios = me.arrayBeneficios;
+
+        for (var i = 0; i < beneficios.length; i++) {
+          if (beneficios[i].id == id_prima) {
+            beneficios[i].valor = me.beneficiosEmpleado[indice].valor;
+          }
+
+          ;
         }
+
+        ;
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    primaAntiguedad: function primaAntiguedad() {
+      //Calcula la prima de antiguedad
+      var me = this;
+      var total = 0;
+      /*for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+            var num = 0;
+            if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
+              num = me.beneficiosEmpleado[i].valor*me.UT;
+            }else if(me.beneficiosEmpleado[i].tipo_valor == '%' && me.beneficiosEmpleado[i].concepto != 'Prima de Antiguedad'){
+              num = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
+            } 
+            console.log(num)
+             total += parseFloat(num);
+          };*/
+      // let primaMonto = (((total+me.salarioTabla)*2)/100)*me.añosServicio;
+
+      /*let primaMonto = 0;
+       me.TotalprimaAntiguedad = primaMonto;*/
+    },
+    calculaAñosServicio: function calculaAOsServicio() {
+      //Calcula los años de antiguedad a partir de la fecha de ingreso
+      var ingreso = this.fecha_ingreso;
+      var me = this;
+      ingreso = new Date(ingreso);
+      var actual = new Date();
+      var año = ingreso.getFullYear();
+      var mes = ingreso.getMonth();
+      var antiguedad = actual.getFullYear() - año;
+
+      if (mes >= actual.getMonth() && antiguedad != 0) {
+        antiguedad--;
+      }
+
+      ;
+      me.añosServicio = antiguedad;
+    },
+    sumaTotal: function sumaTotal(suma) {
+      var me = this;
+
+      if (suma == 'asig') {
+        var totalBene = 0;
+
+        for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+          var bene = 0;
+
+          if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
+            bene = me.beneficiosEmpleado[i].valor * me.UT;
+          } else if (me.beneficiosEmpleado[i].tipo_valor == '%') {
+            bene = me.beneficiosEmpleado[i].valor * me.salarioTabla / 100;
+          }
+
+          totalBene += parseFloat(bene);
+        }
+
+        ;
+        return me.totalBene = totalBene;
+      } else if (suma == 'deduc') {
+        var totalDeduc = 0;
+        var arrayDescuentos = me.descuentosEmpleado;
+
+        for (var i = 0; i < arrayDescuentos.length; i++) {
+          var num = arrayDescuentos[i].porcentaje * me.salarioTabla / 100;
+          total += parseFloat(num);
+        }
+
+        ;
+        return me.totalDeduc = totalDeduc;
+      }
+    },
+    mounted: function mounted() {
+      this.listarEmpleado();
     }
-  },
-  mounted: function mounted() {
-    this.listarEmpleado();
   }
 });
 
@@ -38586,6 +38574,7 @@ var render = function() {
                         on: {
                           click: function($event) {
                             _vm.accion = "registrar"
+                            _vm.listarBeneficios()
                           }
                         }
                       },
@@ -39255,10 +39244,8 @@ var render = function() {
                         domProps: { value: _vm.fecha_ingreso },
                         on: {
                           change: function($event) {
-                            return _vm.validarCampo(
-                              _vm.fecha_ingreso,
-                              "fecha_ingreso"
-                            )
+                            _vm.validarCampo(_vm.fecha_ingreso, "fecha_ingreso")
+                            _vm.calculaAñosServicio()
                           },
                           input: function($event) {
                             if ($event.target.composing) {
@@ -39486,13 +39473,25 @@ var render = function() {
                                   : _vm._e()
                               ])
                             ]
-                          )
+                          ),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _vm._m(6),
+                            _vm._v(" "),
+                            _c("td", { attrs: { colspan: "2" } }, [
+                              _c("span", {
+                                domProps: {
+                                  textContent: _vm._s(_vm.añosServicio)
+                                }
+                              })
+                            ])
+                          ])
                         ]),
                         _vm._v(" "),
                         _c(
                           "tbody",
                           [
-                            _vm._m(6),
+                            _vm._m(7),
                             _vm._v(" "),
                             _vm._l(_vm.beneficiosEmpleado, function(beneficio) {
                               return _c("tr", { key: beneficio.id }, [
@@ -39505,6 +39504,7 @@ var render = function() {
                                 _vm._v(" "),
                                 beneficio.tipo_valor == "U.T"
                                   ? _c("td", {
+                                      staticClass: "beneficio",
                                       attrs: { colspan: "2" },
                                       domProps: {
                                         textContent: _vm._s(
@@ -39516,8 +39516,10 @@ var render = function() {
                                     })
                                   : _vm._e(),
                                 _vm._v(" "),
-                                beneficio.tipo_valor == "%"
+                                beneficio.tipo_valor == "%" &&
+                                beneficio.concepto != "Prima de Antiguedad"
                                   ? _c("td", {
+                                      staticClass: "beneficio",
                                       attrs: { colspan: "2" },
                                       domProps: {
                                         textContent: _vm._s(
@@ -39531,9 +39533,91 @@ var render = function() {
                                         )
                                       }
                                     })
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                beneficio.concepto == "Prima de Antiguedad"
+                                  ? _c("td", {
+                                      staticClass: "beneficio",
+                                      attrs: { colspan: "2" },
+                                      domProps: {
+                                        textContent: _vm._s(
+                                          _vm.formatoDivisa(
+                                            _vm.TotalprimaAntiguedad.toFixed(2)
+                                          )
+                                        )
+                                      }
+                                    })
                                   : _vm._e()
                               ])
                             }),
+                            _vm._v(" "),
+                            _vm.beneficiosEmpleado.length != 0
+                              ? _c("tr", [
+                                  _vm._m(8),
+                                  _vm._v(" "),
+                                  _c("td", {
+                                    attrs: { colspan: "2" },
+                                    domProps: {
+                                      textContent: _vm._s(
+                                        _vm.formatoDivisa(_vm.sumaTotal("asig"))
+                                      )
+                                    }
+                                  })
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm._m(9)
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          [
+                            _vm._m(10),
+                            _vm._v(" "),
+                            _vm._l(_vm.descuentosEmpleado, function(descuento) {
+                              return _c("tr", { key: descuento.id }, [
+                                _c("td", {
+                                  attrs: { colspan: "4" },
+                                  domProps: {
+                                    textContent: _vm._s(descuento.concepto)
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("td", {
+                                  attrs: { colspan: "2" },
+                                  domProps: {
+                                    textContent: _vm._s(
+                                      _vm.formatoDivisa(
+                                        parseFloat(
+                                          (descuento.porcentaje *
+                                            _vm.salarioTabla) /
+                                            100
+                                        ).toFixed(2)
+                                      )
+                                    )
+                                  }
+                                })
+                              ])
+                            }),
+                            _vm._v(" "),
+                            _vm.beneficiosEmpleado.length != 0
+                              ? _c("tr", [
+                                  _vm._m(11),
+                                  _vm._v(" "),
+                                  _c("td", {
+                                    attrs: { colspan: "2" },
+                                    domProps: {
+                                      textContent: _vm._s(
+                                        _vm.formatoDivisa(
+                                          _vm.sumaTotal("deduc")
+                                        )
+                                      )
+                                    }
+                                  })
+                                ])
+                              : _vm._e(),
                             _vm._v(" "),
                             _c("tr", [
                               _c(
@@ -39546,11 +39630,11 @@ var render = function() {
                                       staticClass: "btn btn-light",
                                       attrs: {
                                         "data-toggle": "modal",
-                                        "data-target": "#Modal"
+                                        "data-target": "#ModalDescuentos"
                                       },
                                       on: {
                                         click: function($event) {
-                                          return _vm.listarBeneficios()
+                                          return _vm.listarDescuentos()
                                         }
                                       }
                                     },
@@ -39566,9 +39650,7 @@ var render = function() {
                           2
                         ),
                         _vm._v(" "),
-                        _vm._m(7),
-                        _vm._v(" "),
-                        _vm._m(8)
+                        _vm._m(12)
                       ]
                     )
                   ])
@@ -39595,464 +39677,7 @@ var render = function() {
         : _vm._e(),
       _vm._v(" "),
       _vm.accion == "ver"
-        ? _c("div", { staticClass: "container-fluid" }, [_vm._m(9)])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.accion == "editar"
-        ? _c("div", { staticClass: "container-fluid" }, [
-            _c("form", [
-              _c("div", { staticClass: "card card-default" }, [
-                _vm._m(10),
-                _vm._v(" "),
-                _c("div", { staticClass: "card-body" }, [
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "name" } }, [
-                        _vm._v("Nombres")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "text",
-                          id: "name",
-                          required: "",
-                          value: "Eliezer Sandino"
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.validarCampo(_vm.nombres, "name")
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "lastname" } }, [
-                        _vm._v("Apellidos")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "text",
-                          id: "lastname",
-                          required: "",
-                          value: "Alvarez Oronoz"
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.validarCampo(_vm.apellidos, "lastname")
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "sexo" } }, [_vm._v("Sexo")]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          staticClass: "form-control",
-                          attrs: { id: "sexo", name: "sexo", required: "" },
-                          on: {
-                            change: function($event) {
-                              return _vm.validarCampo(_vm.sexo, "sexo")
-                            }
-                          }
-                        },
-                        [
-                          _c("option", { attrs: { value: "Femenino" } }, [
-                            _vm._v("Femenino")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "option",
-                            { attrs: { value: "Masculino", selected: "" } },
-                            [_vm._v("Masculino")]
-                          )
-                        ]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "cedula" } }, [
-                        _vm._v("Cédula")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "input-group" }, [
-                        _vm._m(11),
-                        _vm._v(" "),
-                        _c("input", {
-                          staticClass: "form-control",
-                          attrs: {
-                            id: "cedula",
-                            type: "number",
-                            name: "cedula",
-                            min: "4000000",
-                            required: "",
-                            value: "18947463"
-                          },
-                          on: {
-                            keyup: function($event) {
-                              return _vm.validarCampo(_vm.cedula, "cedula")
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "nacimiento" } }, [
-                        _vm._v("Fecha de nacimiento")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "date",
-                          min: "1930-01-01",
-                          max: "2000-01-01",
-                          id: "nacimiento",
-                          name: "fecha_na",
-                          required: "",
-                          value: "1989-12-12"
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.validarCampo(
-                              _vm.fecha_nacimiento,
-                              "nacimiento"
-                            )
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Fecha invalida\n                  "
-                        )
-                      ])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "correo" } }, [
-                        _vm._v("Correo electrónico")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "email",
-                          id: "correo",
-                          required: "",
-                          value: "sandino@gmail.com"
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.validarCampo(_vm.correo, "correo")
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "telefono" } }, [
-                        _vm._v("Número de teléfono")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "input-group" }, [
-                        _vm._m(12),
-                        _vm._v(" "),
-                        _c("input", {
-                          staticClass: "form-control",
-                          attrs: {
-                            id: "telefono",
-                            type: "number",
-                            required: "",
-                            value: "9531458"
-                          },
-                          on: {
-                            keyup: function($event) {
-                              return _vm.validarCampo(_vm.telefono, "telefono")
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "card-footer" })
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "card card-default" }, [
-                _vm._m(13),
-                _vm._v(" "),
-                _c("div", { staticClass: "card-body" }, [
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "grado" } }, [
-                        _vm._v("Grado")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          staticClass: "form-control",
-                          attrs: { id: "grado", required: "" },
-                          on: {
-                            change: function($event) {
-                              return _vm.validarCampo(_vm.grado, "grado")
-                            }
-                          }
-                        },
-                        [
-                          _c(
-                            "option",
-                            { attrs: { value: "Profesional", selected: "" } },
-                            [_vm._v("Profesional")]
-                          ),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Técnico" } }, [
-                            _vm._v("Técnico")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Apoyo" } }, [
-                            _vm._v("Apoyo")
-                          ])
-                        ]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-2 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "nivel" } }, [
-                        _vm._v("Nivel")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          staticClass: "form-control",
-                          attrs: { id: "nivel", required: "" },
-                          on: {
-                            change: function($event) {
-                              return _vm.validarCampo(_vm.nivel, "nivel")
-                            }
-                          }
-                        },
-                        [
-                          _c(
-                            "option",
-                            { attrs: { value: "1", selected: "" } },
-                            [_vm._v("1")]
-                          ),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "2" } }, [
-                            _vm._v("2")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "3" } }, [
-                            _vm._v("3")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "4" } }, [
-                            _vm._v("4")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "5" } }, [_vm._v("5")])
-                        ]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "fecha_ingreso" } }, [
-                        _vm._v("Fecha de ingreso")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "date",
-                          min: "2004-01-01",
-                          max: "2021-01-01",
-                          id: "fecha_ingreso",
-                          name: "fecha_na",
-                          required: "",
-                          value: "2015-01-01"
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.validarCampo(
-                              _vm.fecha_ingreso,
-                              "fecha_ingreso"
-                            )
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Fecha invalida\n                  "
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "departamento" } }, [
-                        _vm._v("Departamento")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          staticClass: "form-control",
-                          attrs: { id: "departamento", required: "" },
-                          on: {
-                            change: function($event) {
-                              return _vm.validarCampo(
-                                _vm.departamento,
-                                "departamento"
-                              )
-                            }
-                          }
-                        },
-                        [
-                          _c("option", { attrs: { value: "RR.HH" } }, [
-                            _vm._v("Recursos Humanos")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Informática" } }, [
-                            _vm._v("Informática")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "option",
-                            { attrs: { value: "Telemática", selected: "" } },
-                            [_vm._v("Telemática")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "option",
-                            { attrs: { value: "Control de estudios" } },
-                            [_vm._v("Control de estudios")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "option",
-                            { attrs: { value: "Desarrollo Estudiantil" } },
-                            [_vm._v("Desarrollo Estudiantil")]
-                          )
-                        ]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
-                      _c("label", { attrs: { for: "grado" } }, [
-                        _vm._v("Grado de Instrucción")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          staticClass: "form-control",
-                          attrs: { id: "grado_ins", required: "" },
-                          on: {
-                            change: function($event) {
-                              return _vm.validarCampo(
-                                _vm.grado_instruccion,
-                                "grado_ins"
-                              )
-                            }
-                          }
-                        },
-                        [
-                          _c("option", { attrs: { value: "T.S.U" } }, [
-                            _vm._v("T.S.U")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "option",
-                            { attrs: { value: "Profesional", selected: "" } },
-                            [_vm._v("Profesional")]
-                          ),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Especialista" } }, [
-                            _vm._v("Especialista")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Maestria" } }, [
-                            _vm._v("Maestria")
-                          ]),
-                          _vm._v(" "),
-                          _c("option", { attrs: { value: "Doctor" } }, [
-                            _vm._v("Doctor")
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
-                        )
-                      ])
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "card-footer" })
-              ]),
-              _vm._v(" "),
-              _vm._m(14),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary btn-lg",
-                  attrs: { type: "button" },
-                  on: {
-                    click: function($event) {
-                      return _vm.registrar()
-                    }
-                  }
-                },
-                [_vm._v("Registrar")]
-              )
-            ])
-          ])
+        ? _c("div", { staticClass: "container-fluid" }, [_vm._m(13)])
         : _vm._e()
     ]),
     _vm._v(" "),
@@ -40061,7 +39686,7 @@ var render = function() {
       {
         staticClass: "modal fade",
         attrs: {
-          id: "Modal",
+          id: "ModalBeneficios",
           tabindex: "-1",
           role: "dialog",
           "aria-labelledby": "exampleModalLabel",
@@ -40080,7 +39705,7 @@ var render = function() {
                     _c("div", { staticClass: "row" }, [
                       _c("div", { staticClass: "col-md-12" }, [
                         _c("table", { staticClass: "table table-hover" }, [
-                          _vm._m(15),
+                          _vm._m(14),
                           _vm._v(" "),
                           _c(
                             "tbody",
@@ -40127,6 +39752,37 @@ var render = function() {
                                             ]
                                           )
                                         ]
+                                      : beneficio.concepto ==
+                                        "Prima de Antiguedad"
+                                      ? [
+                                          _c(
+                                            "a",
+                                            {
+                                              attrs: { href: "#" },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm.agregarBeneficio(
+                                                    {
+                                                      concepto:
+                                                        beneficio.concepto,
+                                                      tipo_valor:
+                                                        beneficio.tipo_valor,
+                                                      valor: beneficio.valor
+                                                    },
+                                                    beneficio.id
+                                                  )
+                                                  _vm.primaAntiguedad()
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fa fa-plus text-dark"
+                                              })
+                                            ]
+                                          )
+                                        ]
                                       : [
                                           _c(
                                             "a",
@@ -40169,7 +39825,133 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(16)
+              _vm._m(15)
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "ModalDescuentos",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("div", { staticClass: "container-fluid" }, [
+                    _c("div", { staticClass: "row" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _c("table", { staticClass: "table table-hover" }, [
+                          _vm._m(16),
+                          _vm._v(" "),
+                          _c(
+                            "tbody",
+                            _vm._l(_vm.arrayDescuentos, function(descuento) {
+                              return _c("tr", { key: descuento.id }, [
+                                _c("td", {
+                                  domProps: {
+                                    textContent: _vm._s(descuento.concepto)
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("td", {
+                                  domProps: {
+                                    textContent: _vm._s(descuento.tipo)
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("td", {
+                                  domProps: {
+                                    textContent: _vm._s(
+                                      descuento.porcentaje + "%"
+                                    )
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "td",
+                                  [
+                                    _vm.id_descuentosAgregados.includes(
+                                      descuento.id
+                                    )
+                                      ? [
+                                          _c(
+                                            "a",
+                                            {
+                                              attrs: { href: "#" },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.retirarDescuento(
+                                                    descuento.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fa fa-check text-success"
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      : [
+                                          _c(
+                                            "a",
+                                            {
+                                              attrs: { href: "#" },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.agregarDescuento(
+                                                    {
+                                                      concepto:
+                                                        descuento.concepto,
+                                                      tipo: descuento.tipo,
+                                                      porcentaje:
+                                                        descuento.porcentaje
+                                                    },
+                                                    descuento.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fa fa-plus text-dark"
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                  ],
+                                  2
+                                )
+                              ])
+                            }),
+                            0
+                          )
+                        ])
+                      ])
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _vm._m(17)
             ])
           ]
         )
@@ -40303,6 +40085,14 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "4" } }, [
+      _c("strong", [_vm._v("Años de Servicio: ")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("tr", { staticStyle: { "background-color": "#343a40" } }, [
       _c(
         "td",
@@ -40315,30 +40105,45 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("tbody", [
-      _c("tr", { staticStyle: { "background-color": "#343a40" } }, [
+    return _c("td", { attrs: { colspan: "4" } }, [
+      _c("strong", [_vm._v("Total de Beneficios:")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("td", { attrs: { colspan: "6", align: "center" } }, [
         _c(
-          "td",
+          "button",
           {
-            staticClass: "text-light",
-            attrs: { colspan: "6", align: "center" }
+            staticClass: "btn btn-light",
+            attrs: { "data-toggle": "modal", "data-target": "#ModalBeneficios" }
           },
-          [_vm._v("DESCUENTOS")]
+          [_c("i", { staticClass: "fa fa-plus" }), _vm._v(" Agregar")]
         )
-      ]),
-      _vm._v(" "),
-      _c("tr", [
-        _c("td", { attrs: { colspan: "6", align: "center" } }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-light",
-              attrs: { "data-toggle": "modal", "data-target": "#Modal" }
-            },
-            [_c("i", { staticClass: "fa fa-plus" }), _vm._v(" Agregar")]
-          )
-        ])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", { staticStyle: { "background-color": "#343a40" } }, [
+      _c(
+        "td",
+        { staticClass: "text-light", attrs: { colspan: "6", align: "center" } },
+        [_vm._v("DESCUENTOS")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { attrs: { colspan: "4" } }, [
+      _c("strong", [_vm._v("Total de Deducciones:")])
     ])
   },
   function() {
@@ -40401,127 +40206,35 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h3", { staticClass: "card-title" }, [
-        _vm._v("Editar datos personales")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-tools" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-tool",
-            attrs: { type: "button", "data-card-widget": "collapse" }
-          },
-          [_c("i", { staticClass: "fas fa-minus" })]
-        )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("div", { staticClass: "input-group-text" }, [
-        _c("select", [
-          _c("option", { attrs: { value: "V-", selected: "" } }, [
-            _vm._v("V-")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "E-" } }, [_vm._v("E-")])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("div", { staticClass: "input-group-text" }, [
-        _c("select", [
-          _c("option", { attrs: { value: "0414-" } }, [_vm._v("0414-")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "0424-", selected: "" } }, [
-            _vm._v("0424-")
-          ]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "0416-" } }, [_vm._v("0416-")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "0426-" } }, [_vm._v("0426-")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "0412-" } }, [_vm._v("0412-")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "0285-" } }, [_vm._v("0285-")])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h3", { staticClass: "card-title" }, [
-        _vm._v("Editar datos de Empleado")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-tools" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-tool",
-            attrs: { type: "button", "data-card-widget": "collapse" }
-          },
-          [_c("i", { staticClass: "fas fa-minus" })]
-        )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card card-default" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _c("h3", { staticClass: "card-title" }, [
-          _vm._v("Editar datos de Salario")
-        ]),
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Beneficio")]),
         _vm._v(" "),
-        _c("div", { staticClass: "card-tools" }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-tool",
-              attrs: { type: "button", "data-card-widget": "collapse" }
-            },
-            [_c("i", { staticClass: "fas fa-minus" })]
-          )
-        ])
-      ]),
+        _c("th", [_vm._v("Cantidad")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Estado")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      ),
       _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("div", { staticClass: "row" }, [
-          _c(
-            "table",
-            { staticClass: "table table-bordered table-striped table-sm" },
-            [
-              _c("tbody", [
-                _c("tr", { staticStyle: { "background-color": "#CEEFCF5" } }, [
-                  _c("td", { attrs: { colspan: "4" } }, [
-                    _c("strong", [_vm._v("Salario tabla para Profesional 1:")])
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("776784,00")])
-                ])
-              ])
-            ]
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-footer" })
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "button" } },
+        [_vm._v("Save changes")]
+      )
     ])
   },
   function() {
@@ -40530,9 +40243,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Beneficio")]),
+        _c("th", [_vm._v("Concepto")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Cantidad")]),
+        _c("th", [_vm._v("Tipo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Valor")]),
         _vm._v(" "),
         _c("th", [_vm._v("Estado")])
       ])

@@ -22,4 +22,8 @@ Route::post('/empleados/agregarNuevo', 'empleadoController@store');
 Route::post('/empleados/salarioTabla', 'empleadoController@salarioTabla');
 Route::get('/empleados/beneficios', 'empleadoController@beneficios');
 Route::get('/empleados/primaProfesional', 'empleadoController@primaProfesional');
+Route::get('/empleados/primaAntiguedad', 'empleadoController@primaAntiguedad');
+Route::get('/empleados/descuentos', 'empleadoController@descuentos');
+
+
 

@@ -61,6 +61,17 @@ class empleadoController extends Controller
             $empleado->estado = 'contratado';
             $empleado->save();
 
+            //agregar beneficios
+            $beneficios = $request->beneficios;
+            for ($i=0; $i < count($beneficios); $i++) { 
+                $empleado->beneficio()->attach($beneficios[$i]);
+            };
+
+            $descuentos = $request->descuentos;
+            for ($i=0; $i < count($descuentos); $i++) { 
+                $empleado->descuento()->attach($descuentos[$i]);
+            };
+
             DB::commit();
         } catch(Exception $e){
             DB::rollBack();

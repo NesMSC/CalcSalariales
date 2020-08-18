@@ -72,7 +72,6 @@
       </div>
       <div class="container-fluid" v-if="accion=='registrar'">
         <!-- Formulario de registro de -->
-        <form>  
           <!-- card datos personales -->      
           <div class="card card-default">
             <div class="card-header">
@@ -236,13 +235,13 @@
             <div class="card-footer">
             </div>
           </div>
-          <!-- /.card -->  
+          <!-- /.card --> 
           <!-- card datos de salario-->      
-          <div class="card card-default">
+          <div class="card card-default collapsed-card">
             <div class="card-header">
               <h3 class="card-title">Datos de Salario</h3>
               <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
               </div>
             </div> 
             <!-- /.card-header -->
@@ -286,11 +285,11 @@
                     </tr>
                     <tr v-if="beneficiosEmpleado.length != 0">
                       <td colspan="4"><strong>Total de Beneficios:</strong></td>
-                      <td colspan="2" v-text="formatoDivisa(sumaTotal('asig'))"></td>
+                      <td colspan="2" v-text="formatoDivisa(sumaTotal('asig').toFixed(2))"></td>
                     </tr>
                     <tr>
                       <td colspan="6" align="center">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#ModalBeneficios"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+                        <button class="btn btn-light" data-toggle="modal" data-target="#ModalBeneficios"><i class="fa fa-plus"></i>&nbsp;Agregar/Quitar</button>
                       </td>
                     </tr>
                   </tbody>
@@ -308,14 +307,22 @@
                     </tr>
                     <tr >
                       <td colspan="6" align="center">
-                        <button @click="listarDescuentos()" class="btn btn-light" data-toggle="modal" data-target="#ModalDescuentos"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+                        <button @click="listarDescuentos()" class="btn btn-light" data-toggle="modal" data-target="#ModalDescuentos"><i class="fa fa-plus"></i>&nbsp;Agregar/Quitar</button>
                       </td>
                     </tr>
                   </tbody>
                   <tbody>
                     <tr style="background-color: #CEEFCF5">
                       <td colspan="4"><strong>Salario normal mensual</strong></td>
-                      <td colspan="2">2.222.222</td>
+                      <td colspan="2" v-text="formatoDivisa(parseFloat(totalBene+salarioTabla).toFixed(2))"></td>
+                    </tr>
+                    <tr style="background-color: #FFF !important">
+                      <td colspan="6">
+                        <div class="form-group form-check">
+                          <input type="checkbox" class="form-check-input" id="confirm_sal">
+                          <label class="form-check-label" for="confirm_sal">Confirmo que he ingresado los datos salariales correctamente</label>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -327,7 +334,6 @@
           </div>
           <!-- /.card -->
           <button @click="registrar()" type="button" class="btn btn-primary btn-lg">Registrar</button>
-        </form> 
       </div><!-- /.container-fluid -->
       <div class="container-fluid" v-if="accion=='ver'">
         <div class="row">
@@ -496,11 +502,12 @@
             arrayempleado: [],
             accion: 'listar',
             id_salario: 1,
-            salarioTabla: '',
+            salarioTabla: 0,
             UT: '',
             arrayBeneficios: [],
             arrayDescuentos: [],
             beneficiosEmpleado: [],
+            totalBene: 0,
             descuentosEmpleado: [],
             id_beneficiosAgregados:[],
             id_descuentosAgregados: [],
@@ -538,7 +545,9 @@
                 nivel: me.nivel,
                 fecha_ingreso: me.fecha_ingreso,
                 departamento: me.departamento,
-                grado_instruccion: me.grado_instruccion
+                grado_instruccion: me.grado_instruccion,
+                beneficios: me.id_beneficiosAgregados,
+                descuentos: me.id_descuentosAgregados
               }).then(function(response){
                 alert('Agregado exitosamente');
                 me.accion = "listar";
@@ -562,8 +571,10 @@
                   element.classList.add('is-valid');
                 };                
               };
+
+            
            //console.log(this.error);
-           if(!this.error.length){return true}
+           if(!this.error.length && this.validarDatosSalario()){return true}
           },
           validarCampo(campo, id){
             //Validar campos al escribir o cambiar
@@ -612,6 +623,31 @@
               }; 
             };
            //console.log(this.error);
+          },
+          validarDatosSalario(){
+            let checkStatus = document.getElementById('confirm_sal').checked;
+            if (checkStatus) {
+              return true;
+            }else{
+              let cardElement = document.getElementsByClassName('card-default');
+                for (var i = 0; i < cardElement.length; i++) {
+                  cardElement[i].classList.toggle('collapsed-card')
+                }
+                //Cambiar icono de minus a plus en la cabecera de la carta
+              let elementIco = document.getElementsByClassName('fas');
+              console.log(elementIco);
+                for (var i = 11; i < 14; i++) {
+                  if (elementIco[i].classList.contains('fa-minus')) {
+                    elementIco[i].classList.remove('fa-minus');
+                    elementIco[i].classList.add('fa-plus');
+                  }else{
+                    elementIco[i].classList.remove('fa-plus');
+                    elementIco[i].classList.add('fa-minus');
+                  }
+                }
+
+                alert('Comprobar datos de salario')
+            }
           },
           datoSalario(){
               let me = this;
@@ -724,22 +760,19 @@
             //Calcula la prima de antiguedad
             let me = this;
             let total = 0;
-            /*for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+            for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
                   var num = 0;
                   if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
                     num = me.beneficiosEmpleado[i].valor*me.UT;
                   }else if(me.beneficiosEmpleado[i].tipo_valor == '%' && me.beneficiosEmpleado[i].concepto != 'Prima de Antiguedad'){
                     num = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
                   } 
-                  console.log(num)
                    total += parseFloat(num);
-                };*/
+                };
                 
-               // let primaMonto = (((total+me.salarioTabla)*2)/100)*me.añosServicio;
-               /*let primaMonto = 0;
-                me.TotalprimaAntiguedad = primaMonto;*/
-
-                
+                let primaMonto = (((total+me.salarioTabla)*2)/100)*me.añosServicio;
+                console.log(primaMonto);
+                me.TotalprimaAntiguedad = primaMonto;       
           },
           calculaAñosServicio(){
             //Calcula los años de antiguedad a partir de la fecha de ingreso
@@ -766,19 +799,19 @@
                   var bene = 0;
                   if (me.beneficiosEmpleado[i].tipo_valor == 'U.T') {
                     bene = me.beneficiosEmpleado[i].valor*me.UT;
-                  }else if(me.beneficiosEmpleado[i].tipo_valor == '%'){
+                  }else if(me.beneficiosEmpleado[i].tipo_valor == '%' && me.beneficiosEmpleado[i].concepto != 'Prima de Antiguedad'){
                     bene = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
                   } 
                    totalBene += parseFloat(bene);
                 };
-               return me.totalBene = totalBene;
+               return me.totalBene = totalBene + me.TotalprimaAntiguedad;
                   
             }else if(suma == 'deduc'){
               let totalDeduc = 0;
               let arrayDescuentos = me.descuentosEmpleado;
               for (var i = 0; i < arrayDescuentos.length; i++) {
                   var num = arrayDescuentos[i].porcentaje*me.salarioTabla/100;
-                  total += parseFloat(num);
+                  totalDeduc += parseFloat(num);
                 };
                 return me.totalDeduc = totalDeduc;
             }
@@ -790,3 +823,12 @@
     }
 }
 </script>
+<style>
+  .collapsed-card.card-body{
+    display:none;
+  }
+  .collapsed-card.card-footer{
+    display:none;
+  }
+
+</style>

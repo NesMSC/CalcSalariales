@@ -36,7 +36,13 @@ class empleadoController extends Controller
     public function store(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
+        $cedula = $request->cedula;
+        $busquedaRegistro = DB::table('personas')->where('cedula', '=', "$cedula")->first();
 
+        if ($busquedaRegistro) {
+            return ["respuesta"=>true];
+        };
+        
         try{
 
             DB::beginTransaction();
@@ -67,6 +73,7 @@ class empleadoController extends Controller
                 $empleado->beneficio()->attach($beneficios[$i]);
             };
 
+            //Agregar descuentos
             $descuentos = $request->descuentos;
             for ($i=0; $i < count($descuentos); $i++) { 
                 $empleado->descuento()->attach($descuentos[$i]);
@@ -77,6 +84,8 @@ class empleadoController extends Controller
             DB::rollBack();
             return $e;
         }
+
+        return ["respuesta"=>false];
         
     }
 

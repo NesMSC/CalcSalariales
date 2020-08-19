@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid" v-if="accion=='registrar'">
+      <div class="container-fluid" v-if="accion=='registrar' || accion=='editar'">
         <!-- Formulario de registro de -->
           <!-- card datos personales -->      
           <div class="card card-default">
@@ -227,8 +227,7 @@
                   <div class="invalid-feedback">
                           *Este campo es requerido
                   </div>
-                </div>
-                
+                </div>        
               </div>  
             </div>
             <!-- /.card-body -->
@@ -257,8 +256,8 @@
                         </strong>
                       </td>
                       <td colspan="2">
-                        <span v-if="grado!='Seleccionar' && nivel!='Seleccionar'">
-                          <p v-if="datoSalario()" v-text="formatoDivisa(salarioTabla)"></p>
+                        <span>
+                          <p  v-text="formatoDivisa(salarioTabla)"></p>
                         </span>
                         
                       </td>
@@ -514,7 +513,8 @@
             añosServicio: 0,
             TotalprimaAntiguedad:0,
             error: []
-        }},
+          }
+        },
         methods: {
           listarEmpleado(){
             let me=this;
@@ -531,30 +531,54 @@
             let me = this;
             if(me.validarForm()){
 
-              let me = this;
-              let url = '/empleados/agregarNuevo';
-              axios.post(url, {
-                nombres:me.nombres,
-                apellidos:me.apellidos,
-                sexo:me.sexo,
-                cedula:me.pre_cedula+me.cedula,
-                correo:me.correo,
-                telefono:me.pre_telefono+me.telefono,
-                nacimiento:me.fecha_nacimiento,
-                grado: me.grado,
-                nivel: me.nivel,
-                fecha_ingreso: me.fecha_ingreso,
-                departamento: me.departamento,
-                grado_instruccion: me.grado_instruccion,
-                beneficios: me.id_beneficiosAgregados,
-                descuentos: me.id_descuentosAgregados
-              }).then(function(response){
-                alert('Agregado exitosamente');
-                me.accion = "listar";
-                me.listarEmpleado();
-              }).catch(function(error){
-                console.log(error)
-              });
+              swal.fire({
+                title: '¿Desea continuar con el registro?',
+                text: "Una vez registrado, el empleado no podrá ser eliminado de la base de datos",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.value) {
+                  let me = this;
+                  let url = '/empleados/agregarNuevo';
+                  axios.post(url, {
+                    nombres:me.nombres,
+                    apellidos:me.apellidos,
+                    sexo:me.sexo,
+                    cedula:me.pre_cedula+me.cedula,
+                    correo:me.correo,
+                    telefono:me.pre_telefono+me.telefono,
+                    nacimiento:me.fecha_nacimiento,
+                    grado: me.grado,
+                    nivel: me.nivel,
+                    fecha_ingreso: me.fecha_ingreso,
+                    departamento: me.departamento,
+                    grado_instruccion: me.grado_instruccion,
+                    beneficios: me.id_beneficiosAgregados,
+                    descuentos: me.id_descuentosAgregados
+                  }).then(function(response){
+                    if(response.data.respuesta){
+                      Vue.toasted.error( 'Empleado existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']})
+                    }else{
+                      swal.fire(
+                        'Empleado agregado exitosamente',
+                        '',
+                        'success'
+                      )
+                      me.accion = "listar";
+                      me.listarEmpleado();
+                      me.resetearInputs();
+                    } 
+                  }).catch(function(error){
+                    console.log(error)
+                  });
+                }else return;
+              })
+
+
             };
           },
           validarForm(){
@@ -572,7 +596,6 @@
                 };                
               };
 
-            
            //console.log(this.error);
            if(!this.error.length && this.validarDatosSalario()){return true}
           },
@@ -601,8 +624,7 @@
                     }
                   break;
                   case "nacimiento":
-                    if(
-                      input.value < input.min || input.value > input.max){input.classList.add('is-invalid')
+                    if(input.value < input.min || input.value > input.max){input.classList.add('is-invalid')
                       this.error.push(input.id);
                     }
                     else{
@@ -620,6 +642,12 @@
                       input.classList.add('is-valid');
                     }
                   break;
+                  case "nivel":
+                    this.datoSalario();
+                  break;
+                  case "grado":
+                    this.datoSalario();
+                  break;
               }; 
             };
            //console.log(this.error);
@@ -630,12 +658,15 @@
               return true;
             }else{
               let cardElement = document.getElementsByClassName('card-default');
-                for (var i = 0; i < cardElement.length; i++) {
-                  cardElement[i].classList.toggle('collapsed-card')
+                for (var i = 0; i < 2; i++) {
+                  if (!cardElement[i].classList.contains('collapsed-card')) {
+                    cardElement[i].classList.add('collapsed-card')
+                  }       
                 }
+
+                cardElement[2].classList.remove('collapsed-card');
                 //Cambiar icono de minus a plus en la cabecera de la carta
               let elementIco = document.getElementsByClassName('fas');
-              console.log(elementIco);
                 for (var i = 11; i < 14; i++) {
                   if (elementIco[i].classList.contains('fa-minus')) {
                     elementIco[i].classList.remove('fa-minus');
@@ -646,29 +677,64 @@
                   }
                 }
 
-                alert('Comprobar datos de salario')
+                Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
             }
           },
           datoSalario(){
-              let me = this;
-              let url = 'empleados/salarioTabla';
-              axios.post(url, {id_salario:me.id_salario}).then(function(response){
-                let grado = me.grado;
-                let nivel = parseInt(me.nivel)-1;
-                let salario = JSON.parse(response.data.tabulador);
-                salario = salario[grado][nivel];
-                me.salarioTabla = salario;
-                me.UT = response.data.UT;
-              }).catch(function(error){
-                console.log(error);
-                return false;
-              });
 
-              return true;
+              let me = this;
+
+              if (me.grado!='Seleccionar' && me.nivel!='Seleccionar') {
+                  let url = 'empleados/salarioTabla';
+                  axios.post(url, {id_salario:me.id_salario}).then(function(response){
+                  let grado = me.grado;
+                  let nivel = parseInt(me.nivel)-1;
+                  let salario = JSON.parse(response.data.tabulador);
+                  salario = salario[grado][nivel];
+                  me.salarioTabla = salario;
+                  me.UT = response.data.UT;
+                }).catch(function(error){
+                  console.log(error);
+                  return false;
+                });
+
+                return true;
+              }else{
+                return false;
+              }
+          },
+          resetearInputs(){
+            let me = this;
+
+            me.nombres="";
+            me.apellidos="";
+            me.sexo="";
+            me.pre_cedula="";
+            me.cedula="";
+            me.correo="";
+            me.pre_telefono="";
+            me.telefono="";
+            me.fecha_nacimiento="";
+            me.grado="Seleccionar";
+            me.nivel="Seleccionar";
+            me.fecha_ingreso="";
+            me.departamento="Seleccionar";
+            me.grado_instruccion="Seleccionar";
+            me.sexo= "Seleccionar"
+            me.pre_cedula= "V-"
+            me.pre_telefono= "0414-"
+            me.salarioTabla = 0;
+            me.añosServicio = 0;
+            me.TotalprimaAntiguedad= 0;
+            me.totalBene = 0;
+            me.id_beneficiosAgregados= [];
+            me.id_descuentosAgregados= [];
+            me.beneficiosEmpleado= [];
+            me.descuentosEmpleado= [];
           },
           listarBeneficios(){
             let me = this;
-            let url = 'empleados/beneficios'
+            let url = 'empleados/beneficios';
             axios.get(url).then(function(response){
               me.arrayBeneficios = response.data.beneficios;
             }).catch(function(error){
@@ -677,7 +743,7 @@
           },
           listarDescuentos(){
             let me = this;
-            let url = 'empleados/descuentos'
+            let url = 'empleados/descuentos';
             axios.get(url).then(function(response){
               me.arrayDescuentos = response.data.descuentos;
             }).catch(function(error){
@@ -815,13 +881,14 @@
                 };
                 return me.totalDeduc = totalDeduc;
             }
-          
-        },
+          }   
+        }, 
         mounted() {
-            this.listarEmpleado();
+          this.listarEmpleado();
+
+
         }
     }
-}
 </script>
 <style>
   .collapsed-card.card-body{

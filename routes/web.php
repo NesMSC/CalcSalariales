@@ -24,6 +24,8 @@ Route::get('/empleados/beneficios', 'empleadoController@beneficios');
 Route::get('/empleados/primaProfesional', 'empleadoController@primaProfesional');
 Route::get('/empleados/primaAntiguedad', 'empleadoController@primaAntiguedad');
 Route::get('/empleados/descuentos', 'empleadoController@descuentos');
+Route::get('/empleados/editarEmpleado/{id}', 'empleadoController@edit');
+Route::put('/empleados/actualizarEmpleado', 'empleadoController@update');
 
 
 

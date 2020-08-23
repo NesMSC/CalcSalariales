@@ -22,7 +22,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <button @click="accion='registrar'; listarBeneficios();" type="button" class="btn btn-light">
+                <button @click="accion='registrar'" type="button" class="btn btn-light">
                   <i class="fa fa-plus"></i>&nbsp;Nuevo
                 </button>
               </div>
@@ -58,7 +58,7 @@
                       <td v-text="empleado.departamento"></td>
                       <td>
                         <a href="#" @click="accion='ver'"><i class="far fa-eye" ></i></a>
-                        <a href="#" @click="accion='editar'"><i class="fas fa-edit"></i></a>
+                        <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
                       </td>
                     </tr>
                   </tbody>
@@ -227,7 +227,17 @@
                   <div class="invalid-feedback">
                           *Este campo es requerido
                   </div>
-                </div>        
+                </div>
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="estadoEmpleado">Estado</label> 
+                  <select v-model="estadoEmpleado" id="estadoEmpleado" class="form-control" required>
+                    <option value="Fijo">Fijo</option>
+                    <option value="Contratado">Contratado</option>
+                    <option value="Pensionado">Pensionado</option>
+                    <option value="Jubilado">Jubilado</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                </div>      
               </div>  
             </div>
             <!-- /.card-body -->
@@ -288,7 +298,7 @@
                     </tr>
                     <tr>
                       <td colspan="6" align="center">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#ModalBeneficios"><i class="fa fa-plus"></i>&nbsp;Agregar/Quitar</button>
+                        <button @click="listarBeneficios()" class="btn btn-light" data-toggle="modal" data-target="#ModalBeneficios"><i class="fa fa-plus"></i>&nbsp;Agregar/Quitar</button>
                       </td>
                     </tr>
                   </tbody>
@@ -332,7 +342,13 @@
             </div>
           </div>
           <!-- /.card -->
-          <button @click="registrar()" type="button" class="btn btn-primary btn-lg">Registrar</button>
+          <template v-if="accion=='registrar'">
+            <button @click="registrar()" type="button" class="btn btn-primary btn-lg">Registrar</button>
+          </template>
+          <template v-if="accion=='editar'">
+            <button @click="actualizarEmpleado()" type="button" class="btn btn-primary btn-lg">Actualizar</button>
+          </template>
+          
       </div><!-- /.container-fluid -->
       <div class="container-fluid" v-if="accion=='ver'">
         <div class="row">
@@ -498,6 +514,7 @@
             fecha_ingreso: "",
             departamento: "Seleccionar",
             grado_instruccion: "Seleccionar",
+            estadoEmpleado: "Contratado",
             arrayempleado: [],
             accion: 'listar',
             id_salario: 1,
@@ -512,7 +529,9 @@
             id_descuentosAgregados: [],
             añosServicio: 0,
             TotalprimaAntiguedad:0,
-            error: []
+            error: [],
+            id_empleado: "",
+            id_persona: ""
           }
         },
         methods: {
@@ -557,6 +576,7 @@
                     fecha_ingreso: me.fecha_ingreso,
                     departamento: me.departamento,
                     grado_instruccion: me.grado_instruccion,
+                    estado: me.estadoEmpleado,
                     beneficios: me.id_beneficiosAgregados,
                     descuentos: me.id_descuentosAgregados
                   }).then(function(response){
@@ -579,6 +599,88 @@
               })
 
 
+            };
+          },
+          editarEmpleado(id){
+            let me = this;
+            let url = '/empleados/editarEmpleado/'+id;
+            axios.get(url).then(function(response){
+              let empleado = response.data.empleado[0];   
+              me.beneficiosEmpleado = response.data.beneficios;
+              me.descuentosEmpleado = response.data.descuentos;
+              
+              for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
+                    me.id_beneficiosAgregados.push(me.beneficiosEmpleado[i].id);
+                  }
+
+              for (var i = 0; i < me.descuentosEmpleado.length; i++) {
+                    me.id_descuentosAgregados.push(me.descuentosEmpleado[i].id);
+                  }
+
+              let cedula = empleado.cedula;
+              me.nombres= empleado.nombres;
+              me.apellidos= empleado.apellidos;
+              me.sexo= empleado.sexo;
+              me.pre_cedula= empleado.cedula.substring(0, 2);
+              me.cedula= empleado.cedula.substring(2);
+              me.correo= empleado.correo;
+              me.pre_telefono= empleado.telefono.substring(0, 5);
+              me.telefono= empleado.telefono.substring(5);
+              me.fecha_nacimiento= empleado.nacimiento;
+              me.grado= empleado.grado;
+              me.nivel= empleado.nivel;
+              me.fecha_ingreso= empleado.fechaIngreso;
+              me.departamento= empleado.departamento;
+              me.grado_instruccion= empleado.instruccion;
+              me.estadoEmpleado= empleado.estado;
+              me.id_empleado= empleado.id_empleado;
+              me.id_persona= empleado.id_persona;
+              me.calculaAñosServicio();
+
+              me.datoSalario();
+              
+              
+            }).catch(function(error){
+              console.log(error);
+            });
+          },
+          actualizarEmpleado(){
+            let me = this;
+            if(me.validarForm()){
+                let me = this;
+                let url = '/empleados/actualizarEmpleado';
+                axios.put(url, {
+                  nombres:me.nombres,
+                  apellidos:me.apellidos,
+                  sexo:me.sexo,
+                  cedula:me.pre_cedula+me.cedula,
+                  correo:me.correo,
+                  telefono:me.pre_telefono+me.telefono,
+                  nacimiento:me.fecha_nacimiento,
+                  grado: me.grado,
+                  nivel: me.nivel,
+                  fecha_ingreso: me.fecha_ingreso,
+                  departamento: me.departamento,
+                  grado_instruccion: me.grado_instruccion,
+                  estado: me.estadoEmpleado,
+                  beneficios: me.id_beneficiosAgregados,
+                  descuentos: me.id_descuentosAgregados,
+                  id_persona: me.id_persona,
+                  id_empleado: me.id_empleado 
+                }).then(function(response){
+                  
+                  swal.fire(
+                      'Actualizado exitosamente',
+                      '',
+                      'success');
+
+                    me.accion = "listar";
+                    me.listarEmpleado();
+                    me.resetearInputs();
+                   
+                }).catch(function(error){
+                  console.log(error)
+                });
             };
           },
           validarForm(){
@@ -693,6 +795,11 @@
                   salario = salario[grado][nivel];
                   me.salarioTabla = salario;
                   me.UT = response.data.UT;
+
+                  if (me.accion=='editar') {
+                    me.primaProfesional();
+                  };
+                
                 }).catch(function(error){
                   console.log(error);
                   return false;
@@ -817,6 +924,10 @@
                   beneficios[i].valor = me.beneficiosEmpleado[indice].valor;
                 };
               };
+
+              if (me.accion == 'editar') {
+                me.primaAntiguedad();
+              }
             }).catch(function(error){
               console.log(error);
             });
@@ -833,11 +944,12 @@
                   }else if(me.beneficiosEmpleado[i].tipo_valor == '%' && me.beneficiosEmpleado[i].concepto != 'Prima de Antiguedad'){
                     num = me.beneficiosEmpleado[i].valor*me.salarioTabla/100;
                   } 
+
                    total += parseFloat(num);
                 };
                 
                 let primaMonto = (((total+me.salarioTabla)*2)/100)*me.añosServicio;
-                console.log(primaMonto);
+                
                 me.TotalprimaAntiguedad = primaMonto;       
           },
           calculaAñosServicio(){

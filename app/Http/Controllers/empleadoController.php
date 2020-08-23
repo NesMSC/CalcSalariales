@@ -20,7 +20,8 @@ class empleadoController extends Controller
         if (!$request->ajax()) return redirect('/');
 
         $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                            ->select('nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                            ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                            ->orderBy('personas.id', 'desc')
                             ->get();
 
         return ["empleados" => $empleados];
@@ -54,6 +55,7 @@ class empleadoController extends Controller
             $persona->correo = $request->correo;
             $persona->telefono = $request->telefono;
             $persona->nacimiento = $request->nacimiento;
+            $persona->sexo = $request->sexo;
             $persona->save();
 
             $empleado = new Empleado;
@@ -64,7 +66,7 @@ class empleadoController extends Controller
             $empleado->fechaIngreso = $request->fecha_ingreso;
             $empleado->departamento = $request->departamento;
             $empleado->instruccion = $request->grado_instruccion;
-            $empleado->estado = 'contratado';
+            $empleado->estado = $request->estado;
             $empleado->save();
 
             //agregar beneficios
@@ -108,7 +110,20 @@ class empleadoController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        $empleado = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                            ->join('salarios', 'empleados.salario_id', '=', 'salarios.id')
+                            ->select('personas.id as id_persona', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'cedula', 'correo', 'telefono', 'nacimiento', 'grado', 'nivel', 'fechaIngreso', 'departamento', 'instruccion', 'estado', 'sexo')
+                            ->where('personas.id', '=', $id)
+                            ->get();
+        
+        $empleado_id = Persona::find($id)->empleado->id;                      
+        $empleado_bene = Empleado::find($empleado_id)->beneficio;
+        $empleado_desc = Empleado::find($empleado_id)->descuento;
+
+        return ["empleado"=>$empleado, "beneficios" => $empleado_bene, "descuentos" => $empleado_desc];
+
+
     }
 
     /**
@@ -118,9 +133,35 @@ class empleadoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      DB::table('personas')
+        ->where('id', $request->id_persona)
+        ->update(['nombres' => $request->nombres, 'apellidos' => $request->apellidos, 'cedula' => $request->cedula, 'correo' => $request->correo, 'telefono' => $request->telefono, 'nacimiento'=>$request->nacimiento, 'sexo' => $request->sexo]);
+
+      DB::table('empleados')
+        ->where('id', $request->id_empleado)
+        ->update(['grado' => $request->grado, 'nivel' => $request->nivel, 'fechaIngreso' => $request->fecha_ingreso, 'departamento' => $request->departamento, 'instruccion' => $request->grado_instruccion, 'estado' => $request->estado]);
+
+      
+      DB::table('beneficio_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
+      DB::table('descuento_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
+
+      $empleado = Empleado::find($request->id_empleado);
+
+      //Actualiza beneficios
+      $beneficios = $request->beneficios;
+        for ($i=0; $i < count($beneficios); $i++) { 
+          $empleado->beneficio()->attach($beneficios[$i]);
+        };
+
+      //Actualiza descuentos
+      $descuentos = $request->descuentos;
+        for ($i=0; $i < count($descuentos); $i++) { 
+          $empleado->descuento()->attach($descuentos[$i]);
+        };
+
+      return true; 
     }
 
     public function salarioTabla(Request $request)

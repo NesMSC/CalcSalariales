@@ -6,11 +6,13 @@
 
 require('./bootstrap');
 
+
 window.Vue = require('vue');
 
 import Toasted from 'vue-toasted';
 
 Vue.use(Toasted);
+
 
 /**
  * The following block of code may be used to automatically register your

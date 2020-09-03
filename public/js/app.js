@@ -2023,6 +2023,41 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var _this = undefined;
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2540,6 +2575,14 @@ __webpack_require__.r(__webpack_exports__);
       grado_instruccion: "Seleccionar",
       estadoEmpleado: "Contratado",
       arrayempleado: [],
+      pagination: {
+        "total": 0,
+        "current_page": 0,
+        "per_page": 0,
+        "last_page": 0,
+        "from": 0,
+        "to": 0
+      },
       accion: 'listar',
       id_salario: 1,
       salarioTabla: 0,
@@ -2558,19 +2601,56 @@ __webpack_require__.r(__webpack_exports__);
       id_persona: ""
     };
   },
+  computed: {
+    isActive: function isActive() {
+      return _this.pagination.current_page;
+    },
+    pageNumber: function pageNumber() {
+      var me = _this;
+
+      if (!me.pagination.to) {
+        return [];
+      }
+
+      var from = me.pagination.current_page - 2; //TODO offset
+
+      if (from < 1) {
+        from = 1;
+      }
+
+      ;
+      var to = from + 2 * 2; //TODO
+
+      if (to >= me.pagination.last_page) {
+        to = me.pagination.last_page;
+      }
+
+      ;
+      var pagesArray = [];
+
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      ;
+      return pagesArray;
+    }
+  },
   methods: {
-    listarEmpleado: function listarEmpleado() {
+    listarEmpleado: function listarEmpleado(page) {
       var me = this;
-      var url = '/empleados';
+      var url = '/empleados?page=' + page;
       axios.get(url).then(function (response) {
-        var respuesta = response.data.empleados;
+        var respuesta = response.data.empleados.data;
         me.arrayempleado = respuesta;
+        me.pagination = response.data.pagination;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     registrar: function registrar() {
-      var _this = this;
+      var _this2 = this;
 
       var me = this;
 
@@ -2586,7 +2666,7 @@ __webpack_require__.r(__webpack_exports__);
           cancelButtonText: 'Cancelar'
         }).then(function (result) {
           if (result.value) {
-            var _me = _this;
+            var _me = _this2;
             var url = '/empleados/agregarNuevo';
             axios.post(url, {
               nombres: _me.nombres,
@@ -3067,6 +3147,10 @@ __webpack_require__.r(__webpack_exports__);
         ;
         return me.totalDeduc = totalDeduc;
       }
+    },
+    cambioPagina: function cambioPagina(page) {
+      this.pagination.current_page = page;
+      this.listarEmpleado(page);
     }
   },
   mounted: function mounted() {
@@ -42630,7 +42714,7 @@ var render = function() {
                       },
                       [
                         _c("i", { staticClass: "fa fa-plus" }),
-                        _vm._v(" Nuevo\n                ")
+                        _vm._v(" Nuevo\r\n                ")
                       ]
                     )
                   ]),
@@ -42685,6 +42769,7 @@ var render = function() {
                                     on: {
                                       click: function($event) {
                                         _vm.accion = "ver"
+                                        _vm.editarEmpleado(empleado.id)
                                       }
                                     }
                                   },
@@ -42710,6 +42795,71 @@ var render = function() {
                           0
                         )
                       ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "ul",
+                      {
+                        staticClass: "pagination btn-group mr-2 mt-4",
+                        attrs: { role: "group", "aria-label": "First group" }
+                      },
+                      [
+                        _vm.pagination.current_page > 1
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page - 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Atras")]
+                              )
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm._l(_vm.pageNumber, function(page) {
+                          return _c("li", [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-light",
+                                attrs: { type: "button" }
+                              },
+                              [_vm._v("1")]
+                            )
+                          ])
+                        }),
+                        _vm._v(" "),
+                        _vm.pagination.current_page < _vm.pagination.last_page
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page + 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Siguiente")]
+                              )
+                            ])
+                          : _vm._e()
+                      ],
+                      2
                     )
                   ])
                 ])
@@ -42760,7 +42910,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ]),
@@ -42797,7 +42947,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ]),
@@ -42940,7 +43090,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ]),
@@ -42987,7 +43137,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Fecha invalida\n                  "
+                          "\r\n                          *Fecha invalida\r\n                  "
                         )
                       ])
                     ])
@@ -43026,7 +43176,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ]),
@@ -43128,7 +43278,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ])
@@ -43311,7 +43461,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Fecha invalida\n                  "
+                          "\r\n                          *Fecha invalida\r\n                  "
                         )
                       ])
                     ]),
@@ -43462,7 +43612,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                          *Este campo es requerido\n                  "
+                          "\r\n                          *Este campo es requerido\r\n                  "
                         )
                       ])
                     ]),
@@ -43550,7 +43700,7 @@ var render = function() {
                               _c("td", { attrs: { colspan: "4" } }, [
                                 _c("strong", [
                                   _vm._v(
-                                    "Salario tabla para\n                        "
+                                    "Salario tabla para\r\n                        "
                                   ),
                                   _vm.grado != "Seleccionar" &&
                                   _vm.nivel != "Seleccionar"
@@ -43855,7 +44005,139 @@ var render = function() {
         : _vm._e(),
       _vm._v(" "),
       _vm.accion == "ver"
-        ? _c("div", { staticClass: "container-fluid" }, [_vm._m(13)])
+        ? _c("div", { staticClass: "container-fluid" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-header" }, [
+                    _c("strong", [
+                      _c("p", {
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.nombres +
+                              " " +
+                              _vm.apellidos +
+                              "   " +
+                              _vm.pre_cedula +
+                              _vm.cedula
+                          )
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c(
+                      "table",
+                      { staticClass: "table", attrs: { id: "table1" } },
+                      [
+                        _vm._m(13),
+                        _vm._v(" "),
+                        _c("tbody", [
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s("Sexo: " + _vm.sexo)
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Correo electrónico: " + _vm.correo
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Número de teléfono: " +
+                                    _vm.pre_telefono +
+                                    _vm.telefono
+                                )
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Fecha de nacimiento: " + _vm.fecha_nacimiento
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td"),
+                            _vm._v(" "),
+                            _c("td")
+                          ])
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "table",
+                      { staticClass: "table", attrs: { id: "table2" } },
+                      [
+                        _vm._m(14),
+                        _vm._v(" "),
+                        _c("tbody", [
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Grado de instruccion: " +
+                                    _vm.grado_instruccion
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Cargo: " + _vm.grado + " " + _vm.nivel
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Departamento: " + _vm.departamento
+                                )
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Estado: " + _vm.estadoEmpleado
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Fecha de ingreso: " + _vm.fecha_ingreso
+                                )
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("td")
+                          ])
+                        ])
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
         : _vm._e()
     ]),
     _vm._v(" "),
@@ -43883,7 +44165,7 @@ var render = function() {
                     _c("div", { staticClass: "row" }, [
                       _c("div", { staticClass: "col-md-12" }, [
                         _c("table", { staticClass: "table table-hover" }, [
-                          _vm._m(14),
+                          _vm._m(15),
                           _vm._v(" "),
                           _c(
                             "tbody",
@@ -44003,7 +44285,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(15)
+              _vm._m(16)
             ])
           ]
         )
@@ -44034,7 +44316,7 @@ var render = function() {
                     _c("div", { staticClass: "row" }, [
                       _c("div", { staticClass: "col-md-12" }, [
                         _c("table", { staticClass: "table table-hover" }, [
-                          _vm._m(16),
+                          _vm._m(17),
                           _vm._v(" "),
                           _c(
                             "tbody",
@@ -44129,7 +44411,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(17)
+              _vm._m(18)
             ])
           ]
         )
@@ -44351,42 +44633,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-12" }, [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _c("p", [_vm._v("Eliezer Sandino Alvarez Oronoz")])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body" }, [
-            _c("table", { staticClass: "table", attrs: { id: "example1" } }, [
-              _c("tbody", [
-                _c("tr", [
-                  _c("td", [_vm._v("Grado de instruccion: Profesional")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Cargo: Profesional 1")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(" Departamento: Telemática")])
-                ]),
-                _vm._v(" "),
-                _c("tr", [
-                  _c("td", [_vm._v("Cédula: V-18947463")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Correo electrónico: sandino@gmail.com")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(" Número de teléfono: 04249531458")])
-                ]),
-                _vm._v(" "),
-                _c("tr", [
-                  _c("td", [_vm._v("Fecha de ingreso: 2015-01-01")]),
-                  _vm._v(" "),
-                  _c("td")
-                ])
-              ])
-            ])
-          ])
-        ])
-      ])
+    return _c("thead", [
+      _c("tr", [_c("td", [_c("strong", [_vm._v("Datos personales")])])])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [_c("td", [_c("strong", [_vm._v("Datos de empleado")])])])
     ])
   },
   function() {
@@ -56898,7 +57154,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\calcSalariales\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Apache24\htdocs\CalcSalariales\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

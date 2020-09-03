@@ -17,14 +17,24 @@ class empleadoController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->ajax()) return redirect('/');
+        //if (!$request->ajax()) return redirect('/');
 
         $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                             ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
                             ->orderBy('personas.id', 'desc')
-                            ->get();
+                            ->paginate(2);
 
-        return ["empleados" => $empleados];
+        return [
+          "pagination" => [
+                "total" => $empleados->total(),
+                "current_page" => $empleados->currentPage(),
+                "per_page" => $empleados->perPage(),
+                "last_page" => $empleados->lastPage(),
+                "from" => $empleados->firstItem(),
+                "to" => $empleados->lastPage()
+            ],
+          "empleados" => $empleados
+        ];
     }
 
 

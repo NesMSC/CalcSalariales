@@ -57,12 +57,25 @@
                       <td v-text="empleado.grado+' '+empleado.nivel"></td>
                       <td v-text="empleado.departamento"></td>
                       <td>
-                        <a href="#" @click="accion='ver'"><i class="far fa-eye" ></i></a>
+                        <a href="#" @click="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
                         <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
                       </td>
                     </tr>
                   </tbody>
                 </table>
+                
+                  <ul class="pagination btn-group mr-2 mt-4" role="group" aria-label="First group">
+                    <li v-if="pagination.current_page > 1">
+                      <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page - 1)">Atras</button>
+                    </li>
+                    <li v-for="page in pageNumber">
+                      <button type="button" class="btn btn-light">1</button>
+                    </li>
+                    <li v-if="pagination.current_page < pagination.last_page">
+                      <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page + 1)">Siguiente</button>
+                    </li>
+                  </ul>
+                
               </div>
               <!-- /.card-body -->
             </div>
@@ -355,24 +368,44 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <p>Eliezer Sandino Alvarez Oronoz</p>
+                <strong><p v-text="nombres+' '+apellidos+'   '+pre_cedula+cedula"></p></strong>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example1" class="table">
+                <table id="table1" class="table">
+                  <thead>
+                    <tr>
+                      <td><strong>Datos personales</strong></td>
+                    </tr>
+                  </thead>
                   <tbody>
                     <tr >
-                      <td>Grado de instruccion: Profesional</td>
-                      <td>Cargo: Profesional 1</td>
-                      <td> Departamento: Telemática</td>
+                      <td v-text="'Sexo: '+sexo"></td>
+                      <td v-text="'Correo electrónico: '+correo"></td>
+                      <td v-text="'Número de teléfono: '+pre_telefono+telefono"></td>
                     </tr>
                     <tr >
-                      <td>Cédula: V-18947463</td>
-                      <td>Correo electrónico: sandino@gmail.com</td>
-                      <td> Número de teléfono: 04249531458</td>
+                      <td v-text="'Fecha de nacimiento: '+fecha_nacimiento"></td>
+                      <td> </td>
+                      <td> </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table id="table2" class="table">
+                  <thead>
+                    <tr >
+                      <td><strong>Datos de empleado</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr >
+                      <td v-text="'Grado de instruccion: '+grado_instruccion"></td>
+                      <td v-text="'Cargo: '+grado+' '+nivel"></td>
+                      <td v-text="'Departamento: '+departamento"></td>
                     </tr>
                     <tr >
-                      <td>Fecha de ingreso: 2015-01-01</td>
+                      <td v-text="'Estado: '+estadoEmpleado"></td>
+                      <td v-text="'Fecha de ingreso: '+fecha_ingreso"></td>
                       <td> </td>
                     </tr>
                   </tbody>
@@ -516,6 +549,14 @@
             grado_instruccion: "Seleccionar",
             estadoEmpleado: "Contratado",
             arrayempleado: [],
+            pagination: {
+                "total": 0,
+                "current_page": 0,
+                "per_page": 0,
+                "last_page": 0,
+                "from": 0,
+                "to": 0
+              },
             accion: 'listar',
             id_salario: 1,
             salarioTabla: 0,
@@ -534,13 +575,48 @@
             id_persona: ""
           }
         },
+        computed:{
+          isActive: ()=>{
+            return this.pagination.current_page;
+          },
+          pageNumber: ()=>{
+
+            let me = this;
+
+            if(!me.pagination.to){
+              return [];
+            }
+
+            var from = me.pagination.current_page - 2; //TODO offset
+
+            if (from < 1) {
+              from = 1;
+            };
+
+            var to = from + (2 * 2); //TODO
+
+            if (to >= me.pagination.last_page) {
+              to = me.pagination.last_page;
+            };
+
+            var pagesArray = [];
+
+            while(from <= to){
+              pagesArray.push(from);
+              from++;
+            };
+
+            return pagesArray;
+          }
+        },
         methods: {
-          listarEmpleado(){
+          listarEmpleado(page){
             let me=this;
-                var url= '/empleados';
+                var url= '/empleados?page='+page;
                 axios.get(url).then(function (response) {
-                    var respuesta= response.data.empleados;
+                    var respuesta= response.data.empleados.data;
                     me.arrayempleado = respuesta;
+                    me.pagination = response.data.pagination;
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -993,11 +1069,14 @@
                 };
                 return me.totalDeduc = totalDeduc;
             }
+          },
+          cambioPagina(page){
+            this.pagination.current_page = page;
+            this.listarEmpleado(page);
           }   
         }, 
         mounted() {
           this.listarEmpleado();
-
 
         }
     }

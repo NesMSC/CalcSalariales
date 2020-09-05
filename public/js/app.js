@@ -2554,6 +2554,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2596,7 +2606,9 @@ __webpack_require__.r(__webpack_exports__);
       TotalprimaAntiguedad: 0,
       error: [],
       id_empleado: "",
-      id_persona: ""
+      id_persona: "",
+      busqueda: "",
+      criterio: ""
     };
   },
   computed: {
@@ -2636,9 +2648,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    listarEmpleado: function listarEmpleado(page) {
+    listarEmpleado: function listarEmpleado(page, busqueda, criterio) {
       var me = this;
-      var url = '/empleados?page=' + page;
+      var url = '/empleados?page=' + page + '&busqueda=' + busqueda + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         var respuesta = response.data.empleados.data;
         me.arrayempleado = respuesta;
@@ -3148,11 +3160,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     cambioPagina: function cambioPagina(page) {
       this.pagination.current_page = page;
-      this.listarEmpleado(page);
+      this.listarEmpleado(page, this.busqueda, this.criterio);
     }
   },
   mounted: function mounted() {
-    this.listarEmpleado();
+    this.listarEmpleado(1, this.busqueda, this.criterio);
   }
 });
 
@@ -42718,7 +42730,117 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-body" }, [
-                    _vm._m(1),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("div", { staticClass: "col-md-4" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _vm._m(1),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.busqueda,
+                                expression: "busqueda"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "search",
+                              type: "text",
+                              placeholder: "Busqueda"
+                            },
+                            domProps: { value: _vm.busqueda },
+                            on: {
+                              keyup: function($event) {
+                                return _vm.listarEmpleado(
+                                  _vm.pagination.current_page,
+                                  _vm.busqueda,
+                                  _vm.criterio
+                                )
+                              },
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.busqueda = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-3" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.criterio,
+                                  expression: "criterio"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              on: {
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.criterio = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  },
+                                  function($event) {
+                                    return _vm.listarEmpleado(
+                                      1,
+                                      _vm.busqueda,
+                                      _vm.criterio
+                                    )
+                                  }
+                                ]
+                              }
+                            },
+                            [
+                              _c(
+                                "option",
+                                { attrs: { value: "", selected: "" } },
+                                [_vm._v("Todos")]
+                              ),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Fijo" } }, [
+                                _vm._v("Fijos")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Contratado" } }, [
+                                _vm._v("Contratados")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Pensionado" } }, [
+                                _vm._v("Pensionados")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Jubilado" } }, [
+                                _vm._v("Jubilados")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Inactivo" } }, [
+                                _vm._v("Inactivos")
+                              ])
+                            ]
+                          )
+                        ])
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c(
                       "table",
@@ -42829,8 +42951,12 @@ var render = function() {
                             { key: page, class: [page == 1 ? "active" : ""] },
                             [
                               _c("button", {
-                                staticClass: "btn btn-light",
-                                class: [page == _vm.isActive ? "active" : ""],
+                                staticClass: "btn",
+                                class: [
+                                  page == _vm.isActive
+                                    ? "btn-primary"
+                                    : "btn-light"
+                                ],
                                 attrs: { type: "button" },
                                 domProps: { textContent: _vm._s(page) },
                                 on: {
@@ -44452,21 +44578,12 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group row" }, [
-      _c("div", { staticClass: "col-md-4" }, [
-        _c("div", { staticClass: "input-group" }, [
-          _c("div", { staticClass: "input-group-prepend" }, [
-            _c("div", { staticClass: "input-group-text" }, [
-              _c("i", {
-                staticClass: "fa fa-search",
-                attrs: { "aria-hidden": "true" }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            staticClass: "form-control",
-            attrs: { id: "search", type: "text", placeholder: "Busqueda" }
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("div", { staticClass: "input-group-text" }, [
+        _c("a", { attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fa fa-search",
+            attrs: { "aria-hidden": "true" }
           })
         ])
       ])
@@ -44676,13 +44793,7 @@ var staticRenderFns = [
           staticClass: "btn btn-secondary",
           attrs: { type: "button", "data-dismiss": "modal" }
         },
-        [_vm._v("Close")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Save changes")]
+        [_vm._v("Cerrar")]
       )
     ])
   },
@@ -44713,13 +44824,7 @@ var staticRenderFns = [
           staticClass: "btn btn-secondary",
           attrs: { type: "button", "data-dismiss": "modal" }
         },
-        [_vm._v("Close")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Save changes")]
+        [_vm._v("Cerrar")]
       )
     ])
   }

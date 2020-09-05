@@ -33,10 +33,22 @@
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <div class="input-group-text">
-                          <i aria-hidden="true" class='fa fa-search'></i>
+                          <a href="#" ><i aria-hidden="true" class='fa fa-search'></i></a>
                         </div>
                       </div>
-                      <input id="search" type="text"class="form-control" placeholder="Busqueda">
+                      <input @keyup="listarEmpleado(pagination.current_page, busqueda, criterio)" v-model="busqueda" id="search" type="text"class="form-control" placeholder="Busqueda">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="input-group">
+                      <select @change="listarEmpleado(1, busqueda, criterio)" class="form-control" v-model="criterio">
+                        <option value="" selected>Todos</option>
+                        <option value="Fijo">Fijos</option>
+                        <option value="Contratado">Contratados</option>
+                        <option value="Pensionado">Pensionados</option>
+                        <option value="Jubilado">Jubilados</option>
+                        <option value="Inactivo">Inactivos</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -69,7 +81,7 @@
                       <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page - 1)">Atras</button>
                     </li>
                     <li v-for="page in pageNumber" :key="page" :class="[page == 1 ? 'active' : '']">
-                      <button @click.prevent="cambioPagina(page)" :class="[page == isActive ? 'active' : '']" v-text="page" type="button" class="btn btn-light"></button>
+                      <button @click.prevent="cambioPagina(page)" :class="[page == isActive ? 'btn-primary' : 'btn-light']" v-text="page" type="button" class="btn"></button>
                     </li>
                     <li v-if="pagination.current_page < pagination.last_page">
                       <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page + 1)">Siguiente</button>
@@ -467,8 +479,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           </div>
         </div>
       </div>
@@ -518,8 +529,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
           </div>
         </div>
       </div>
@@ -572,7 +582,9 @@
             TotalprimaAntiguedad:0,
             error: [],
             id_empleado: "",
-            id_persona: ""
+            id_persona: "",
+            busqueda: "",
+            criterio: ""
           }
         },
         computed:{
@@ -611,9 +623,9 @@
           }
         },
         methods: {
-          listarEmpleado(page){
+          listarEmpleado(page, busqueda, criterio){
             let me=this;
-                var url= '/empleados?page='+page;
+                var url= '/empleados?page='+page+'&busqueda='+busqueda+'&criterio='+criterio;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data.empleados.data;
                     me.arrayempleado = respuesta;
@@ -1073,11 +1085,11 @@
           },
           cambioPagina(page){
             this.pagination.current_page = page;
-            this.listarEmpleado(page);
+            this.listarEmpleado(page, this.busqueda, this.criterio);
           }   
         }, 
         mounted() {
-          this.listarEmpleado();
+          this.listarEmpleado(1, this.busqueda, this.criterio);
 
         }
     }

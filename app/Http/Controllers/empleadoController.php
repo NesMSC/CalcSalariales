@@ -17,12 +17,52 @@ class empleadoController extends Controller
      */
     public function index(Request $request)
     {
-        //if (!$request->ajax()) return redirect('/');
+        if (!$request->ajax()) return redirect('/');
 
-        $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                            ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
-                            ->orderBy('personas.id', 'desc')
-                            ->paginate(10);
+        if (!$request->busqueda && $request->criterio) {
+          //Busqueda con solo el criterio
+          $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('empleados.estado', $request->criterio)
+                              ->orderBy('personas.id', 'desc')
+                              ->paginate(10);
+
+          
+        }elseif ($request->busqueda && !$request->criterio) {
+          //Busqueda sin criterio
+          $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('nombres', 'like', "%$request->busqueda%")
+                              ->orWhere('apellidos', 'like', "%$request->busqueda%")
+                              ->orWhere('departamento', 'like', "%$request->busqueda%")
+                              ->orderBy('personas.id', 'desc')
+                              ->paginate(10);
+          
+        }elseif ($request->busqueda && $request->criterio) {
+          //Busqueda con dato buscado y criterio
+          $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('empleados.estado', $request->criterio)
+                              ->where(function($query){
+                                global $request;
+                                $query->where('nombres', 'like', "%$request->busqueda%")
+                                      ->orWhere('apellidos', 'like', "%$request->busqueda%")
+                                      ->orWhere('departamento', 'like', "%$request->busqueda%")
+                                      ->orderBy('personas.id', 'desc');
+                              })
+                              ->paginate(10);
+        }else{
+          //Todos los datos
+          $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->orderBy('personas.id', 'desc')
+                              ->paginate(10);
+
+        };
+
+
+
+        
 
         return [
           "pagination" => [

@@ -2023,8 +2023,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var _this = undefined;
-
 //
 //
 //
@@ -2603,10 +2601,10 @@ var _this = undefined;
   },
   computed: {
     isActive: function isActive() {
-      return _this.pagination.current_page;
+      return this.pagination.current_page;
     },
     pageNumber: function pageNumber() {
-      var me = _this;
+      var me = this;
 
       if (!me.pagination.to) {
         return [];
@@ -2650,7 +2648,7 @@ var _this = undefined;
       });
     },
     registrar: function registrar() {
-      var _this2 = this;
+      var _this = this;
 
       var me = this;
 
@@ -2666,7 +2664,7 @@ var _this = undefined;
           cancelButtonText: 'Cancelar'
         }).then(function (result) {
           if (result.value) {
-            var _me = _this2;
+            var _me = _this;
             var url = '/empleados/agregarNuevo';
             axios.post(url, {
               nombres: _me.nombres,
@@ -42826,16 +42824,24 @@ var render = function() {
                           : _vm._e(),
                         _vm._v(" "),
                         _vm._l(_vm.pageNumber, function(page) {
-                          return _c("li", [
-                            _c(
-                              "button",
-                              {
+                          return _c(
+                            "li",
+                            { key: page, class: [page == 1 ? "active" : ""] },
+                            [
+                              _c("button", {
                                 staticClass: "btn btn-light",
-                                attrs: { type: "button" }
-                              },
-                              [_vm._v("1")]
-                            )
-                          ])
+                                class: [page == _vm.isActive ? "active" : ""],
+                                attrs: { type: "button" },
+                                domProps: { textContent: _vm._s(page) },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.cambioPagina(page)
+                                  }
+                                }
+                              })
+                            ]
+                          )
                         }),
                         _vm._v(" "),
                         _vm.pagination.current_page < _vm.pagination.last_page
@@ -57154,7 +57160,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Apache24\htdocs\CalcSalariales\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\calcSalariales\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

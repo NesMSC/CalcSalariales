@@ -68,8 +68,8 @@
                     <li v-if="pagination.current_page > 1">
                       <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page - 1)">Atras</button>
                     </li>
-                    <li v-for="page in pageNumber">
-                      <button type="button" class="btn btn-light">1</button>
+                    <li v-for="page in pageNumber" :key="page" :class="[page == 1 ? 'active' : '']">
+                      <button @click.prevent="cambioPagina(page)" :class="[page == isActive ? 'active' : '']" v-text="page" type="button" class="btn btn-light"></button>
                     </li>
                     <li v-if="pagination.current_page < pagination.last_page">
                       <button type="button" class="btn btn-light" @click.prevent="cambioPagina(pagination.current_page + 1)">Siguiente</button>
@@ -576,10 +576,11 @@
           }
         },
         computed:{
-          isActive: ()=>{
+          
+          isActive: function (){
             return this.pagination.current_page;
           },
-          pageNumber: ()=>{
+          pageNumber: function(){
 
             let me = this;
 

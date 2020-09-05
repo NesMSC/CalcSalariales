@@ -22,7 +22,7 @@ class empleadoController extends Controller
         $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                             ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
                             ->orderBy('personas.id', 'desc')
-                            ->paginate(2);
+                            ->paginate(10);
 
         return [
           "pagination" => [

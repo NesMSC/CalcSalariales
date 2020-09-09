@@ -26,6 +26,7 @@ Vue.use(Toasted);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('Padministrativo', require('./components/Padministrativo.vue').default);
+Vue.component('Pobrero', require('./components/Pobrero.vue').default);
 Vue.component('Escritorio', require('./components/Escritorio.vue').default);
 
 /**
@@ -37,7 +38,7 @@ Vue.component('Escritorio', require('./components/Escritorio.vue').default);
 const app = new Vue({
     el: '#app',
     data:{
-    	menu: 1
+    	menu: 3
     }
 });
  

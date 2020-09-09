@@ -2582,6 +2582,7 @@ __webpack_require__.r(__webpack_exports__);
       departamento: "Seleccionar",
       grado_instruccion: "Seleccionar",
       estadoEmpleado: "Contratado",
+      tipoPersonal: "Administrativo",
       arrayempleado: [],
       pagination: {
         "total": 0,
@@ -2650,7 +2651,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     listarEmpleado: function listarEmpleado(page, busqueda, criterio) {
       var me = this;
-      var url = '/empleados?page=' + page + '&busqueda=' + busqueda + '&criterio=' + criterio;
+      var url = '/empleados?page=' + page + '&busqueda=' + busqueda + '&criterio=' + criterio + '&tipo=' + me.tipoPersonal;
       axios.get(url).then(function (response) {
         var respuesta = response.data.empleados.data;
         me.arrayempleado = respuesta;
@@ -2693,7 +2694,8 @@ __webpack_require__.r(__webpack_exports__);
               grado_instruccion: _me.grado_instruccion,
               estado: _me.estadoEmpleado,
               beneficios: _me.id_beneficiosAgregados,
-              descuentos: _me.id_descuentosAgregados
+              descuentos: _me.id_descuentosAgregados,
+              tipo: _me.tipoPersonal
             }).then(function (response) {
               if (response.data.respuesta) {
                 Vue.toasted.error('Empleado existente, verifique los datos ingresados', {
@@ -57039,7 +57041,8 @@ Vue.use(vue_toasted__WEBPACK_IMPORTED_MODULE_0___default.a);
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('Padministrativo', __webpack_require__(/*! ./components/Padministrativo.vue */ "./resources/js/components/Padministrativo.vue")["default"]);
+Vue.component('Padministrativo', __webpack_require__(/*! ./components/Padministrativo.vue */ "./resources/js/components/Padministrativo.vue")["default"]); //Vue.component('Pobrero', require('./components/Pobrero.vue').default);
+
 Vue.component('Escritorio', __webpack_require__(/*! ./components/Escritorio.vue */ "./resources/js/components/Escritorio.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -57050,7 +57053,7 @@ Vue.component('Escritorio', __webpack_require__(/*! ./components/Escritorio.vue 
 var app = new Vue({
   el: '#app',
   data: {
-    menu: 1
+    menu: 3
   }
 });
 

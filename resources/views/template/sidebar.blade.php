@@ -38,7 +38,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" @click="menu=1" class="nav-link">
+                <a href="#" @click.prevent="menu=1" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Administrativo</p>
                 </a>
@@ -50,9 +50,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="#" @click.prevent="menu=3" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Abrero</p>
+                  <p>Obrero</p>
                 </a>
               </li>
             </ul>

@@ -8,7 +8,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="#">Trabajadores</a></li>
-              <li class="breadcrumb-item active">Administrativo</li>
+              <li class="breadcrumb-item active">Obreros</li>
             </ol>
           </div>
         </div>
@@ -40,7 +40,6 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-                    <div class="input-group">
                       <select @change="listarEmpleado(1, busqueda, criterio)" class="form-control" v-model="criterio">
                         <option value="" selected>Todos</option>
                         <option value="Fijo">Fijos</option>
@@ -58,7 +57,6 @@
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>Cargo</th>
-                    <th>Departamento</th>
                     <th>Acción</th>
                   </tr>
                   </thead>
@@ -66,8 +64,7 @@
                     <tr v-for="empleado in arrayempleado" :key="empleado.id">
                       <td v-text="empleado.nombres"></td>
                       <td v-text="empleado.apellidos"></td>
-                      <td v-text="empleado.grado+' '+empleado.nivel"></td>
-                      <td v-text="empleado.departamento"></td>
+                      <td v-text="'Obrero °'+empleado.grado"></td>
                       <td>
                         <a href="#" @click="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
                         <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
@@ -202,24 +199,17 @@
             <!-- /.card-header -->
             <div class="card-body">  
               <div class="row">
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado</label>
-                  <select v-model="grado" @change="validarCampo(grado, 'grado')" id="grado" class="form-control" required>
-                    <option disabled selected>Seleccionar</option>
-                    <option value="Profesional">Profesional</option>
-                    <option value="Técnico">Técnico</option>
-                    <option value="Apoyo">Apoyo</option>
-                  </select>
-                </div>
                 <div class="col-md-2 mb-2 form-group">
-                  <label for="nivel">Nivel</label>
-                  <select v-model="nivel" @change="validarCampo(nivel, 'nivel')" id="nivel" class="form-control" required>
+                  <label for="nivel">grado</label>
+                  <select v-model="grado" @change="validarCampo(grado, 'grado')" id="grado" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
+                    <option value="5">6</option>
+                    <option value="5">7</option>
                   </select>
                 </div>
                 <div class="col-md-4 mb-2 form-group">
@@ -227,30 +217,6 @@
                   <input v-model="fecha_ingreso" @change="validarCampo(fecha_ingreso, 'fecha_ingreso'); calculaAñosServicio()" type="date" min="2004-01-01" max="2021-01-01" class="form-control" id="fecha_ingreso" name="fecha_na" required>
                   <div class="invalid-feedback">
                           *Fecha invalida
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="departamento">Departamento</label>
-                  <select v-model="departamento" @change="validarCampo(departamento, 'departamento')" id="departamento" class="form-control" required>
-                    <option disabled selected>Seleccionar</option>
-                    <option value="RR.HH">Recursos Humanos</option>
-                    <option value="Informática">Informática</option>
-                    <option value="Control de estudios">Control de estudios</option>
-                    <option value="Desarrollo Estudiantil">Desarrollo Estudiantil</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado de Instrucción</label>	
-                  <select v-model="grado_instruccion" @change="validarCampo(grado_instruccion, 'grado_ins'); primaProfesional(grado_instruccion)" id="grado_ins" class="form-control" required>
-                    <option disabled selected>Seleccionar</option>
-                    <option value="T.S.U">T.S.U</option>
-                    <option value="Profesional">Profesional</option>
-                    <option value="Especialista">Especialista</option>
-                    <option value="Maestria">Maestria</option>
-                    <option value="Doctor">Doctor</option>
-                  </select>                  
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
                   </div>
                 </div>
                 <div class="col-md-4 mb-2 form-group">
@@ -286,8 +252,8 @@
                   <tbody>
                     <tr style="background-color: #CEEFCF5">
                       <td colspan="4">
-                        <strong>Salario tabla para
-                        <span v-if="grado!='Seleccionar' && nivel!='Seleccionar'" v-text="grado+' '+nivel+':'"></span>
+                        <strong>Salario tabla para Obrero
+                        <span v-if="grado!='Seleccionar'" v-text="grado+':'"></span>
                         </strong>
                       </td>
                       <td colspan="2">
@@ -411,9 +377,7 @@
                   </thead>
                   <tbody>
                     <tr >
-                      <td v-text="'Grado de instruccion: '+grado_instruccion"></td>
-                      <td v-text="'Cargo: '+grado+' '+nivel"></td>
-                      <td v-text="'Departamento: '+departamento"></td>
+                      <td v-text="'Cargo: Obrero'+grado"></td>
                     </tr>
                     <tr >
                       <td v-text="'Estado: '+estadoEmpleado"></td>
@@ -553,12 +517,9 @@
             telefono: "",
             fecha_nacimiento: "",
             grado: "Seleccionar",
-            nivel: "Seleccionar",
             fecha_ingreso: "",
-            departamento: "Seleccionar",
-            grado_instruccion: "Seleccionar",
+            tipoPersonal: "Obrero",
             estadoEmpleado: "Contratado",
-            tipoPersonal: "Administrativo",
             arrayempleado: [],
             pagination: {
                 "total": 0,
@@ -569,7 +530,7 @@
                 "to": 0
               },
             accion: 'listar',
-            id_salario: 1,
+            id_salario: 2,
             salarioTabla: 0,
             UT: '',
             arrayBeneficios: [],
@@ -883,13 +844,10 @@
                   let grado = me.grado;
                   let nivel = parseInt(me.nivel)-1;
                   let salario = JSON.parse(response.data.tabulador);
-                  salario = salario[grado][nivel];
+                  salario = salario[grado];
                   me.salarioTabla = salario;
                   me.UT = response.data.UT;
 
-                  if (me.accion=='editar') {
-                    me.primaProfesional();
-                  };
                 
                 }).catch(function(error){
                   console.log(error);
@@ -973,55 +931,6 @@
           formatoDivisa(number){
            let monto = new Intl.NumberFormat('en-US').format(number);
            return monto;
-          },
-          primaProfesional(){
-            const me = this;
-            let porcentajes;
-            let id_prima;
-            const url = 'empleados/primaProfesional';
-            axios.get(url).then(function(response){
-              porcentajes = response.data.primaProfesional;
-              let prima = response.data.prima[0]
-              id_prima = prima.id;
-              if (!me.id_beneficiosAgregados.includes(id_prima)) {
-                me.id_beneficiosAgregados.push(id_prima);
-                me.beneficiosEmpleado.push({concepto:prima.concepto, tipo_valor:prima.tipo_valor, valor:prima.valor})
-              };
-              
-              let indice = me.id_beneficiosAgregados.indexOf(id_prima);
-
-              switch(me.grado_instruccion){
-                case "T.S.U":
-                  me.beneficiosEmpleado[indice].valor = porcentajes.TSU;
-                break;
-                case "Profesional":
-                  me.beneficiosEmpleado[indice].valor = porcentajes.Profesional;
-                break;
-                case "Especialista":
-                  me.beneficiosEmpleado[indice].valor = porcentajes.Especialista;
-                break;
-                case "Maestria":
-                  me.beneficiosEmpleado[indice].valor = porcentajes.Maestria;
-                break;
-                case "Doctor":
-                  me.beneficiosEmpleado[indice].valor = porcentajes.Doctor;
-                break;
-              }
-
-              //Asignar el porcentaje a la prima profesional en el listado
-              let beneficios = me.arrayBeneficios;
-              for (let i = 0; i < beneficios.length; i++) {
-                if (beneficios[i].id == id_prima) {
-                  beneficios[i].valor = me.beneficiosEmpleado[indice].valor;
-                };
-              };
-
-              if (me.accion == 'editar') {
-                me.primaAntiguedad();
-              }
-            }).catch(function(error){
-              console.log(error);
-            });
           },
           primaAntiguedad(){
 

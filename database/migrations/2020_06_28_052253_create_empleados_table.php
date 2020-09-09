@@ -19,11 +19,11 @@ class CreateEmpleadosTable extends Migration
             $table->foreign('persona_id')->references('id')->on('personas');
             $table->unsignedBigInteger('salario_id');
             $table->foreign('salario_id')->references('id')->on('salarios');
-            $table->string('grado');
-            $table->integer('nivel');
+            $table->string('grado')->nullable();
+            $table->integer('nivel')->nullable();
             $table->date('fechaIngreso');
-            $table->string('departamento');
-            $table->string('instruccion');
+            $table->string('departamento')->nullable();
+            $table->string('instruccion')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

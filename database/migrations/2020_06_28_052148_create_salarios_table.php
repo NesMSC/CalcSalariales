@@ -15,7 +15,6 @@ class CreateSalariosTable extends Migration
     {
         Schema::create('salarios', function (Blueprint $table) {
             $table->id('id');
-            $table->string('tipoPersonal');
             $table->json('tabulador');
             $table->unsignedBigInteger('indicador_id');
             $table->foreign('indicador_id')->references('id')->on('ind_economicos');

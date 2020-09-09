@@ -17,13 +17,14 @@ class empleadoController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->ajax()) return redirect('/');
+       // if (!$request->ajax()) return redirect('/');
 
         if (!$request->busqueda && $request->criterio) {
           //Busqueda con solo el criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
                               ->where('empleados.estado', $request->criterio)
+                              ->where('empleados.tipoPersonal', $request->tipo)
                               ->orderBy('personas.id', 'desc')
                               ->paginate(10);
 
@@ -32,6 +33,7 @@ class empleadoController extends Controller
           //Busqueda sin criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('empleados.tipoPersonal', $request->tipo)
                               ->where('nombres', 'like', "%$request->busqueda%")
                               ->orWhere('apellidos', 'like', "%$request->busqueda%")
                               ->orWhere('departamento', 'like', "%$request->busqueda%")
@@ -42,6 +44,7 @@ class empleadoController extends Controller
           //Busqueda con dato buscado y criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('empleados.tipoPersonal', $request->tipo)
                               ->where('empleados.estado', $request->criterio)
                               ->where(function($query){
                                 global $request;
@@ -55,6 +58,7 @@ class empleadoController extends Controller
           //Todos los datos
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->where('empleados.tipoPersonal', $request->tipo)
                               ->orderBy('personas.id', 'desc')
                               ->paginate(10);
 
@@ -117,6 +121,7 @@ class empleadoController extends Controller
             $empleado->departamento = $request->departamento;
             $empleado->instruccion = $request->grado_instruccion;
             $empleado->estado = $request->estado;
+            $empleado->tipoPersonal = $request->tipo;
             $empleado->save();
 
             //agregar beneficios

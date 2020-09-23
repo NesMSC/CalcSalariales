@@ -8,21 +8,22 @@ use App\Persona;
 use App\Empleado;
 use App\Salario;
 
-class empleadoController extends Controller
+class docenteController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+   public function index(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
 
         if (!$request->busqueda && $request->criterio) {
           //Busqueda con solo el criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.estado', $request->criterio)
                               ->where('empleados.tipoPersonal', $request->tipo)
                               ->orderBy('personas.id', 'desc')
@@ -32,41 +33,44 @@ class empleadoController extends Controller
         }elseif ($request->busqueda && !$request->criterio) {
           //Busqueda sin criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.tipoPersonal', $request->tipo)
                               ->where('nombres', 'like', "%$request->busqueda%")
                               ->orWhere('apellidos', 'like', "%$request->busqueda%")
-                              ->orWhere('departamento', 'like', "%$request->busqueda%")
+                              ->orWhere('pnf', 'like', "%$request->busqueda%")
+                              ->orWhere('categoria', 'like', "%$request->busqueda%")
+                              ->orWhere('dedicacion', 'like', "%$request->busqueda%")
                               ->orderBy('personas.id', 'desc')
                               ->paginate(5);
           
         }elseif ($request->busqueda && $request->criterio) {
           //Busqueda con dato buscado y criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.tipoPersonal', $request->tipo)
                               ->where('empleados.estado', $request->criterio)
                               ->where(function($query){
                                 global $request;
                                 $query->where('nombres', 'like', "%$request->busqueda%")
                                       ->orWhere('apellidos', 'like', "%$request->busqueda%")
-                                      ->orWhere('departamento', 'like', "%$request->busqueda%")
+                                      ->orWhere('pnf', 'like', "%$request->busqueda%")
+                                      ->orWhere('categoria', 'like', "%$request->busqueda%")
+                                      ->orWhere('dedicacion', 'like', "%$request->busqueda%")
                                       ->orderBy('personas.id', 'desc');
                               })
                               ->paginate(5);
         }else{
           //Todos los datos
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'grado', 'nivel', 'departamento')
+                              ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
+                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.tipoPersonal', $request->tipo)
                               ->orderBy('personas.id', 'desc')
                               ->paginate(5);
 
-        };
-
-
-
-        
+        };    
 
         return [
           "pagination" => [
@@ -82,12 +86,14 @@ class empleadoController extends Controller
     }
 
 
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     */    public function store(Request $request)
+     */
+    public function store(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
         $cedula = $request->cedula;
@@ -113,15 +119,19 @@ class empleadoController extends Controller
 
             $empleado = new Empleado;
             $empleado->persona_id = $persona->id;
-            $empleado->salario_id = 1;
-            $empleado->grado = $request->grado;
-            $empleado->nivel = $request->nivel;
+            $empleado->salario_id = 3;
             $empleado->fechaIngreso = $request->fecha_ingreso;
-            $empleado->departamento = $request->departamento;
-            $empleado->instruccion = $request->grado_instruccion;
+            $empleado->instruccion = $request->instruccion;
             $empleado->estado = $request->estado;
             $empleado->tipoPersonal = $request->tipo;
             $empleado->save();
+
+            $docente = DB::table('docente_cat')->insert([
+                                'empleado_id'=>$empleado->id, 
+                                'categoria'=>$request->categoria,
+                                'dedicacion'=>$request->dedicacion,
+                                'pnf'=>$request->docente_pnf
+                            ]);
 
             //agregar beneficios
             $beneficios = $request->beneficios;
@@ -141,10 +151,9 @@ class empleadoController extends Controller
             return $e;
         }
 
-        return ["respuesta"=>false];
+        return ["respuesta"=>false, "empleado"=>$empleado];
         
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -152,12 +161,15 @@ class empleadoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+      public function show(Request $request, $id)
     {
+
+        if (!$request->ajax()) return redirect('/');
 
         $empleado = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                             ->join('salarios', 'empleados.salario_id', '=', 'salarios.id')
-                            ->select('personas.id as id_persona', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'cedula', 'correo', 'telefono', 'nacimiento', 'grado', 'nivel', 'fechaIngreso', 'departamento', 'instruccion', 'estado', 'sexo')
+                            ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
+                            ->select('personas.id as id_persona', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'cedula', 'correo', 'telefono', 'nacimiento', 'categoria', 'dedicacion', 'fechaIngreso', 'pnf', 'instruccion', 'estado', 'sexo')
                             ->where('personas.id', '=', $id)
                             ->get();
         
@@ -175,92 +187,10 @@ class empleadoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-      DB::table('personas')
-        ->where('id', $request->id_persona)
-        ->update(['nombres' => $request->nombres, 'apellidos' => $request->apellidos, 'cedula' => $request->cedula, 'correo' => $request->correo, 'telefono' => $request->telefono, 'nacimiento'=>$request->nacimiento, 'sexo' => $request->sexo]);
-
-      DB::table('empleados')
-        ->where('id', $request->id_empleado)
-        ->update(['grado' => $request->grado, 'nivel' => $request->nivel, 'fechaIngreso' => $request->fecha_ingreso, 'departamento' => $request->departamento, 'instruccion' => $request->grado_instruccion, 'estado' => $request->estado]);
-
-      
-      DB::table('beneficio_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
-      DB::table('descuento_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
-
-      $empleado = Empleado::find($request->id_empleado);
-
-      //Actualiza beneficios
-      $beneficios = $request->beneficios;
-        for ($i=0; $i < count($beneficios); $i++) { 
-          $empleado->beneficio()->attach($beneficios[$i]);
-        };
-
-      //Actualiza descuentos
-      $descuentos = $request->descuentos;
-        for ($i=0; $i < count($descuentos); $i++) { 
-          $empleado->descuento()->attach($descuentos[$i]);
-        };
-
-      return true; 
-    }
-
-    public function salarioTabla(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/');
-
-        $id_salario = $request->id_salario;
-
-        $salario = Salario::join("ind_economicos", "salarios.indicador_id", "=", "ind_economicos.id")->select('tabulador', 'UnTributaria')
-                          ->where('salarios.id', '=', $id_salario)
-                          ->get();
-
-        return ["tabulador"=>$salario[0]->tabulador, "UT"=>$salario[0]->UnTributaria];
-    }
-    public function beneficios(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/');
-
-        $beneficios = DB::table('beneficios')->get();
-
-        return ["beneficios" => $beneficios];
+        //
     }
 
 
-    public function primaProfesional(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/');
-
-        $json = file_get_contents('json/primaProfesional.json');
-        $json_primas=json_decode($json);
-
-        $prima = DB::table('beneficios')
-                      ->select('id', 'concepto', 'tipo_valor', 'valor')
-                      ->where('valor', '=', 0)
-                      ->get();
-
-        return ["primaProfesional" => $json_primas, "prima" => $prima];
-    }
-
-    public function primaAntiguedad(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/');
-
-        $prima = DB::table('beneficios')
-                      ->select('id')
-                      ->where('concepto', '=', 'Prima de Antiguedad')
-                      ->get();
-
-        return ["primaAntiguedad" => $prima];
-    }
-
-    public function descuentos(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/');
-
-        $descuentos = DB::table('descuentos')->get();
-
-        return ["descuentos" => $descuentos];
-    }
 }

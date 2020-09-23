@@ -27,5 +27,11 @@ Route::get('/empleados/descuentos', 'empleadoController@descuentos');
 Route::get('/empleados/editarEmpleado/{id}', 'empleadoController@edit');
 Route::put('/empleados/actualizarEmpleado', 'empleadoController@update');
 
+Route::get('/docentes', 'docenteController@index');
+Route::post('/docentes/agregarNuevo', 'docenteController@store');
+Route::get('/docentes/mostrarDocente/{id}', 'docenteController@show');
+
+
+
 
 

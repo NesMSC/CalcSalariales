@@ -17,6 +17,8 @@ class CreatePagosTable extends Migration
             $table->id('id');
             $table->unsignedBigInteger('id_empleado');
             $table->foreign('id_empleado')->references('id')->on('empleados');
+            $table->unsignedBigInteger('id_nomina');
+            $table->foreign('id_nomina')->references('id')->on('nominas');
             $table->float('sueldo');
             $table->float('salarioNormal');
             $table->integer('diasTrabajados');

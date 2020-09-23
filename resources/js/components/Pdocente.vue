@@ -9,27 +9,27 @@
             <template v-if="accion=='listar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Trabajadores</a></li>
-                <li class="breadcrumb-item active">Administrativo</li>
+                <li class="breadcrumb-item active">Docente</li>
               </ol>
             </template>
             <template v-if="accion=='registrar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
                 <li class="breadcrumb-item">Registrar</li>
               </ol>
             </template>
             <template v-if="accion=='ver'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
                 <li class="breadcrumb-item">Consultar</li>
               </ol>
             </template>
             <template v-if="accion=='editar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
                 <li class="breadcrumb-item">Editar</li>
               </ol>
             </template>
@@ -45,7 +45,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <button @click="accion='registrar'; resetearInputs();" type="button" class="btn btn-light">
+                <button @click="accion='registrar'; resetearInputs()" type="button" class="btn btn-light">
                   <i class="fa fa-plus"></i>&nbsp;Nuevo
                 </button>
               </div>
@@ -80,20 +80,22 @@
                   <tr>
                     <th>Nombre</th>
                     <th>Apellido</th>
-                    <th>Cargo</th>
-                    <th>Departamento</th>
+                    <th>PNF</th>
+                    <th>Categoria</th>
+                    <th>Dedicación</th>
                     <th>Acción</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="empleado in arrayempleado" :key="empleado.id">
-                      <td v-text="empleado.nombres"></td>
-                      <td v-text="empleado.apellidos"></td>
-                      <td v-text="empleado.grado+' '+empleado.nivel"></td>
-                      <td v-text="empleado.departamento"></td>
+                    <tr v-for="docente in arraydocente" :key="docente.id">
+                      <td v-text="docente.nombres"></td>
+                      <td v-text="docente.apellidos"></td>
+                      <td v-text="docente.pnf"></td>
+                      <td v-text="docente.categoria"></td>
+                      <td v-text="docente.dedicacion"></td>
                       <td>
-                        <a href="#" @click="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
-                        <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
+                        <a href="#" @click="accion='ver'; mostrarEmpleado(docente.id)"><i class="far fa-eye" ></i></a>
+                        <a href="#" @click="accion='editar'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
                       </td>
                     </tr>
                   </tbody>
@@ -226,25 +228,50 @@
             <div class="card-body">  
               <div class="row">
                 <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado</label>
-                  <select v-model="grado" @change="validarCampo(grado, 'grado')" id="grado" class="form-control" required>
+                  <label for="grado">Categoria</label>
+                  <select v-model="categoria" @change="validarCampo(categoria, 'categoria')" id="categoria" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
-                    <option value="Profesional">Profesional</option>
-                    <option value="Técnico">Técnico</option>
-                    <option value="Apoyo">Apoyo</option>
+                    <option value="Instructor">Instructor</option>
+                    <option value="Asistente">Asistente</option>
+                    <option value="Agregado">Agregado</option>
+                    <option value="Asociado">Asociado</option>
+                    <option value="Titular">Titular</option>
+                    <option value="Auxiliar Docente">Auxiliar</option>
                   </select>
                 </div>
-                <div class="col-md-2 mb-2 form-group">
-                  <label for="nivel">Nivel</label>
-                  <select v-model="nivel" @change="validarCampo(nivel, 'nivel')" id="nivel" class="form-control" required>
+                <template v-if="categoria=='Auxiliar Docente'">
+                  <div class="col-md-2 mb-2 form-group">
+                    <label for="grado_auxiliar">Grado</label>
+                    <select v-model="grado_auxiliar" @change="validarCampo(grado_auxiliar, 'grado_auxiliar')" id="grado_auxiliar" class="form-control" required>
+                      <option selected value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
+                </template>
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="dedicacion">Dedicación</label>
+                  <select v-model="dedicacion" @change="validarCampo(dedicacion, 'dedicacion')" id="dedicacion" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="Exclusiva">Exclusiva</option>
+                    <option value="Tiempo Completo">Tiempo Completo</option>
+                    <option value="Medio Tiempo">Medio Tiempo</option>
+                    <option value="Convencional">Convencional</option>
                   </select>
                 </div>
+                <template v-if="dedicacion=='Convencional'">
+                  <div class="col-md-2 mb-2 form-group">
+                    <label for="horas">Horas</label>
+                    <select v-model="horas_convencional" @change="validarCampo(horas_convencional, 'horas')" id="horas" class="form-control" required>
+                      <option selected value="7">7</option>
+                      <option value="6">6</option>
+                      <option value="5">5</option>
+                      <option value="4">4</option>
+                      <option value="3">3</option>
+                      <option value="2">2</option>
+                    </select>
+                  </div>
+                </template>
                 <div class="col-md-4 mb-2 form-group">
                   <label for="fecha_ingreso">Fecha de ingreso</label>
                   <input v-model="fecha_ingreso" @change="validarCampo(fecha_ingreso, 'fecha_ingreso'); calculaAñosServicio()" type="date" min="2004-01-01" max="2021-01-01" class="form-control" id="fecha_ingreso" name="fecha_na" required>
@@ -253,32 +280,29 @@
                   </div>
                 </div>
                 <div class="col-md-4 mb-2 form-group">
-                  <label for="departamento">Departamento</label>
-                  <select v-model="departamento" @change="validarCampo(departamento, 'departamento')" id="departamento" class="form-control" required>
+                  <label for="pnf">PNF</label>
+                  <select v-model="docente_pnf" @change="validarCampo(docente_pnf, 'pnf')" id="pnf" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
-                    <option value="RR.HH">Recursos Humanos</option>
+                    <option value="Mecánica">Mecánica</option>
                     <option value="Informática">Informática</option>
-                    <option value="Control de estudios">Control de estudios</option>
-                    <option value="Desarrollo Estudiantil">Desarrollo Estudiantil</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Geología">Geología</option>
                   </select>
                 </div>
                 <div class="col-md-4 mb-2 form-group">
-                  <label for="grado">Grado de Instrucción</label>	
-                  <select v-model="grado_instruccion" @change="validarCampo(grado_instruccion, 'grado_ins'); primaProfesional(grado_instruccion)" id="grado_ins" class="form-control" required>
+                  <label for="pnf">Instrucción</label>
+                  <select v-model="grado_instruccion" @change="validarCampo(grado_instruccion, 'instruccion'); primaProfesional(grado_instruccion)" id="instruccion" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
                     <option value="T.S.U">T.S.U</option>
                     <option value="Profesional">Profesional</option>
                     <option value="Especialista">Especialista</option>
                     <option value="Maestria">Maestria</option>
                     <option value="Doctor">Doctor</option>
-                  </select>                  
-                  <div class="invalid-feedback">
-                          *Este campo es requerido
-                  </div>
+                  </select>
                 </div>
                 <div class="col-md-4 mb-2 form-group">
                   <label for="estadoEmpleado">Estado</label> 
-                  <select v-model="estadoEmpleado" id="estadoEmpleado" class="form-control" required>
+                  <select v-model="estadoDocente" id="estadoDocente" class="form-control" required>
                     <option value="Fijo">Fijo</option>
                     <option value="Contratado">Contratado</option>
                     <option value="Pensionado">Pensionado</option>
@@ -310,7 +334,9 @@
                     <tr style="background-color: #CEEFCF5">
                       <td colspan="4">
                         <strong>Salario tabla para
-                        <span v-if="grado!='Seleccionar' && nivel!='Seleccionar'" v-text="grado+' '+nivel+':'"></span>
+                        <span v-if="categoria!='Seleccionar'" v-text="(categoria=='Auxiliar')?`${categoria} Docente ${grado_auxiliar}`:categoria"></span>
+                       
+                        <span v-if="dedicacion!='Seleccionar'" v-text="(dedicacion=='Convencional')?`Tiempo ${dedicacion} ${horas_convencional} Horas`:dedicacion"></span>
                         </strong>
                       </td>
                       <td colspan="2">
@@ -435,8 +461,9 @@
                   <tbody>
                     <tr >
                       <td v-text="'Grado de instruccion: '+grado_instruccion"></td>
-                      <td v-text="'Cargo: '+grado+' '+nivel"></td>
-                      <td v-text="'Departamento: '+departamento"></td>
+                      <td v-text="'Categoria: '+categoria"></td>
+                      <td v-text="'Dedicación: '+dedicacion"></td>
+                      <td v-text="'PNF: '+docente_pnf"></td>
                     </tr>
                     <tr >
                       <td v-text="'Estado: '+estadoEmpleado"></td>
@@ -575,14 +602,16 @@
             pre_telefono: "0414-",
             telefono: "",
             fecha_nacimiento: "",
-            grado: "Seleccionar",
-            nivel: "Seleccionar",
+            categoria: "Seleccionar",
+            grado_auxiliar: "1",
+            dedicacion: "Seleccionar",
+            horas_convencional: "7",
             fecha_ingreso: "",
-            departamento: "Seleccionar",
+            docente_pnf: "Seleccionar",
             grado_instruccion: "Seleccionar",
-            estadoEmpleado: "Contratado",
-            tipoPersonal: "Administrativo",
-            arrayempleado: [],
+            estadoDocente: "Contratado",
+            tipoPersonal: "Docente",
+            arraydocente: [],
             pagination: {
                 "total": 0,
                 "current_page": 0,
@@ -592,7 +621,7 @@
                 "to": 0
               },
             accion: 'listar',
-            id_salario: 1,
+            id_salario: 3,
             salarioTabla: 0,
             UT: '',
             arrayBeneficios: [],
@@ -649,10 +678,10 @@
         methods: {
           listarEmpleado(page, busqueda, criterio){
             let me=this;
-                var url= '/empleados?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
+                var url= '/docentes?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data.empleados.data;
-                    me.arrayempleado = respuesta;
+                    me.arraydocente = respuesta;
                     me.pagination = response.data.pagination;
                 })
                 .catch(function (error) {
@@ -675,7 +704,7 @@
               }).then((result) => {
                 if (result.value) {
                   let me = this;
-                  let url = '/empleados/agregarNuevo';
+                  let url = '/docentes/agregarNuevo';
                   axios.post(url, {
                     nombres:me.nombres,
                     apellidos:me.apellidos,
@@ -684,18 +713,18 @@
                     correo:me.correo,
                     telefono:me.pre_telefono+me.telefono,
                     nacimiento:me.fecha_nacimiento,
-                    grado: me.grado,
-                    nivel: me.nivel,
+                    categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
+                    dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
                     fecha_ingreso: me.fecha_ingreso,
-                    departamento: me.departamento,
-                    grado_instruccion: me.grado_instruccion,
-                    estado: me.estadoEmpleado,
+                    docente_pnf: me.docente_pnf,
+                    instruccion:me.grado_instruccion,
+                    estado: me.estadoDocente,
                     beneficios: me.id_beneficiosAgregados,
                     descuentos: me.id_descuentosAgregados,
                     tipo: me.tipoPersonal
                   }).then(function(response){
                     if(response.data.respuesta){
-                      Vue.toasted.error( 'Empleado existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']})
+                      Vue.toasted.error( 'Empleado existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']});
                     }else{
                       swal.fire(
                         'Empleado agregado exitosamente',
@@ -715,9 +744,9 @@
 
             };
           },
-          editarEmpleado(id){
+          mostrarEmpleado(id){
             let me = this;
-            let url = '/empleados/editarEmpleado/'+id;
+            let url = '/docentes/mostrarDocente/'+id;
             axios.get(url).then(function(response){
               let empleado = response.data.empleado[0];   
               me.beneficiosEmpleado = response.data.beneficios;
@@ -741,8 +770,9 @@
               me.pre_telefono= empleado.telefono.substring(0, 5);
               me.telefono= empleado.telefono.substring(5);
               me.fecha_nacimiento= empleado.nacimiento;
-              me.grado= empleado.grado;
-              me.nivel= empleado.nivel;
+              me.categoria= empleado.categoria;
+              me.dedicacion= empleado.dedicacion;
+              me.docente_pnf= empleado.pnf;
               me.fecha_ingreso= empleado.fechaIngreso;
               me.departamento= empleado.departamento;
               me.grado_instruccion= empleado.instruccion;
@@ -858,10 +888,16 @@
                       input.classList.add('is-valid');
                     }
                   break;
-                  case "nivel":
+                  case "categoria":
                     this.datoSalario();
                   break;
-                  case "grado":
+                  case "dedicacion":
+                    this.datoSalario();
+                  break;
+                  case "grado_auxiliar":
+                    this.datoSalario();
+                  break;
+                  case "horas":
                     this.datoSalario();
                   break;
               }; 
@@ -900,13 +936,21 @@
 
               let me = this;
 
-              if (me.grado!='Seleccionar' && me.nivel!='Seleccionar') {
+              if (me.categoria!='Seleccionar' && me.dedicacion!='Seleccionar') {
                   let url = 'empleados/salarioTabla';
                   axios.post(url, {id_salario:me.id_salario}).then(function(response){
-                  let grado = me.grado;
-                  let nivel = parseInt(me.nivel)-1;
+                  
+                  let categoria = me.categoria;
+                  let horas = me.horas_convencional;
+                  let dedicacion = me.dedicacion;
                   let salario = JSON.parse(response.data.tabulador);
-                  salario = salario[grado][nivel];
+                  if (categoria=='Auxiliar Docente') {
+                    salario = (dedicacion=='Convencional')?salario[categoria][`${dedicacion} ${horas} Horas`]:salario[categoria][dedicacion];
+                    salario = salario[parseInt(me.grado_auxiliar)-1];
+                  }else{
+                    salario = (dedicacion=='Convencional')?salario[categoria][`${dedicacion} ${horas} Horas`]:salario[categoria][dedicacion];
+                  }
+                  
                   me.salarioTabla = salario;
                   me.UT = response.data.UT;
 
@@ -936,8 +980,11 @@
             me.pre_telefono="";
             me.telefono="";
             me.fecha_nacimiento="";
-            me.grado="Seleccionar";
-            me.nivel="Seleccionar";
+            me.categoria="Seleccionar";
+            me.grado_auxiliar="1"
+            me.dedicacion="Seleccionar";
+            me.horas_convencional="7"
+            me.docente_pnf="Seleccionar";
             me.fecha_ingreso="";
             me.departamento="Seleccionar";
             me.grado_instruccion="Seleccionar";

@@ -6,10 +6,33 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Trabajadores</a></li>
-              <li class="breadcrumb-item active">Obreros</li>
-            </ol>
+            <template v-if="accion=='listar'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Trabajadores</a></li>
+                <li class="breadcrumb-item active">Obrero</li>
+              </ol>
+            </template>
+            <template v-if="accion=='registrar'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">Trabajadores</li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item">Registrar</li>
+              </ol>
+            </template>
+            <template v-if="accion=='ver'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">Trabajadores</li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item">Consultar</li>
+              </ol>
+            </template>
+            <template v-if="accion=='editar'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">Trabajadores</li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item">Editar</li>
+              </ol>
+            </template>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -22,7 +45,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <button @click="accion='registrar'" type="button" class="btn btn-light">
+                <button @click="accion='registrar'; resetearInputs();" type="button" class="btn btn-light">
                   <i class="fa fa-plus"></i>&nbsp;Nuevo
                 </button>
               </div>
@@ -36,10 +59,11 @@
                           <a href="#" ><i aria-hidden="true" class='fa fa-search'></i></a>
                         </div>
                       </div>
-                      <input @keyup="listarEmpleado(pagination.current_page, busqueda, criterio)" v-model="busqueda" id="search" type="text"class="form-control" placeholder="Busqueda">
+                      <input @keyup="listarEmpleado(pagination.current_page, busqueda, criterio)" v-model="busqueda" id="search" type="text" class="form-control" placeholder="Busqueda">
                     </div>
                   </div>
                   <div class="col-md-3">
+                    <div class="input-group">
                       <select @change="listarEmpleado(1, busqueda, criterio)" class="form-control" v-model="criterio">
                         <option value="" selected>Todos</option>
                         <option value="Fijo">Fijos</option>
@@ -641,7 +665,7 @@
                         'success'
                       )
                       me.accion = "listar";
-                      me.listarEmpleado();
+                      me.listarEmpleado(1, me.busqueda, me.criterio);
                       me.resetearInputs();
                     } 
                   }).catch(function(error){

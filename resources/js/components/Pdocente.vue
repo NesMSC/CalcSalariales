@@ -4,8 +4,8 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">      
+        <div class="row">
+          <div class="col-md-6 sm-4">      
             <template v-if="accion=='listar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Trabajadores</a></li>
@@ -15,25 +15,42 @@
             <template v-if="accion=='registrar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click="accion='listar'; resetearInputs()">Docente</a></li>
                 <li class="breadcrumb-item">Registrar</li>
               </ol>
             </template>
             <template v-if="accion=='ver'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click="accion='listar'; resetearInputs()">Docente</a></li>
                 <li class="breadcrumb-item">Consultar</li>
               </ol>
             </template>
             <template v-if="accion=='editar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Docente</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click="accion='listar'; resetearInputs()">Docente</a></li>
                 <li class="breadcrumb-item">Editar</li>
               </ol>
             </template>
+            <template v-if="accion=='AggAdmin'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item active"  @click="accion='listar'; resetearInputs()"><a href="#">Docente</a></li>
+                <li class="breadcrumb-item active" @click="accion='registrar'"><a href="#">Registrar</a></li>
+                <li class="breadcrumb-item">Agregar Docente Administrativo</li>
+              </ol>
+            </template>
+            <template v-if="accion=='editarDocenteAdmin'">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">Trabajadores</li>
+                <li class="breadcrumb-item active"  @click="accion='listar'; resetearInputs()"><a href="#">Docente</a></li>
+                <li class="breadcrumb-item">Editar Docente Administrativo</li>
+              </ol>
+            </template>
           </div>
+          <div v-if="accion=='registrar'" class="col-md-6 sm-8" align="right">
+            <button type="button" @click="accion='AggAdmin'" class="btn btn-primary">Agregar Administrativo</button>
+          </div>    
         </div>
       </div><!-- /.container-fluid -->
     </section>
@@ -94,8 +111,14 @@
                       <td v-text="docente.categoria"></td>
                       <td v-text="docente.dedicacion"></td>
                       <td>
-                        <a href="#" @click="accion='ver'; mostrarEmpleado(docente.id)"><i class="far fa-eye" ></i></a>
-                        <a href="#" @click="accion='editar'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
+                        <template v-if="docente.tipoPersonal=='Docente'">
+                          <a href="#" @click.prevent="accion='ver'; mostrarEmpleado(docente.id)"><i class="far fa-eye" ></i></a>
+                          <a href="#" @click.prevent="accion='editar'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
+                        </template>
+                        <template v-else>
+                          <a href="#" @click.prevent="accion='editarDocenteAdmin'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
+                          <a href="#" @click.prevent="retirarAdmin(docente.id_empleado)"><i class="fa fa-trash"></i></a>
+                        </template>
                       </td>
                     </tr>
                   </tbody>
@@ -209,7 +232,7 @@
                           *Este campo es requerido
                   </div>
                 </div>
-              </div> 
+              </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
@@ -421,8 +444,106 @@
           </template>
           <template v-if="accion=='editar'">
             <button @click="actualizarEmpleado()" type="button" class="btn btn-primary btn-lg">Actualizar</button>
+          </template>         
+      </div><!-- /.container-fluid -->
+      <div class="container-fluid" v-if="accion=='AggAdmin' || accion=='editarDocenteAdmin'">
+        <!-- Formulario de registro de -->
+          <!-- card datos laborales -->
+          <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title">Datos de Empleado</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+              </div>
+            </div> 
+            <!-- /.card-header -->
+            <div class="card-body">
+            <div class="row">
+              <template v-if="accion=='AggAdmin'">
+                <div class="col-md-6 form-group">
+                  <v-select
+                   @search="buscarAdmin"
+                   :options="arrayAdmin"
+                   label="admin"
+                   :reduce="admin => admin.id"
+                   :placeholder="'Buscar personal...'"
+                   v-model="id_empleado"
+                   ></v-select>
+                </div>
+              </template>
+              <template v-else>
+                <div class="col-md-6">
+                  <p v-text="`${nombres} ${apellidos} ${pre_cedula}${cedula} (Personal Administrativo)`"></p>
+                </div>
+              </template>
+            </div>  
+              <div class="row">
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="grado">Categoria</label>
+                  <select v-model="categoria" @change="validarCampo(categoria, 'categoria')" id="categoria" class="form-control" required>
+                    <option disabled selected>Seleccionar</option>
+                    <option value="Instructor">Instructor</option>
+                    <option value="Asistente">Asistente</option>
+                    <option value="Agregado">Agregado</option>
+                    <option value="Asociado">Asociado</option>
+                    <option value="Titular">Titular</option>
+                    <option value="Auxiliar Docente">Auxiliar</option>
+                  </select>
+                </div>
+                <template v-if="categoria=='Auxiliar Docente'">
+                  <div class="col-md-2 mb-2 form-group">
+                    <label for="grado_auxiliar">Grado</label>
+                    <select v-model="grado_auxiliar" @change="validarCampo(grado_auxiliar, 'grado_auxiliar')" id="grado_auxiliar" class="form-control" required>
+                      <option selected value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
+                </template>
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="dedicacion">Dedicación</label>
+                  <select v-model="dedicacion" @change="validarCampo(dedicacion, 'dedicacion')" id="dedicacion" class="form-control" required>
+                    <option disabled selected>Seleccionar</option>
+                    <option value="Convencional">Convencional</option>
+                  </select>
+                </div>
+                <template v-if="dedicacion=='Convencional'">
+                  <div class="col-md-2 mb-2 form-group">
+                    <label for="horas">Horas</label>
+                    <select v-model="horas_convencional" @change="validarCampo(horas_convencional, 'horas')" id="horas" class="form-control" required>
+                      <option selected value="7">7</option>
+                      <option value="6">6</option>
+                      <option value="5">5</option>
+                      <option value="4">4</option>
+                      <option value="3">3</option>
+                      <option value="2">2</option>
+                    </select>
+                  </div>
+                </template>
+                <div class="col-md-4 mb-2 form-group">
+                  <label for="pnf">PNF</label>
+                  <select v-model="docente_pnf" @change="validarCampo(docente_pnf, 'pnf')" id="pnf" class="form-control" required>
+                    <option disabled selected>Seleccionar</option>
+                    <option value="Mecánica">Mecánica</option>
+                    <option value="Informática">Informática</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Geología">Geología</option>
+                  </select>
+                </div>      
+              </div>  
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+            </div>
+          </div>
+          <!-- /.card -->
+          <template v-if="accion=='AggAdmin'">
+            <button @click="regDocenteAd()" type="button" class="btn btn-primary btn-lg">Registrar</button>
           </template>
-          
+          <template v-else>
+            <button @click="actualizarDocenteAdmin()" type="button" class="btn btn-primary btn-lg">Actualizar</button>
+          </template>
+                     
       </div><!-- /.container-fluid -->
       <div class="container-fluid" v-if="accion=='ver'">
         <div class="row">
@@ -461,12 +582,12 @@
                   <tbody>
                     <tr >
                       <td v-text="'Grado de instruccion: '+grado_instruccion"></td>
-                      <td v-text="'Categoria: '+categoria"></td>
-                      <td v-text="'Dedicación: '+dedicacion"></td>
+                      <td v-text="(categoria=='Auxiliar Docente')?'Categoria: '+categoria+' '+grado_auxiliar:'Categoria: '+categoria"></td>       
+                      <td v-text="(dedicacion=='Convencional')?'Dedicación: '+dedicacion+' '+horas_convencional+' Horas':'Dedicación: '+dedicacion"></td> 
                       <td v-text="'PNF: '+docente_pnf"></td>
                     </tr>
                     <tr >
-                      <td v-text="'Estado: '+estadoEmpleado"></td>
+                      <td v-text="'Estado: '+estadoDocente"></td>
                       <td v-text="'Fecha de ingreso: '+fecha_ingreso"></td>
                       <td> </td>
                     </tr>
@@ -612,6 +733,7 @@
             estadoDocente: "Contratado",
             tipoPersonal: "Docente",
             arraydocente: [],
+            arrayAdmin: [],
             pagination: {
                 "total": 0,
                 "current_page": 0,
@@ -688,6 +810,23 @@
                     console.log(error);
                 });
           },
+          buscarAdmin(search, loading){
+            let me=this;
+            loading(true)
+              var url= '/docentes/aggAdmin?filtro='+search;
+              //Consultar todo el personal administrativo
+              axios.get(url).then(function (response) {
+                  var respuesta= response.data.Padmin;
+                  me.arrayAdmin=[];
+                  for(var i = 0; i < respuesta.length; i++){
+                    me.arrayAdmin.push({admin:respuesta[i].nombres +" "+ respuesta[i].apellidos +" "+ respuesta[i].cedula, id:respuesta[i].empleado_id});
+                  };
+                loading(false);
+              })
+              .catch(function (error) {
+                  console.log(error);
+            });  
+          },
           registrar(){
             let me = this;
             if(me.validarForm()){
@@ -744,6 +883,34 @@
 
             };
           },
+          //Funcion para registrar a Administrativo como Docente
+          regDocenteAd(){
+            let me = this;
+            let url = '/docentes/registrarAdmin'
+            axios.post(url, {
+              categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
+              dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
+              pnf: me.docente_pnf,
+              id_empleado: me.id_empleado
+            }).then(function(response){
+
+              if(!response.data.respuesta){
+                Vue.toasted.error( 'Docente existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']});
+              }else{
+                swal.fire(
+                  'Empleado agregado exitosamente',
+                  '',
+                  'success'
+                )
+                me.accion = "listar";
+                me.listarEmpleado(1, me.busqueda, me.criterio);
+                me.resetearInputs();
+              };
+              
+            }).catch(function(error){
+              console.log(error);
+            });
+          },
           mostrarEmpleado(id){
             let me = this;
             let url = '/docentes/mostrarDocente/'+id;
@@ -770,13 +937,25 @@
               me.pre_telefono= empleado.telefono.substring(0, 5);
               me.telefono= empleado.telefono.substring(5);
               me.fecha_nacimiento= empleado.nacimiento;
-              me.categoria= empleado.categoria;
-              me.dedicacion= empleado.dedicacion;
+              //Extraer el grado de Auxiliar Docente
+              if (empleado.categoria.includes('Auxiliar')) {
+                me.categoria= empleado.categoria.replace(/\s[1-3]/, "");
+                me.grado_auxiliar= empleado.categoria.match(/[1-3]/)[0];
+              }else{
+                me.categoria= empleado.categoria;
+              };
+              //Extraer las horas convencionales 
+              if (empleado.dedicacion.includes('Convencional')) {
+                me.dedicacion= 'Convencional';
+                me.horas_convencional= empleado.dedicacion.match(/[1-7]/)[0];
+              }else{
+                me.dedicacion=empleado.dedicacion
+              };
               me.docente_pnf= empleado.pnf;
               me.fecha_ingreso= empleado.fechaIngreso;
               me.departamento= empleado.departamento;
               me.grado_instruccion= empleado.instruccion;
-              me.estadoEmpleado= empleado.estado;
+              me.estadoDocente= empleado.estado;
               me.id_empleado= empleado.id_empleado;
               me.id_persona= empleado.id_persona;
               me.calculaAñosServicio();
@@ -792,7 +971,7 @@
             let me = this;
             if(me.validarForm()){
                 let me = this;
-                let url = '/empleados/actualizarEmpleado';
+                let url = '/docentes/actualizarDocente';
                 axios.put(url, {
                   nombres:me.nombres,
                   apellidos:me.apellidos,
@@ -801,12 +980,12 @@
                   correo:me.correo,
                   telefono:me.pre_telefono+me.telefono,
                   nacimiento:me.fecha_nacimiento,
-                  grado: me.grado,
-                  nivel: me.nivel,
+                  categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
+                  dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
                   fecha_ingreso: me.fecha_ingreso,
-                  departamento: me.departamento,
+                  docente_pnf: me.docente_pnf,
                   grado_instruccion: me.grado_instruccion,
-                  estado: me.estadoEmpleado,
+                  estado: me.estadoDocente,
                   beneficios: me.id_beneficiosAgregados,
                   descuentos: me.id_descuentosAgregados,
                   id_persona: me.id_persona,
@@ -818,14 +997,66 @@
                       '',
                       'success');
 
+                    
+                    me.listarEmpleado(1, me.busqueda, me.criterio);
                     me.accion = "listar";
-                    me.listarEmpleado();
                     me.resetearInputs();
                    
                 }).catch(function(error){
                   console.log(error)
                 });
             };
+          },
+          actualizarDocenteAdmin(){
+            let me = this;
+            let url = 'docentes/actualizarDocenteAdmin'
+            axios.put(url, {
+                  categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
+                  dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
+                  docente_pnf: me.docente_pnf,
+                  id_empleado: me.id_empleado 
+                }).then(function(response){
+                  swal.fire(
+                      'Actualizado exitosamente',
+                      '',
+                      'success');
+                    me.listarEmpleado(1, me.busqueda, me.criterio);
+                    me.accion = "listar";
+                    me.resetearInputs();
+                   
+                }).catch(function(error){
+                  console.log(error)
+                });
+          },
+          retirarAdmin(id){
+            let me = this;
+            let url = 'docentes/retirarDocenteAdmin/'+id;
+
+            swal.fire({
+                title: "Se retirará del personal docente",
+                text: "¿Desea continuar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.value) {
+                  axios.get(url).then(function(response){
+                    swal.fire(
+                          'Retirado exitosamente',
+                          '',
+                          'success'
+                        );
+                    me.accion = "listar";
+                    me.listarEmpleado(1, me.busqueda, me.criterio);
+                    me.resetearInputs();
+                  }).catch(function(error){
+                    console.log(error);
+                  });
+                };
+              });    
           },
           validarForm(){
             const inputs = document.getElementsByClassName('form-control');

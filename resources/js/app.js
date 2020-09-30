@@ -10,8 +10,12 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import Toasted from 'vue-toasted';
+import 'vue-select/dist/vue-select.css';
+import vSelect from 'vue-select';
 
 Vue.use(Toasted);
+
+Vue.component('v-select', vSelect);
 
 
 /**

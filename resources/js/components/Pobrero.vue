@@ -15,21 +15,21 @@
             <template v-if="accion=='registrar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Obrero</a></li>
                 <li class="breadcrumb-item">Registrar</li>
               </ol>
             </template>
             <template v-if="accion=='ver'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Obrero</a></li>
                 <li class="breadcrumb-item">Consultar</li>
               </ol>
             </template>
             <template v-if="accion=='editar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Obrero</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Obrero</a></li>
                 <li class="breadcrumb-item">Editar</li>
               </ol>
             </template>
@@ -224,7 +224,7 @@
             <div class="card-body">  
               <div class="row">
                 <div class="col-md-2 mb-2 form-group">
-                  <label for="nivel">grado</label>
+                  <label for="grado">grado</label>
                   <select v-model="grado" @change="validarCampo(grado, 'grado')" id="grado" class="form-control" required>
                     <option disabled selected>Seleccionar</option>
                     <option value="1">1</option>
@@ -647,7 +647,6 @@
                     telefono:me.pre_telefono+me.telefono,
                     nacimiento:me.fecha_nacimiento,
                     grado: me.grado,
-                    nivel: me.nivel,
                     fecha_ingreso: me.fecha_ingreso,
                     departamento: me.departamento,
                     grado_instruccion: me.grado_instruccion,
@@ -751,7 +750,7 @@
                       'success');
 
                     me.accion = "listar";
-                    me.listarEmpleado();
+                    me.listarEmpleado(1, me.busqueda, me.criterio);
                     me.resetearInputs();
                    
                 }).catch(function(error){
@@ -779,6 +778,7 @@
           },
           validarCampo(campo, id){
             //Validar campos al escribir o cambiar
+            
             this.error = [];
             if(id && campo != ""){
               const input = document.getElementById(id);
@@ -820,9 +820,6 @@
                       input.classList.add('is-valid');
                     }
                   break;
-                  case "nivel":
-                    this.datoSalario();
-                  break;
                   case "grado":
                     this.datoSalario();
                   break;
@@ -862,7 +859,7 @@
 
               let me = this;
 
-              if (me.grado!='Seleccionar' && me.nivel!='Seleccionar') {
+              if (me.grado!='Seleccionar') {
                   let url = 'empleados/salarioTabla';
                   axios.post(url, {id_salario:me.id_salario}).then(function(response){
                   let grado = me.grado;
@@ -871,7 +868,6 @@
                   salario = salario[grado];
                   me.salarioTabla = salario;
                   me.UT = response.data.UT;
-
                 
                 }).catch(function(error){
                   console.log(error);

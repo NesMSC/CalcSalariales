@@ -23,9 +23,8 @@ class docenteController extends Controller
           //Busqueda con solo el criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
+                              ->select('personas.id as id', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'empleados.tipoPersonal', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.estado', $request->criterio)
-                              ->where('empleados.tipoPersonal', $request->tipo)
                               ->orderBy('personas.id', 'desc')
                               ->paginate(5);
 
@@ -34,8 +33,7 @@ class docenteController extends Controller
           //Busqueda sin criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
-                              ->where('empleados.tipoPersonal', $request->tipo)
+                              ->select('personas.id as id', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'empleados.tipoPersonal', 'pnf', 'categoria', 'dedicacion')
                               ->where('nombres', 'like', "%$request->busqueda%")
                               ->orWhere('apellidos', 'like', "%$request->busqueda%")
                               ->orWhere('pnf', 'like', "%$request->busqueda%")
@@ -48,8 +46,7 @@ class docenteController extends Controller
           //Busqueda con dato buscado y criterio
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
-                              ->where('empleados.tipoPersonal', $request->tipo)
+                              ->select('personas.id as id', 'nombres', 'empleados.id as id_empleado', 'apellidos', 'empleados.tipoPersonal', 'pnf', 'categoria', 'dedicacion')
                               ->where('empleados.estado', $request->criterio)
                               ->where(function($query){
                                 global $request;
@@ -65,8 +62,7 @@ class docenteController extends Controller
           //Todos los datos
           $empleados = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
                               ->join('docente_cat', 'empleados.id', '=', 'docente_cat.empleado_id')
-                              ->select('personas.id as id', 'nombres', 'apellidos', 'pnf', 'categoria', 'dedicacion')
-                              ->where('empleados.tipoPersonal', $request->tipo)
+                              ->select('personas.id as id', 'empleados.id as id_empleado', 'nombres', 'apellidos', 'empleados.tipoPersonal', 'pnf', 'categoria', 'dedicacion')
                               ->orderBy('personas.id', 'desc')
                               ->paginate(5);
 
@@ -151,8 +147,7 @@ class docenteController extends Controller
             return $e;
         }
 
-        return ["respuesta"=>false, "empleado"=>$empleado];
-        
+        return ["respuesta"=>false, "empleado"=>$empleado];       
     }
 
     /**
@@ -187,10 +182,96 @@ class docenteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      DB::table('personas')
+        ->where('id', $request->id_persona)
+        ->update(['nombres' => $request->nombres, 'apellidos' => $request->apellidos, 'cedula' => $request->cedula, 'correo' => $request->correo, 'telefono' => $request->telefono, 'nacimiento'=>$request->nacimiento, 'sexo' => $request->sexo]);
+
+      DB::table('empleados')
+        ->where('id', $request->id_empleado)
+        ->update(['fechaIngreso' => $request->fecha_ingreso, 'instruccion' => $request->grado_instruccion, 'estado' => $request->estado]);
+
+      DB::table('docente_cat')
+        ->where('empleado_id', $request->id_empleado)
+        ->update(['categoria'=>$request->categoria, 'dedicacion'=>$request->dedicacion, 'pnf'=>$request->docente_pnf]);
+
+      
+      DB::table('beneficio_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
+      DB::table('descuento_empleado')->where('empleado_id', '=', $request->id_empleado)->delete();
+
+      $empleado = Empleado::find($request->id_empleado);
+
+      //Actualiza beneficios
+      $beneficios = $request->beneficios;
+        for ($i=0; $i < count($beneficios); $i++) { 
+          $empleado->beneficio()->attach($beneficios[$i]);
+        };
+
+      //Actualiza descuentos
+      $descuentos = $request->descuentos;
+        for ($i=0; $i < count($descuentos); $i++) { 
+          $empleado->descuento()->attach($descuentos[$i]);
+        };
+
+      return true; 
     }
 
+    public function buscarPadmin(Request $request)
+    {
+      $Padmin = Persona::join('empleados', 'personas.id' ,'=', 'empleados.persona_id')
+                          ->select('personas.id as id','empleados.id as empleado_id', 'nombres', 'apellidos', 'cedula')
+                          ->where('empleados.tipoPersonal', 'Administrativo')
+                          ->where(function($query){
+                            global $request;
+                            $query->where('nombres', 'like', "%$request->filtro%")
+                            ->orWhere('apellidos', 'like', "%$request->filtro%")
+                            ->orWhere('cedula', 'like', "%$request->filtro%");
+                              })
+                          ->get();
 
+      return ["Padmin"=>$Padmin];
+    }
+
+    public function registrarAdmin(Request $request)
+    {
+      if(!$request->ajax()) return redirect('/');
+
+      $id_empleado = $request->id_empleado;
+      $busquedaRegistro = DB::table('docente_cat')->where('empleado_id', '=', "$id_empleado")->first();
+
+      if ($busquedaRegistro) {
+          return ["respuesta"=>false];
+      };
+
+      $docente = DB::table('docente_cat')->insert([
+                                'empleado_id'=>$request->id_empleado, 
+                                'categoria'=>$request->categoria,
+                                'dedicacion'=>$request->dedicacion,
+                                'pnf'=>$request->pnf
+                            ]);
+
+      return ['respuesta' => true];
+    }
+
+    public function actualizarDocenteAdmin(Request $request){
+      if(!$request->ajax()) return redirect('/');
+
+      DB::table('docente_cat')
+        ->where('empleado_id', $request->id_empleado)
+        ->update(['categoria'=>$request->categoria, 'dedicacion'=>$request->dedicacion, 'pnf'=>$request->docente_pnf]);
+
+        return true;
+    }
+
+    public function retirarDocenteAdmin(Request $request){
+      if(!$request->ajax()) return redirect('/');
+
+      DB::table('docente_cat')
+        ->where('empleado_id', $request->id)
+        ->delete();
+
+        return true;
+    }
 }
+

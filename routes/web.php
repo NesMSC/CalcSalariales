@@ -30,6 +30,13 @@ Route::put('/empleados/actualizarEmpleado', 'empleadoController@update');
 Route::get('/docentes', 'docenteController@index');
 Route::post('/docentes/agregarNuevo', 'docenteController@store');
 Route::get('/docentes/mostrarDocente/{id}', 'docenteController@show');
+Route::put('/docentes/actualizarDocente', 'docenteController@update');
+Route::get('/docentes/aggAdmin', 'docenteController@buscarPadmin');
+Route::post('/docentes/registrarAdmin', 'docenteController@registrarAdmin');
+Route::put('/docentes/actualizarDocenteAdmin', 'docenteController@actualizarDocenteAdmin');
+Route::get('/docentes/retirarDocenteAdmin/{id}', 'docenteController@retirarDocenteAdmin');
+
+
 
 
 

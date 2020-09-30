@@ -15,21 +15,21 @@
             <template v-if="accion=='registrar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Administrativo</a></li>
                 <li class="breadcrumb-item">Registrar</li>
               </ol>
             </template>
             <template v-if="accion=='ver'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Administrativo</a></li>
                 <li class="breadcrumb-item">Consultar</li>
               </ol>
             </template>
             <template v-if="accion=='editar'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
-                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'">Administrativo</a></li>
+                <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Administrativo</a></li>
                 <li class="breadcrumb-item">Editar</li>
               </ol>
             </template>
@@ -789,7 +789,7 @@
                       'success');
 
                     me.accion = "listar";
-                    me.listarEmpleado();
+                    me.listarEmpleado(1, me.busqueda, me.criterio);
                     me.resetearInputs();
                    
                 }).catch(function(error){

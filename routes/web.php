@@ -36,6 +36,24 @@ Route::post('/docentes/registrarAdmin', 'docenteController@registrarAdmin');
 Route::put('/docentes/actualizarDocenteAdmin', 'docenteController@actualizarDocenteAdmin');
 Route::get('/docentes/retirarDocenteAdmin/{id}', 'docenteController@retirarDocenteAdmin');
 
+//Beneficios
+Route::get('/beneficios', 'beneficioController@index');
+Route::post('/beneficios/agregarNuevo', 'beneficioController@store');
+Route::get('/beneficios/show/{id}', 'beneficioController@show');
+Route::delete('/beneficios/delete/{id}', 'beneficioController@destroy');
+Route::get('/beneficios/editar/{id}', 'beneficioController@edit');
+Route::put('/beneficios/actualizar', 'beneficioController@update');
+Route::get('/beneficios/primaProfesional', 'beneficioController@primaProfesional');
+Route::put('/beneficios/primaProfesional/update', 'beneficioController@primaProUpdate');
+
+//Descuentos
+Route::get('/descuentos', 'descuentoController@index');
+Route::post('/descuentos/agregarNuevo', 'descuentoController@store');
+Route::get('/descuentos/show/{id}', 'descuentoController@show');
+Route::delete('/descuentos/delete/{id}', 'descuentoController@destroy');
+Route::get('/descuentos/editar/{id}', 'descuentoController@edit');
+Route::put('/descuentos/actualizar', 'descuentoController@update');
+
 
 
 

@@ -18,7 +18,7 @@ class CreateDescuentoEmpleadoTable extends Migration
             $table->unsignedBigInteger('empleado_id');
             $table->foreign('empleado_id')->references('id')->on('empleados');
             $table->unsignedBigInteger('descuento_id');
-            $table->foreign('descuento_id')->references('id')->on('descuentos');
+            $table->foreign('descuento_id')->references('id')->on('descuentos')->onDelete('cascade');
             $table->timestamps();
         });
     }

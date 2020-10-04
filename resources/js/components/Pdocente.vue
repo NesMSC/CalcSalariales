@@ -800,15 +800,15 @@
         methods: {
           listarEmpleado(page, busqueda, criterio){
             let me=this;
-                var url= '/docentes?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data.empleados.data;
-                    me.arraydocente = respuesta;
-                    me.pagination = response.data.pagination;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            var url= '/docentes?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
+            axios.get(url).then(function (response) {
+                var respuesta= response.data.empleados.data;
+                me.arraydocente = respuesta;
+                me.pagination = response.data.pagination;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
           },
           buscarAdmin(search, loading){
             let me=this;
@@ -886,30 +886,33 @@
           //Funcion para registrar a Administrativo como Docente
           regDocenteAd(){
             let me = this;
-            let url = '/docentes/registrarAdmin'
-            axios.post(url, {
-              categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
-              dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
-              pnf: me.docente_pnf,
-              id_empleado: me.id_empleado
-            }).then(function(response){
+            
+            if (me.dedicacion != "Seleccionar" && me.categoria != "Seleccionar" && me.docente_pnf != "Seleccionar" && me.horas_convencional != "Seleccionar" && me.id_empleado != "Seleccionar") {
+                let url = '/docentes/registrarAdmin';
+              axios.post(url, {
+                categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
+                dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
+                pnf: me.docente_pnf,
+                id_empleado: me.id_empleado
+              }).then(function(response){
 
-              if(!response.data.respuesta){
-                Vue.toasted.error( 'Docente existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']});
-              }else{
-                swal.fire(
-                  'Empleado agregado exitosamente',
-                  '',
-                  'success'
-                )
-                me.accion = "listar";
-                me.listarEmpleado(1, me.busqueda, me.criterio);
-                me.resetearInputs();
-              };
-              
-            }).catch(function(error){
-              console.log(error);
-            });
+                if(!response.data.respuesta){
+                  Vue.toasted.error( 'Docente existente, verifique los datos ingresados', {duration:2000, className:['alert', 'alert-danger']});
+                }else{
+                  swal.fire(
+                    'Empleado agregado exitosamente',
+                    '',
+                    'success'
+                  )
+                  me.accion = "listar";
+                  me.listarEmpleado(1, me.busqueda, me.criterio);
+                  me.resetearInputs();
+                };
+                
+              }).catch(function(error){
+                console.log(error);
+              });
+            };
           },
           mostrarEmpleado(id){
             let me = this;
@@ -1061,16 +1064,24 @@
           validarForm(){
             const inputs = document.getElementsByClassName('form-control');
             //Validar todos los campos vacios
-              this.error = [];
               for (let i = 0; i < inputs.length; i++) {               
                 const element = inputs[i];
-                if(!element.value || element.value == "Seleccionar"){
-                  element.classList.add('is-invalid');
+                if(!element.value || element.value == "Seleccionar"){                  
+                  if (this.error.indexOf(element.id)) {
+                      element.classList.add('is-invalid');
+                      this.error.push(element.id);
+                    };
                   this.error.push(element.id);
                 }else{
                   element.classList.remove('is-invalid');
                   element.classList.add('is-valid');
-                };                
+                  let indiceElement = this.error.indexOf(element.id);
+                    //Verifica si existe el indice
+                    if (indiceElement!== -1) {
+                      this.error.splice(indiceElement, 1);
+                    };
+                };
+                this.validarCampo(element.value, element.id);                
               };
 
            //console.log(this.error);
@@ -1078,45 +1089,76 @@
           },
           validarCampo(campo, id){
             //Validar campos al escribir o cambiar
-            this.error = [];
-            if(id && campo != ""){
+            if(id && campo != "" && campo!="Seleccionar"){
               const input = document.getElementById(id);
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
               switch(id){
                 case "cedula":
-                    if(campo.length < 7 || campo.length > 8){input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                    if(campo.length < 7 || campo.length > 8){
+                      input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
+                      
                     }else{
                       input.classList.remove('is-invalid')
                       input.classList.add('is-valid')
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "telefono":
-                    if(campo.length != 7){input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                    if(campo.length != 7){
+                      input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
                     }else{
-                      input.classList.remove('is-invalid')
-                      input.classList.add('is-valid')
+                      input.classList.remove('is-invalid');
+                      input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "nacimiento":
-                    if(input.value < input.min || input.value > input.max){input.classList.add('is-invalid')
-                      this.error.push(input.id);
+                    if(input.value < input.min || input.value > input.max){
+                    input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
                     }
                     else{
-                      input.classList.remove('is-invalid')
-                      input.classList.add('is-valid')
+                      input.classList.remove('is-invalid');
+                      input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "fecha_ingreso":
                     if(input.value < input.min || input.value > input.max){
                       input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                      if (this.error.indexOf(input.id)) {
+                        this.error.push(input.id);
+                      };
                     }
                     else{
                       input.classList.remove('is-invalid');
                       input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "categoria":

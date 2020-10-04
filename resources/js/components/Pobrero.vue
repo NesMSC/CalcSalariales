@@ -761,16 +761,24 @@
           validarForm(){
             const inputs = document.getElementsByClassName('form-control');
             //Validar todos los campos vacios
-              this.error = [];
               for (let i = 0; i < inputs.length; i++) {               
                 const element = inputs[i];
-                if(!element.value || element.value == "Seleccionar"){
-                  element.classList.add('is-invalid');
+                if(!element.value || element.value == "Seleccionar"){                  
+                  if (this.error.indexOf(element.id)) {
+                      element.classList.add('is-invalid');
+                      this.error.push(element.id);
+                    };
                   this.error.push(element.id);
                 }else{
                   element.classList.remove('is-invalid');
                   element.classList.add('is-valid');
-                };                
+                  let indiceElement = this.error.indexOf(element.id);
+                    //Verifica si existe el indice
+                    if (indiceElement!== -1) {
+                      this.error.splice(indiceElement, 1);
+                    };
+                };
+                this.validarCampo(element.value, element.id);                
               };
 
            //console.log(this.error);
@@ -778,46 +786,76 @@
           },
           validarCampo(campo, id){
             //Validar campos al escribir o cambiar
-            
-            this.error = [];
-            if(id && campo != ""){
+            if(id && campo != "" && campo!="Seleccionar"){
               const input = document.getElementById(id);
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
               switch(id){
                 case "cedula":
-                    if(campo.length < 7 || campo.length > 8){input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                    if(campo.length < 7 || campo.length > 8){
+                      input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
+                      
                     }else{
                       input.classList.remove('is-invalid')
                       input.classList.add('is-valid')
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "telefono":
-                    if(campo.length != 7){input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                    if(campo.length != 7){
+                      input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
                     }else{
-                      input.classList.remove('is-invalid')
-                      input.classList.add('is-valid')
+                      input.classList.remove('is-invalid');
+                      input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "nacimiento":
-                    if(input.value < input.min || input.value > input.max){input.classList.add('is-invalid')
-                      this.error.push(input.id);
+                    if(input.value < input.min || input.value > input.max){
+                    input.classList.add('is-invalid');
+                      if (this.error.indexOf(input.id)) {                       
+                        this.error.push(input.id);
+                      };
                     }
                     else{
-                      input.classList.remove('is-invalid')
-                      input.classList.add('is-valid')
+                      input.classList.remove('is-invalid');
+                      input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "fecha_ingreso":
                     if(input.value < input.min || input.value > input.max){
                       input.classList.add('is-invalid');
-                      this.error.push(input.id);
+                      if (this.error.indexOf(input.id)) {
+                        this.error.push(input.id);
+                      };
                     }
                     else{
                       input.classList.remove('is-invalid');
                       input.classList.add('is-valid');
+                      let indiceElement = this.error.indexOf(input.id);
+                      //Verifica si existe el indice
+                      if (indiceElement!== -1) {
+                        this.error.splice(indiceElement, 1);
+                      };
                     }
                   break;
                   case "grado":

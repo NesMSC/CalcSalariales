@@ -12,4 +12,13 @@
 <template v-if="menu==3">
 	<Pobrero></Pobrero>	
 </template>
+<template v-if="menu==4">
+	<h1>Tabuladores</h1>
+</template>
+<template v-if="menu==5">
+	<Beneficios></Beneficios>	
+</template>
+<template v-if="menu==6">
+	<Descuentos></Descuentos>	
+</template>
 

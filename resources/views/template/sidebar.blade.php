@@ -67,19 +67,19 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="#" @click.prevent="menu=4" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tabuladores</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="#" @click.prevent="menu=5" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Beneficios</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="#" @click.prevent="menu=6" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Descuentos</p>
                 </a>

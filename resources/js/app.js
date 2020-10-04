@@ -33,6 +33,9 @@ Vue.component('Padministrativo', require('./components/Padministrativo.vue').def
 Vue.component('Pobrero', require('./components/Pobrero.vue').default);
 Vue.component('Escritorio', require('./components/Escritorio.vue').default);
 Vue.component('Pdocente', require('./components/Pdocente.vue').default);
+Vue.component('Beneficios', require('./components/Beneficios.vue').default);
+Vue.component('Descuentos', require('./components/Descuentos.vue').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -43,7 +46,7 @@ Vue.component('Pdocente', require('./components/Pdocente.vue').default);
 const app = new Vue({
     el: '#app',
     data:{
-    	menu: 2
+    	menu: 6
     }
 });
  

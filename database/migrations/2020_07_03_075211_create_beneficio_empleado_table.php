@@ -18,7 +18,7 @@ class CreateBeneficioEmpleadoTable extends Migration
             $table->unsignedBigInteger('empleado_id');
             $table->foreign('empleado_id')->references('id')->on('empleados');
             $table->unsignedBigInteger('beneficio_id');
-            $table->foreign('beneficio_id')->references('id')->on('beneficios');
+            $table->foreign('beneficio_id')->references('id')->on('beneficios')->onDelete('cascade');
             $table->timestamps();
         });
     }

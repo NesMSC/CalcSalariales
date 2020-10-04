@@ -1899,6 +1899,1029 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Beneficios.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Beneficios.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      concepto: "",
+      valor: 0.0,
+      tipo_valor: "Seleccionar",
+      arrayBeneficios: [],
+      pagination: {
+        "total": 0,
+        "current_page": 0,
+        "per_page": 0,
+        "last_page": 0,
+        "from": 0,
+        "to": 0
+      },
+      primaProfesional: {
+        "TSU": 0,
+        "Profesional": 0,
+        "Especialista": 0,
+        "Maestria": 0,
+        "Doctor": 0
+      },
+      accion: 'listar',
+      UT: '',
+      error: [],
+      errorsPorPrima: [],
+      busqueda: "",
+      id_beneficio: ""
+    };
+  },
+  computed: {
+    isActive: function isActive() {
+      return this.pagination.current_page;
+    },
+    pageNumber: function pageNumber() {
+      var me = this;
+
+      if (!me.pagination.to) {
+        return [];
+      }
+
+      var from = me.pagination.current_page - 2; //TODO offset
+
+      if (from < 1) {
+        from = 1;
+      }
+
+      ;
+      var to = from + 2 * 2; //TODO
+
+      if (to >= me.pagination.last_page) {
+        to = me.pagination.last_page;
+      }
+
+      ;
+      var pagesArray = [];
+
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      ;
+      return pagesArray;
+    }
+  },
+  methods: {
+    listarBeneficios: function listarBeneficios(page, busqueda) {
+      var me = this;
+      var url = '/beneficios?page=' + page + '&busqueda=' + busqueda;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data.beneficios.data;
+        me.arrayBeneficios = respuesta;
+        me.pagination = response.data.pagination;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    registrar: function registrar() {
+      var me = this;
+      var url = '/beneficios/agregarNuevo';
+
+      if (me.validarForm()) {
+        axios.post(url, {
+          concepto: me.concepto,
+          valor: me.valor,
+          tipo_valor: me.tipo_valor
+        }).then(function (response) {
+          swal.fire('Beneficio agregado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.listarBeneficios(1, me.busqueda);
+          me.resetearInputs();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
+    },
+    consultarBeneficio: function consultarBeneficio(id) {
+      var me = this;
+      var url = '/beneficios/show/' + id;
+      axios.get(url).then(function (response) {
+        var beneficio = response.data.beneficio;
+        me.concepto = beneficio.concepto;
+        me.valor = beneficio.valor;
+        me.tipo_valor = beneficio.tipo_valor;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editarBeneficio: function editarBeneficio(id) {
+      var me = this;
+      var url = '/beneficios/editar/' + id;
+      axios.get(url).then(function (response) {
+        var beneficio = response.data.beneficio;
+        me.concepto = beneficio.concepto;
+        me.valor = beneficio.valor;
+        me.tipo_valor = beneficio.tipo_valor;
+        me.id_beneficio = beneficio.id;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    actualizarBeneficio: function actualizarBeneficio() {
+      var me = this;
+      var url = '/beneficios/actualizar';
+
+      if (me.validarForm()) {
+        axios.put(url, {
+          concepto: me.concepto,
+          valor: me.valor,
+          tipo_valor: me.tipo_valor,
+          id: me.id_beneficio
+        }).then(function (response) {
+          swal.fire('Actualizado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.listarBeneficios(1, me.busqueda, me.criterio);
+          me.resetearInputs();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
+    },
+    editarPrimaProfesional: function editarPrimaProfesional() {
+      var me = this;
+      me.concepto = 'Prima de Profesionalización';
+      me.tipo_valor = '%';
+      var url = '/beneficios/primaProfesional';
+      axios.get(url).then(function (response) {
+        me.primaProfesional = response.data.primaProfesional;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    actualizarPrimaProfesional: function actualizarPrimaProfesional() {
+      var me = this;
+      var url = '/beneficios/primaProfesional/update';
+
+      if (me.validarForm()) {
+        axios.put(url, {
+          json_prima: me.primaProfesional
+        }).then(function (response) {
+          swal.fire('Actualizado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.listarBeneficios(1, me.busqueda, me.criterio);
+          me.resetearInputs();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+    },
+    eliminarBeneficio: function eliminarBeneficio(id) {
+      var me = this;
+      var url = '/beneficios/delete/' + id;
+      swal.fire({
+        title: '¿Seguro que desea eliminar?',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"](url).then(function (response) {
+            swal.fire('Beneficio eliminado', '', 'success');
+            me.accion = "listar";
+            me.listarBeneficios(1, me.busqueda, me.criterio);
+            me.resetearInputs();
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else return;
+      });
+    },
+    validarForm: function validarForm() {
+      var inputs = document.getElementsByClassName('form-control'); //Validar todos los campos vacios
+
+      for (var i = 0; i < inputs.length; i++) {
+        var e = inputs[i];
+
+        if (e.id != 'tsu' && e.id != 'profesional' && e.id != 'especialista' && e.id != 'maestria' && e.id != 'doctor') {
+          if (!e.value || e.value == "Seleccionar" || e.value == 0) {
+            e.classList.add('is-invalid');
+
+            if (!this.error.includes(e.id)) {
+              this.error.push(e.id);
+            }
+
+            ;
+          } else {
+            e.classList.remove('is-invalid');
+            e.classList.add('is-valid');
+            var indiceElement = this.error.indexOf(e.id); //Verifica si existe el indice
+
+            if (indiceElement !== -1) {
+              this.error.splice(indiceElement, 1);
+            }
+
+            ;
+          }
+
+          ;
+        }
+
+        ;
+      }
+
+      ;
+
+      if (!this.error.length && !this.errorsPorPrima.length) {
+        return true;
+      }
+    },
+    validarPrimaPro: function validarPrimaPro(campo, id) {
+      var element = document.getElementById(id);
+
+      if (parseInt(campo) && campo > 0 && campo < 100) {
+        element.classList.remove('is-invalid');
+        element.classList.add('is-valid');
+        var indiceElement = this.errorsPorPrima.indexOf(element.id); //Verifica si existe el indice
+
+        if (indiceElement != -1) {
+          this.errorsPorPrima.splice(indiceElement, 1);
+        }
+
+        ;
+      } else {
+        element.classList.add('is-invalid');
+
+        if (!this.errorsPorPrima.includes(element.id)) {
+          this.errorsPorPrima.push(element.id);
+        }
+
+        ;
+      }
+
+      ;
+    },
+    resetearInputs: function resetearInputs() {
+      this.concepto = "";
+      this.valor = 0;
+      this.tipo_valor = "Seleccionar";
+    },
+    cambioPagina: function cambioPagina(page) {
+      this.pagination.current_page = page;
+      this.listarBeneficios(page, this.busqueda);
+    }
+  },
+  mounted: function mounted() {
+    this.listarBeneficios(1, this.busqueda);
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Descuentos.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Descuentos.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      concepto: "",
+      tipo: "Seleccionar",
+      porcentaje: 0,
+      arrayDescuentos: [],
+      pagination: {
+        "total": 0,
+        "current_page": 0,
+        "per_page": 0,
+        "last_page": 0,
+        "from": 0,
+        "to": 0
+      },
+      accion: 'listar',
+      error: [],
+      busqueda: "",
+      criterio: "",
+      id_descuento: ""
+    };
+  },
+  computed: {
+    isActive: function isActive() {
+      return this.pagination.current_page;
+    },
+    pageNumber: function pageNumber() {
+      var me = this;
+
+      if (!me.pagination.to) {
+        return [];
+      }
+
+      var from = me.pagination.current_page - 2; //TODO offset
+
+      if (from < 1) {
+        from = 1;
+      }
+
+      ;
+      var to = from + 2 * 2; //TODO
+
+      if (to >= me.pagination.last_page) {
+        to = me.pagination.last_page;
+      }
+
+      ;
+      var pagesArray = [];
+
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      ;
+      return pagesArray;
+    }
+  },
+  methods: {
+    listarDescuentos: function listarDescuentos(page, busqueda, criterio) {
+      var me = this;
+      var url = '/descuentos?page=' + page + '&busqueda=' + '&criterio=' + criterio;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data.descuentos.data;
+        me.arrayDescuentos = respuesta;
+        me.pagination = response.data.pagination;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    registrar: function registrar() {
+      var me = this;
+      var url = '/descuentos/agregarNuevo';
+
+      if (me.validarForm()) {
+        axios.post(url, {
+          concepto: me.concepto,
+          tipo: me.tipo,
+          porcentaje: me.porcentaje
+        }).then(function (response) {
+          swal.fire('Beneficio agregado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.listarDescuentos(1, me.busqueda, me.criterio);
+          me.resetearInputs();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
+    },
+    consultarDescuento: function consultarDescuento(id) {
+      var me = this;
+      var url = '/descuentos/show/' + id;
+      axios.get(url).then(function (response) {
+        var descuento = response.data.descuento;
+        me.concepto = descuento.concepto;
+        me.tipo = descuento.tipo;
+        me.porcentaje = descuento.porcentaje;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    editarDescuento: function editarDescuento(id) {
+      var me = this;
+      var url = '/descuentos/editar/' + id;
+      axios.get(url).then(function (response) {
+        var descuento = response.data.descuento;
+        me.concepto = descuento.concepto;
+        me.tipo = descuento.tipo;
+        me.porcentaje = descuento.porcentaje;
+        me.id_descuento = descuento.id;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    actualizarDescuento: function actualizarDescuento() {
+      var me = this;
+      var url = '/descuentos/actualizar';
+
+      if (me.validarForm()) {
+        axios.put(url, {
+          concepto: me.concepto,
+          tipo: me.tipo,
+          porcentaje: me.porcentaje,
+          id: me.id_descuento
+        }).then(function (response) {
+          swal.fire('Actualizado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.listarDescuentos(1, me.busqueda, me.criterio);
+          me.resetearInputs();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
+    },
+    eliminarDescuento: function eliminarDescuento(id) {
+      var me = this;
+      var url = '/descuentos/delete/' + id;
+      swal.fire({
+        title: '¿Seguro que desea eliminar?',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"](url).then(function (response) {
+            swal.fire('Descuento eliminado', '', 'success');
+            me.accion = "listar";
+            me.listarDescuentos(1, me.busqueda, me.criterio);
+            me.resetearInputs();
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else return;
+      });
+    },
+    validarForm: function validarForm() {
+      var inputs = document.getElementsByClassName('form-control'); //Validar todos los campos vacios
+
+      for (var i = 0; i < inputs.length; i++) {
+        var e = inputs[i];
+
+        if (!e.value || e.value == "Seleccionar" || e.value == 0) {
+          e.classList.add('is-invalid');
+
+          if (!this.error.includes(e.id)) {
+            console.log(e.id);
+            this.error.push(e.id);
+          }
+
+          ;
+        } else {
+          e.classList.remove('is-invalid');
+          e.classList.add('is-valid');
+          var indiceElement = this.error.indexOf(e.id); //Verifica si existe el indice
+
+          if (indiceElement !== -1) {
+            this.error.splice(indiceElement, 1);
+          }
+
+          ;
+        }
+
+        ;
+        this.validarCampo(e.value, e.id);
+      }
+
+      ;
+
+      if (!this.error.length) {
+        return true;
+      }
+    },
+    validarCampo: function validarCampo(campo, id) {
+      var element = document.getElementById(id);
+
+      if (id == 'porcentaje') {
+        if (parseInt(campo) && campo > 0 && campo < 100) {
+          element.classList.remove('is-invalid');
+          element.classList.add('is-valid');
+          var indiceElement = this.error.indexOf(element.id); //Verifica si existe el indice
+
+          if (indiceElement != -1) {
+            this.error.splice(indiceElement, 1);
+          }
+
+          ;
+        } else {
+          element.classList.add('is-invalid');
+
+          if (!this.error.includes(element.id)) {
+            this.error.push(element.id);
+          }
+
+          ;
+        }
+
+        ;
+      } else {
+        if (campo != '' && campo != 'Seleccionar') {
+          element.classList.remove('is-invalid');
+          element.classList.add('is-valid');
+
+          var _indiceElement = this.error.indexOf(element.id); //Verifica si existe el indice
+
+
+          if (_indiceElement != -1) {
+            this.error.splice(_indiceElement, 1);
+          }
+
+          ;
+        } else {
+          element.classList.add('is-invalid');
+
+          if (!this.error.includes(element.id)) {
+            this.error.push(element.id);
+          }
+
+          ;
+        }
+
+        ;
+      }
+
+      ;
+    },
+    resetearInputs: function resetearInputs() {
+      this.concepto = "";
+      this.tipo = "Seleccionar";
+      this.porcentaje = 0;
+    },
+    cambioPagina: function cambioPagina(page) {
+      this.pagination.current_page = page;
+      this.listarDescuentos(page, this.busqueda);
+    }
+  },
+  mounted: function mounted() {
+    this.listarDescuentos(1, this.busqueda, this.criterio);
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Escritorio.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Escritorio.vue?vue&type=script&lang=js& ***!
@@ -2824,20 +3847,31 @@ __webpack_require__.r(__webpack_exports__);
     validarForm: function validarForm() {
       var inputs = document.getElementsByClassName('form-control'); //Validar todos los campos vacios
 
-      this.error = [];
-
       for (var i = 0; i < inputs.length; i++) {
         var element = inputs[i];
 
         if (!element.value || element.value == "Seleccionar") {
-          element.classList.add('is-invalid');
+          if (this.error.indexOf(element.id)) {
+            element.classList.add('is-invalid');
+            this.error.push(element.id);
+          }
+
+          ;
           this.error.push(element.id);
         } else {
           element.classList.remove('is-invalid');
           element.classList.add('is-valid');
+          var indiceElement = this.error.indexOf(element.id); //Verifica si existe el indice
+
+          if (indiceElement !== -1) {
+            this.error.splice(indiceElement, 1);
+          }
+
+          ;
         }
 
         ;
+        this.validarCampo(element.value, element.id);
       }
 
       ; //console.log(this.error);
@@ -2848,9 +3882,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     validarCampo: function validarCampo(campo, id) {
       //Validar campos al escribir o cambiar
-      this.error = [];
-
-      if (id && campo != "") {
+      if (id && campo != "" && campo != "Seleccionar") {
         var input = document.getElementById(id);
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
@@ -2859,10 +3891,22 @@ __webpack_require__.r(__webpack_exports__);
           case "cedula":
             if (campo.length < 7 || campo.length > 8) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+              var indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+              if (indiceElement !== -1) {
+                this.error.splice(indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -2870,10 +3914,24 @@ __webpack_require__.r(__webpack_exports__);
           case "telefono":
             if (campo.length != 7) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement !== -1) {
+                this.error.splice(_indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -2881,10 +3939,24 @@ __webpack_require__.r(__webpack_exports__);
           case "nacimiento":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement2 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement2 !== -1) {
+                this.error.splice(_indiceElement2, 1);
+              }
+
+              ;
             }
 
             break;
@@ -2892,10 +3964,24 @@ __webpack_require__.r(__webpack_exports__);
           case "fecha_ingreso":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement3 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement3 !== -1) {
+                this.error.splice(_indiceElement3, 1);
+              }
+
+              ;
             }
 
             break;
@@ -4099,29 +5185,34 @@ __webpack_require__.r(__webpack_exports__);
     //Funcion para registrar a Administrativo como Docente
     regDocenteAd: function regDocenteAd() {
       var me = this;
-      var url = '/docentes/registrarAdmin';
-      axios.post(url, {
-        categoria: me.categoria == 'Auxiliar Docente' ? "".concat(me.categoria, " ").concat(me.grado_auxiliar) : me.categoria,
-        dedicacion: me.dedicacion == 'Convencional' ? "Tiempo ".concat(me.dedicacion, " ").concat(me.horas_convencional, " Horas") : me.dedicacion,
-        pnf: me.docente_pnf,
-        id_empleado: me.id_empleado
-      }).then(function (response) {
-        if (!response.data.respuesta) {
-          Vue.toasted.error('Docente existente, verifique los datos ingresados', {
-            duration: 2000,
-            className: ['alert', 'alert-danger']
-          });
-        } else {
-          swal.fire('Empleado agregado exitosamente', '', 'success');
-          me.accion = "listar";
-          me.listarEmpleado(1, me.busqueda, me.criterio);
-          me.resetearInputs();
-        }
 
-        ;
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      if (me.dedicacion != "Seleccionar" && me.categoria != "Seleccionar" && me.docente_pnf != "Seleccionar" && me.horas_convencional != "Seleccionar" && me.id_empleado != "Seleccionar") {
+        var url = '/docentes/registrarAdmin';
+        axios.post(url, {
+          categoria: me.categoria == 'Auxiliar Docente' ? "".concat(me.categoria, " ").concat(me.grado_auxiliar) : me.categoria,
+          dedicacion: me.dedicacion == 'Convencional' ? "Tiempo ".concat(me.dedicacion, " ").concat(me.horas_convencional, " Horas") : me.dedicacion,
+          pnf: me.docente_pnf,
+          id_empleado: me.id_empleado
+        }).then(function (response) {
+          if (!response.data.respuesta) {
+            Vue.toasted.error('Docente existente, verifique los datos ingresados', {
+              duration: 2000,
+              className: ['alert', 'alert-danger']
+            });
+          } else {
+            swal.fire('Empleado agregado exitosamente', '', 'success');
+            me.accion = "listar";
+            me.listarEmpleado(1, me.busqueda, me.criterio);
+            me.resetearInputs();
+          }
+
+          ;
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
     },
     mostrarEmpleado: function mostrarEmpleado(id) {
       var me = this;
@@ -4267,20 +5358,31 @@ __webpack_require__.r(__webpack_exports__);
     validarForm: function validarForm() {
       var inputs = document.getElementsByClassName('form-control'); //Validar todos los campos vacios
 
-      this.error = [];
-
       for (var i = 0; i < inputs.length; i++) {
         var element = inputs[i];
 
         if (!element.value || element.value == "Seleccionar") {
-          element.classList.add('is-invalid');
+          if (this.error.indexOf(element.id)) {
+            element.classList.add('is-invalid');
+            this.error.push(element.id);
+          }
+
+          ;
           this.error.push(element.id);
         } else {
           element.classList.remove('is-invalid');
           element.classList.add('is-valid');
+          var indiceElement = this.error.indexOf(element.id); //Verifica si existe el indice
+
+          if (indiceElement !== -1) {
+            this.error.splice(indiceElement, 1);
+          }
+
+          ;
         }
 
         ;
+        this.validarCampo(element.value, element.id);
       }
 
       ; //console.log(this.error);
@@ -4291,9 +5393,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     validarCampo: function validarCampo(campo, id) {
       //Validar campos al escribir o cambiar
-      this.error = [];
-
-      if (id && campo != "") {
+      if (id && campo != "" && campo != "Seleccionar") {
         var input = document.getElementById(id);
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
@@ -4302,10 +5402,22 @@ __webpack_require__.r(__webpack_exports__);
           case "cedula":
             if (campo.length < 7 || campo.length > 8) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+              var indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+              if (indiceElement !== -1) {
+                this.error.splice(indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -4313,10 +5425,24 @@ __webpack_require__.r(__webpack_exports__);
           case "telefono":
             if (campo.length != 7) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement !== -1) {
+                this.error.splice(_indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -4324,10 +5450,24 @@ __webpack_require__.r(__webpack_exports__);
           case "nacimiento":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement2 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement2 !== -1) {
+                this.error.splice(_indiceElement2, 1);
+              }
+
+              ;
             }
 
             break;
@@ -4335,10 +5475,24 @@ __webpack_require__.r(__webpack_exports__);
           case "fecha_ingreso":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement3 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement3 !== -1) {
+                this.error.splice(_indiceElement3, 1);
+              }
+
+              ;
             }
 
             break;
@@ -5428,20 +6582,31 @@ __webpack_require__.r(__webpack_exports__);
     validarForm: function validarForm() {
       var inputs = document.getElementsByClassName('form-control'); //Validar todos los campos vacios
 
-      this.error = [];
-
       for (var i = 0; i < inputs.length; i++) {
         var element = inputs[i];
 
         if (!element.value || element.value == "Seleccionar") {
-          element.classList.add('is-invalid');
+          if (this.error.indexOf(element.id)) {
+            element.classList.add('is-invalid');
+            this.error.push(element.id);
+          }
+
+          ;
           this.error.push(element.id);
         } else {
           element.classList.remove('is-invalid');
           element.classList.add('is-valid');
+          var indiceElement = this.error.indexOf(element.id); //Verifica si existe el indice
+
+          if (indiceElement !== -1) {
+            this.error.splice(indiceElement, 1);
+          }
+
+          ;
         }
 
         ;
+        this.validarCampo(element.value, element.id);
       }
 
       ; //console.log(this.error);
@@ -5452,9 +6617,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     validarCampo: function validarCampo(campo, id) {
       //Validar campos al escribir o cambiar
-      this.error = [];
-
-      if (id && campo != "") {
+      if (id && campo != "" && campo != "Seleccionar") {
         var input = document.getElementById(id);
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
@@ -5463,10 +6626,22 @@ __webpack_require__.r(__webpack_exports__);
           case "cedula":
             if (campo.length < 7 || campo.length > 8) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+              var indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+              if (indiceElement !== -1) {
+                this.error.splice(indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -5474,10 +6649,24 @@ __webpack_require__.r(__webpack_exports__);
           case "telefono":
             if (campo.length != 7) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement !== -1) {
+                this.error.splice(_indiceElement, 1);
+              }
+
+              ;
             }
 
             break;
@@ -5485,10 +6674,24 @@ __webpack_require__.r(__webpack_exports__);
           case "nacimiento":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement2 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement2 !== -1) {
+                this.error.splice(_indiceElement2, 1);
+              }
+
+              ;
             }
 
             break;
@@ -5496,10 +6699,24 @@ __webpack_require__.r(__webpack_exports__);
           case "fecha_ingreso":
             if (input.value < input.min || input.value > input.max) {
               input.classList.add('is-invalid');
-              this.error.push(input.id);
+
+              if (this.error.indexOf(input.id)) {
+                this.error.push(input.id);
+              }
+
+              ;
             } else {
               input.classList.remove('is-invalid');
               input.classList.add('is-valid');
+
+              var _indiceElement3 = this.error.indexOf(input.id); //Verifica si existe el indice
+
+
+              if (_indiceElement3 !== -1) {
+                this.error.splice(_indiceElement3, 1);
+              }
+
+              ;
             }
 
             break;
@@ -45205,6 +46422,1829 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c&":
+/*!*************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c& ***!
+  \*************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _c("section", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c(
+            "div",
+            { staticClass: "col-sm-6" },
+            [
+              _vm.accion == "listar" ? [_vm._m(0)] : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "registrar"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Beneficios")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Agregar")
+                      ])
+                    ])
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "ver"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Beneficios")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Consultar")
+                      ])
+                    ])
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Beneficios")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Editar")
+                      ])
+                    ])
+                  ]
+                : _vm._e()
+            ],
+            2
+          )
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _vm.accion == "listar"
+        ? _c("div", { staticClass: "container-fluid" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-header" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-light",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.accion = "registrar"
+                            _vm.resetearInputs()
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-plus" }),
+                        _vm._v(" Nuevo\r\n                ")
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("div", { staticClass: "col-md-4" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _vm._m(1),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.busqueda,
+                                expression: "busqueda"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "search",
+                              type: "text",
+                              placeholder: "Busqueda"
+                            },
+                            domProps: { value: _vm.busqueda },
+                            on: {
+                              keyup: function($event) {
+                                return _vm.listarBeneficios(
+                                  _vm.pagination.current_page,
+                                  _vm.busqueda
+                                )
+                              },
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.busqueda = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "table",
+                      {
+                        staticClass: "table table-bordered table-striped",
+                        attrs: { id: "example1" }
+                      },
+                      [
+                        _vm._m(2),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.arrayBeneficios, function(beneficio) {
+                            return _c("tr", { key: beneficio.id }, [
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(beneficio.concepto)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(
+                                    beneficio.valor + " " + beneficio.tipo_valor
+                                  )
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                [
+                                  _c(
+                                    "a",
+                                    {
+                                      staticStyle: { color: "#000" },
+                                      attrs: { href: "#" },
+                                      on: {
+                                        click: function($event) {
+                                          $event.preventDefault()
+                                          _vm.accion = "ver"
+                                          _vm.consultarBeneficio(beneficio.id)
+                                        }
+                                      }
+                                    },
+                                    [_c("i", { staticClass: "far fa-eye" })]
+                                  ),
+                                  _vm._v(" "),
+                                  beneficio.concepto ==
+                                  "Prima de Profesionalización"
+                                    ? [
+                                        _c(
+                                          "a",
+                                          {
+                                            attrs: { href: "#" },
+                                            on: {
+                                              click: function($event) {
+                                                $event.preventDefault()
+                                                _vm.accion = "editar"
+                                                _vm.editarPrimaProfesional(
+                                                  beneficio.id
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fas fa-edit"
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    : [
+                                        _c(
+                                          "a",
+                                          {
+                                            attrs: { href: "#" },
+                                            on: {
+                                              click: function($event) {
+                                                $event.preventDefault()
+                                                _vm.accion = "editar"
+                                                _vm.editarBeneficio(
+                                                  beneficio.id
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fas fa-edit"
+                                            })
+                                          ]
+                                        )
+                                      ],
+                                  _vm._v(" "),
+                                  beneficio.concepto !=
+                                    "Prima de Profesionalización" &&
+                                  beneficio.concepto != "Prima de Antiguedad"
+                                    ? [
+                                        _c(
+                                          "a",
+                                          {
+                                            staticStyle: { color: "red" },
+                                            attrs: { href: "#" },
+                                            on: {
+                                              click: function($event) {
+                                                $event.preventDefault()
+                                                return _vm.eliminarBeneficio(
+                                                  beneficio.id
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fas fa-trash"
+                                            })
+                                          ]
+                                        )
+                                      ]
+                                    : _vm._e()
+                                ],
+                                2
+                              )
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "ul",
+                      {
+                        staticClass: "pagination btn-group mr-2 mt-4",
+                        attrs: { role: "group", "aria-label": "First group" }
+                      },
+                      [
+                        _vm.pagination.current_page > 1
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page - 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Atras")]
+                              )
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm._l(_vm.pageNumber, function(page) {
+                          return _c(
+                            "li",
+                            { key: page, class: [page == 1 ? "active" : ""] },
+                            [
+                              _c("button", {
+                                staticClass: "btn",
+                                class: [
+                                  page == _vm.isActive
+                                    ? "btn-primary"
+                                    : "btn-light"
+                                ],
+                                attrs: { type: "button" },
+                                domProps: { textContent: _vm._s(page) },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.cambioPagina(page)
+                                  }
+                                }
+                              })
+                            ]
+                          )
+                        }),
+                        _vm._v(" "),
+                        _vm.pagination.current_page < _vm.pagination.last_page
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page + 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Siguiente")]
+                              )
+                            ])
+                          : _vm._e()
+                      ],
+                      2
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.accion == "registrar" || _vm.accion == "editar"
+        ? _c(
+            "div",
+            { staticClass: "container-fluid" },
+            [
+              _c("div", { staticClass: "card card-default" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _vm.accion == "registrar"
+                    ? _c("h3", { staticClass: "card-title" }, [
+                        _vm._v("Agregar Beneficio")
+                      ])
+                    : _c("h3", { staticClass: "card-title" }, [
+                        _vm._v("Editar Beneficio")
+                      ]),
+                  _vm._v(" "),
+                  _vm._m(3)
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-body" }, [
+                  _vm.concepto == "Prima de Profesionalización"
+                    ? _c("div", [
+                        _c("div", { staticClass: "row mb-4" }, [
+                          _c("div", { staticClass: "col-md-4" }, [
+                            _c("label", { attrs: { for: "concepto" } }, [
+                              _vm._v("Concepto")
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.concepto,
+                                  expression: "concepto"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                disabled: "",
+                                id: "concepto",
+                                required: ""
+                              },
+                              domProps: { value: _vm.concepto },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.concepto = $event.target.value
+                                }
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _vm._m(4)
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("form", [
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "col-sm-4 col-form-label col-form-label-sm",
+                                  attrs: { for: "tsu" }
+                                },
+                                [_vm._v("TSU")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-4" }, [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.primaProfesional.TSU,
+                                      expression: "primaProfesional.TSU"
+                                    }
+                                  ],
+                                  staticClass: "form-control form-control-sm",
+                                  attrs: { type: "number", id: "tsu" },
+                                  domProps: { value: _vm.primaProfesional.TSU },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.validarPrimaPro(
+                                        _vm.primaProfesional.TSU,
+                                        "tsu"
+                                      )
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.primaProfesional,
+                                        "TSU",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "col-sm-4 col-form-label col-form-label-sm",
+                                  attrs: { for: "profesional" }
+                                },
+                                [_vm._v("Profesional")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-4" }, [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.primaProfesional.Profesional,
+                                      expression: "primaProfesional.Profesional"
+                                    }
+                                  ],
+                                  staticClass: "form-control form-control-sm",
+                                  attrs: { type: "number", id: "profesional" },
+                                  domProps: {
+                                    value: _vm.primaProfesional.Profesional
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.validarPrimaPro(
+                                        _vm.primaProfesional.Profesional,
+                                        "profesional"
+                                      )
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.primaProfesional,
+                                        "Profesional",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "col-sm-4 col-form-label col-form-label-sm",
+                                  attrs: { for: "especialista" }
+                                },
+                                [_vm._v("Especialista")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-4" }, [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.primaProfesional.Especialista,
+                                      expression:
+                                        "primaProfesional.Especialista"
+                                    }
+                                  ],
+                                  staticClass: "form-control form-control-sm",
+                                  attrs: { type: "number", id: "especialista" },
+                                  domProps: {
+                                    value: _vm.primaProfesional.Especialista
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.validarPrimaPro(
+                                        _vm.primaProfesional.Especialista,
+                                        "especialista"
+                                      )
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.primaProfesional,
+                                        "Especialista",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "col-sm-4 col-form-label col-form-label-sm",
+                                  attrs: { for: "maestria" }
+                                },
+                                [_vm._v("Maestria")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-4" }, [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.primaProfesional.Maestria,
+                                      expression: "primaProfesional.Maestria"
+                                    }
+                                  ],
+                                  staticClass: "form-control form-control-sm",
+                                  attrs: { type: "number", id: "maestria" },
+                                  domProps: {
+                                    value: _vm.primaProfesional.Maestria
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.validarPrimaPro(
+                                        _vm.primaProfesional.Maestria,
+                                        "maestria"
+                                      )
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.primaProfesional,
+                                        "Maestria",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "form-group row" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "col-sm-4 col-form-label col-form-label-sm",
+                                  attrs: { for: "doctor" }
+                                },
+                                [_vm._v("Doctor")]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "col-sm-4" }, [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.primaProfesional.Doctor,
+                                      expression: "primaProfesional.Doctor"
+                                    }
+                                  ],
+                                  staticClass: "form-control form-control-sm",
+                                  attrs: { type: "number", id: "doctor" },
+                                  domProps: {
+                                    value: _vm.primaProfesional.Doctor
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.validarPrimaPro(
+                                        _vm.primaProfesional.Doctor,
+                                        "doctor"
+                                      )
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.primaProfesional,
+                                        "Doctor",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ])
+                          ])
+                        ])
+                      ])
+                    : _c("div", { staticClass: "row" }, [
+                        _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
+                          _c("label", { attrs: { for: "concepto" } }, [
+                            _vm._v("Concepto")
+                          ]),
+                          _vm._v(" "),
+                          _vm.concepto == "Prima de Antiguedad"
+                            ? _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.concepto,
+                                    expression: "concepto"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  disabled: "",
+                                  id: "concepto",
+                                  required: ""
+                                },
+                                domProps: { value: _vm.concepto },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.concepto = $event.target.value
+                                  }
+                                }
+                              })
+                            : _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.concepto,
+                                    expression: "concepto"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  id: "concepto",
+                                  required: ""
+                                },
+                                domProps: { value: _vm.concepto },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.concepto = $event.target.value
+                                  }
+                                }
+                              }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "invalid-feedback" }, [
+                            _vm._v(
+                              "\r\n                          *Este campo es requerido\r\n                  "
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-3 mb-2 form-group" }, [
+                          _c("label", { attrs: { for: "valor" } }, [
+                            _vm._v("valor")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.valor,
+                                expression: "valor"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "number",
+                              id: "valor",
+                              required: ""
+                            },
+                            domProps: { value: _vm.valor },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.valor = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "invalid-feedback" }, [
+                            _vm._v(
+                              "\r\n                          *Campo inválido\r\n                  "
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-3 mb-2 form-group" }, [
+                          _c("label", { attrs: { for: "tipo_valor" } }, [
+                            _vm._v("Tipo de valor")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.tipo_valor,
+                                  expression: "tipo_valor"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                id: "tipo_valor",
+                                name: "tipo_valor",
+                                required: ""
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.tipo_valor = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                }
+                              }
+                            },
+                            [
+                              _c(
+                                "option",
+                                { attrs: { disabled: "", selected: "" } },
+                                [_vm._v("Seleccionar")]
+                              ),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "U.T" } }, [
+                                _vm._v("U.T")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "%" } }, [
+                                _vm._v("%")
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "invalid-feedback" }, [
+                            _vm._v(
+                              "\r\n                        *Este campo es requerido\r\n                  "
+                            )
+                          ])
+                        ])
+                      ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-footer" })
+              ]),
+              _vm._v(" "),
+              _vm.accion == "registrar"
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-lg",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.registrar()
+                          }
+                        }
+                      },
+                      [_vm._v("Registrar")]
+                    )
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar" &&
+              _vm.concepto != "Prima de Profesionalización"
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-lg",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.actualizarBeneficio()
+                          }
+                        }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar" &&
+              _vm.concepto == "Prima de Profesionalización"
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-lg",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.actualizarPrimaProfesional()
+                          }
+                        }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  ]
+                : _vm._e()
+            ],
+            2
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.accion == "ver"
+        ? _c("div", { staticClass: "container-fluid" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-header" }, [
+                    _c("strong", [
+                      _c("p", {
+                        domProps: { textContent: _vm._s(_vm.concepto) }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c(
+                      "table",
+                      { staticClass: "table", attrs: { id: "table1" } },
+                      [
+                        _c("tbody", [
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Valor: " + _vm.valor + _vm.tipo_valor
+                                )
+                              }
+                            })
+                          ])
+                        ])
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        : _vm._e()
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ol", { staticClass: "breadcrumb" }, [
+      _c("li", { staticClass: "breadcrumb-item" }, [
+        _c("a", { attrs: { href: "#" } }, [_vm._v("Salarios")])
+      ]),
+      _vm._v(" "),
+      _c("li", { staticClass: "breadcrumb-item active" }, [
+        _vm._v("Beneficios")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("div", { staticClass: "input-group-text" }, [
+        _c("a", { attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fa fa-search",
+            staticStyle: { color: "#000" },
+            attrs: { "aria-hidden": "true" }
+          })
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Concepto")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Valor")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Acción")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-tools" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-tool",
+          attrs: { type: "button", "data-card-widget": "collapse" }
+        },
+        [_c("i", { staticClass: "fas fa-minus" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c("label", { attrs: { for: "tipo_valor" } }, [_vm._v("Tipo de valor")]),
+      _vm._v(" "),
+      _c(
+        "select",
+        {
+          staticClass: "form-control",
+          attrs: { id: "tipo_valor", name: "tipo_valor", required: "" }
+        },
+        [
+          _c("option", { attrs: { value: "%", disabled: "", selected: "" } }, [
+            _vm._v("%")
+          ])
+        ]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6&":
+/*!*************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6& ***!
+  \*************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _c("section", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c(
+            "div",
+            { staticClass: "col-sm-6" },
+            [
+              _vm.accion == "listar" ? [_vm._m(0)] : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "registrar"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Descuentos")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Agregar")
+                      ])
+                    ])
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "ver"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Descuentos")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Consultar")
+                      ])
+                    ])
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                                _vm.resetearInputs()
+                              }
+                            }
+                          },
+                          [_vm._v("Descuentos")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Editar")
+                      ])
+                    ])
+                  ]
+                : _vm._e()
+            ],
+            2
+          )
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _vm.accion == "listar"
+        ? _c("div", { staticClass: "container-fluid" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-header" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-light",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.accion = "registrar"
+                            _vm.resetearInputs()
+                          }
+                        }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-plus" }),
+                        _vm._v(" Nuevo\r\n                ")
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("div", { staticClass: "col-md-4" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _vm._m(1),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.busqueda,
+                                expression: "busqueda"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              id: "search",
+                              type: "text",
+                              placeholder: "Busqueda"
+                            },
+                            domProps: { value: _vm.busqueda },
+                            on: {
+                              keyup: function($event) {
+                                return _vm.listarDescuentos(
+                                  _vm.pagination.current_page,
+                                  _vm.busqueda,
+                                  _vm.criterio
+                                )
+                              },
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.busqueda = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-3" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.criterio,
+                                  expression: "criterio"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              on: {
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.criterio = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  },
+                                  function($event) {
+                                    return _vm.listarDescuentos(
+                                      1,
+                                      _vm.busqueda,
+                                      _vm.criterio
+                                    )
+                                  }
+                                ]
+                              }
+                            },
+                            [
+                              _c(
+                                "option",
+                                { attrs: { value: "", selected: "" } },
+                                [_vm._v("Todos")]
+                              ),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Retención" } }, [
+                                _vm._v("Retención")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Aporte" } }, [
+                                _vm._v("Aporte")
+                              ]),
+                              _vm._v(" "),
+                              _c("option", { attrs: { value: "Descuento" } }, [
+                                _vm._v("Descuento")
+                              ])
+                            ]
+                          )
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "table",
+                      {
+                        staticClass: "table table-bordered table-striped",
+                        attrs: { id: "example1" }
+                      },
+                      [
+                        _vm._m(2),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.arrayDescuentos, function(descuento) {
+                            return _c("tr", { key: descuento.id }, [
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(descuento.concepto)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(descuento.tipo)
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", {
+                                domProps: {
+                                  textContent: _vm._s(
+                                    descuento.porcentaje + "%"
+                                  )
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("td", [
+                                _c(
+                                  "a",
+                                  {
+                                    staticStyle: { color: "#000" },
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        _vm.accion = "ver"
+                                        _vm.consultarDescuento(descuento.id)
+                                      }
+                                    }
+                                  },
+                                  [_c("i", { staticClass: "far fa-eye" })]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "a",
+                                  {
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        _vm.accion = "editar"
+                                        _vm.editarDescuento(descuento.id)
+                                      }
+                                    }
+                                  },
+                                  [_c("i", { staticClass: "fas fa-edit" })]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "a",
+                                  {
+                                    staticStyle: { color: "red" },
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.eliminarDescuento(
+                                          descuento.id
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [_c("i", { staticClass: "fas fa-trash" })]
+                                )
+                              ])
+                            ])
+                          }),
+                          0
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "ul",
+                      {
+                        staticClass: "pagination btn-group mr-2 mt-4",
+                        attrs: { role: "group", "aria-label": "First group" }
+                      },
+                      [
+                        _vm.pagination.current_page > 1
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page - 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Atras")]
+                              )
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm._l(_vm.pageNumber, function(page) {
+                          return _c(
+                            "li",
+                            { key: page, class: [page == 1 ? "active" : ""] },
+                            [
+                              _c("button", {
+                                staticClass: "btn",
+                                class: [
+                                  page == _vm.isActive
+                                    ? "btn-primary"
+                                    : "btn-light"
+                                ],
+                                attrs: { type: "button" },
+                                domProps: { textContent: _vm._s(page) },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.cambioPagina(page)
+                                  }
+                                }
+                              })
+                            ]
+                          )
+                        }),
+                        _vm._v(" "),
+                        _vm.pagination.current_page < _vm.pagination.last_page
+                          ? _c("li", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-light",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.cambioPagina(
+                                        _vm.pagination.current_page + 1
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Siguiente")]
+                              )
+                            ])
+                          : _vm._e()
+                      ],
+                      2
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.accion == "registrar" || _vm.accion == "editar"
+        ? _c(
+            "div",
+            { staticClass: "container-fluid" },
+            [
+              _c("div", { staticClass: "card card-default" }, [
+                _c("div", { staticClass: "card-header" }, [
+                  _vm.accion == "registrar"
+                    ? _c("h3", { staticClass: "card-title" }, [
+                        _vm._v("Agregar Beneficio")
+                      ])
+                    : _c("h3", { staticClass: "card-title" }, [
+                        _vm._v("Editar Beneficio")
+                      ]),
+                  _vm._v(" "),
+                  _vm._m(3)
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-body" }, [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-4 mb-2 form-group" }, [
+                      _c("label", { attrs: { for: "concepto" } }, [
+                        _vm._v("Concepto")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.concepto,
+                            expression: "concepto"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", id: "concepto", required: "" },
+                        domProps: { value: _vm.concepto },
+                        on: {
+                          change: function($event) {
+                            return _vm.validarCampo(_vm.concepto, "concepto")
+                          },
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.concepto = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(
+                          "\r\n                          *Este campo es requerido\r\n                  "
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-3 mb-2 form-group" }, [
+                      _c("label", { attrs: { for: "tipo" } }, [_vm._v("Tipo")]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.tipo,
+                              expression: "tipo"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { id: "tipo", required: "" },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.tipo = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.validarCampo(_vm.tipo, "tipo")
+                              }
+                            ]
+                          }
+                        },
+                        [
+                          _c(
+                            "option",
+                            { attrs: { selected: "", disabled: "" } },
+                            [_vm._v("Seleccionar")]
+                          ),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "Retención" } }, [
+                            _vm._v("Retención")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "Aporte" } }, [
+                            _vm._v("Aporte")
+                          ]),
+                          _vm._v(" "),
+                          _c("option", { attrs: { value: "Descuento" } }, [
+                            _vm._v("Descuento")
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(
+                          "\r\n                        *Este campo es requerido\r\n                  "
+                        )
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-2 mb-2 form-group" }, [
+                      _c("label", { attrs: { for: "porcentaje" } }, [
+                        _vm._v("Porcentaje de sueldo")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.porcentaje,
+                            expression: "porcentaje"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "number",
+                          id: "porcentaje",
+                          required: ""
+                        },
+                        domProps: { value: _vm.porcentaje },
+                        on: {
+                          change: function($event) {
+                            return _vm.validarCampo(
+                              _vm.porcentaje,
+                              "porcentaje"
+                            )
+                          },
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.porcentaje = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(
+                          "\r\n                          *Campo inválido\r\n                  "
+                        )
+                      ])
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-footer" })
+              ]),
+              _vm._v(" "),
+              _vm.accion == "registrar"
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-lg",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.registrar()
+                          }
+                        }
+                      },
+                      [_vm._v("Registrar")]
+                    )
+                  ]
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar"
+                ? [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary btn-lg",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.actualizarDescuento()
+                          }
+                        }
+                      },
+                      [_vm._v("Actualizar")]
+                    )
+                  ]
+                : _vm._e()
+            ],
+            2
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.accion == "ver"
+        ? _c("div", { staticClass: "container-fluid" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "card" }, [
+                  _c("div", { staticClass: "card-header" }, [
+                    _c("strong", [
+                      _c("p", {
+                        domProps: { textContent: _vm._s(_vm.concepto) }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c(
+                      "table",
+                      { staticClass: "table", attrs: { id: "table1" } },
+                      [
+                        _c("tbody", [
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s("Tipo: " + _vm.tipo)
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c("td", {
+                              domProps: {
+                                textContent: _vm._s(
+                                  "Descontado: " +
+                                    _vm.porcentaje +
+                                    "% del salario"
+                                )
+                              }
+                            })
+                          ])
+                        ])
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        : _vm._e()
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ol", { staticClass: "breadcrumb" }, [
+      _c("li", { staticClass: "breadcrumb-item" }, [
+        _c("a", { attrs: { href: "#" } }, [_vm._v("Salarios")])
+      ]),
+      _vm._v(" "),
+      _c("li", { staticClass: "breadcrumb-item active" }, [
+        _vm._v("Descuentos")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("div", { staticClass: "input-group-text" }, [
+        _c("a", { attrs: { href: "#" } }, [
+          _c("i", {
+            staticClass: "fa fa-search",
+            staticStyle: { color: "#000" },
+            attrs: { "aria-hidden": "true" }
+          })
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Concepto")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tipo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Porcentaje")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Acción")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-tools" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-tool",
+          attrs: { type: "button", "data-card-widget": "collapse" }
+        },
+        [_c("i", { staticClass: "fas fa-minus" })]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Escritorio.vue?vue&type=template&id=6f777408&":
 /*!*************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Escritorio.vue?vue&type=template&id=6f777408& ***!
@@ -64992,6 +68032,8 @@ Vue.component('Padministrativo', __webpack_require__(/*! ./components/Padministr
 Vue.component('Pobrero', __webpack_require__(/*! ./components/Pobrero.vue */ "./resources/js/components/Pobrero.vue")["default"]);
 Vue.component('Escritorio', __webpack_require__(/*! ./components/Escritorio.vue */ "./resources/js/components/Escritorio.vue")["default"]);
 Vue.component('Pdocente', __webpack_require__(/*! ./components/Pdocente.vue */ "./resources/js/components/Pdocente.vue")["default"]);
+Vue.component('Beneficios', __webpack_require__(/*! ./components/Beneficios.vue */ "./resources/js/components/Beneficios.vue")["default"]);
+Vue.component('Descuentos', __webpack_require__(/*! ./components/Descuentos.vue */ "./resources/js/components/Descuentos.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -65001,7 +68043,7 @@ Vue.component('Pdocente', __webpack_require__(/*! ./components/Pdocente.vue */ "
 var app = new Vue({
   el: '#app',
   data: {
-    menu: 2
+    menu: 6
   }
 });
 
@@ -65050,6 +68092,144 @@ window.swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/Beneficios.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/Beneficios.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Beneficios.vue?vue&type=template&id=1ef0821c& */ "./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c&");
+/* harmony import */ var _Beneficios_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Beneficios.vue?vue&type=script&lang=js& */ "./resources/js/components/Beneficios.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Beneficios_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Beneficios.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Beneficios.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/Beneficios.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Beneficios_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Beneficios.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Beneficios.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Beneficios_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c& ***!
+  \*******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Beneficios.vue?vue&type=template&id=1ef0821c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Beneficios.vue?vue&type=template&id=1ef0821c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Beneficios_vue_vue_type_template_id_1ef0821c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Descuentos.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/Descuentos.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Descuentos.vue?vue&type=template&id=6cbf85b6& */ "./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6&");
+/* harmony import */ var _Descuentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Descuentos.vue?vue&type=script&lang=js& */ "./resources/js/components/Descuentos.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Descuentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Descuentos.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Descuentos.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/Descuentos.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Descuentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Descuentos.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Descuentos.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Descuentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6& ***!
+  \*******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Descuentos.vue?vue&type=template&id=6cbf85b6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Descuentos.vue?vue&type=template&id=6cbf85b6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Descuentos_vue_vue_type_template_id_6cbf85b6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 

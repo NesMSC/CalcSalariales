@@ -35,6 +35,7 @@ Vue.component('Escritorio', require('./components/Escritorio.vue').default);
 Vue.component('Pdocente', require('./components/Pdocente.vue').default);
 Vue.component('Beneficios', require('./components/Beneficios.vue').default);
 Vue.component('Descuentos', require('./components/Descuentos.vue').default);
+Vue.component('Tabuladores', require('./components/Tabuladores.vue').default);
 
 
 /**
@@ -46,7 +47,7 @@ Vue.component('Descuentos', require('./components/Descuentos.vue').default);
 const app = new Vue({
     el: '#app',
     data:{
-    	menu: 6
+    	menu: 4
     }
 });
  

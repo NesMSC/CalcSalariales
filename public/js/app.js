@@ -6942,6 +6942,417 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tabuladores.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tabuladores.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      tabAdmin: {},
+      tabAdmin_id: '',
+      tabDoc: {},
+      tabDoc_id: '',
+      tabObre: {},
+      tabObre_id: '',
+      pagAdmin: {},
+      pagDoc: {},
+      accion: 'listar',
+      errors: []
+    };
+  },
+  methods: {
+    tabuladores: function tabuladores() {
+      var _this = this;
+
+      var url = '/tabuladores';
+      axios.get(url).then(function (response) {
+        _this.tabAdmin = JSON.parse(response.data.tabuladores[0].tabulador);
+        _this.tabAdmin_id = response.data.tabuladores[0].id;
+        _this.tabObre = JSON.parse(response.data.tabuladores[1].tabulador);
+        _this.tabObre_id = response.data.tabuladores[1].id;
+        _this.tabDoc = JSON.parse(response.data.tabuladores[2].tabulador);
+        _this.tabDoc_id = response.data.tabuladores[2].id;
+
+        _this.paginaAdmin('profesional');
+
+        _this.paginaDoc('instructor');
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    paginaAdmin: function paginaAdmin(pag) {
+      var me = this;
+
+      switch (pag) {
+        case 'profesional':
+          me.pagAdmin = {
+            Profesional: me.tabAdmin.Profesional
+          };
+          break;
+
+        case 'tecnico':
+          me.pagAdmin = {
+            Técnico: me.tabAdmin.Técnico
+          };
+          break;
+
+        case 'apoyo':
+          me.pagAdmin = {
+            Apoyo: me.tabAdmin.Apoyo
+          };
+          break;
+      }
+
+      ;
+    },
+    paginaDoc: function paginaDoc(pag) {
+      var me = this;
+
+      switch (pag) {
+        case 'instructor':
+          me.pagDoc = {
+            Instructor: me.tabDoc.Instructor
+          };
+          break;
+
+        case 'asistente':
+          me.pagDoc = {
+            Asistente: me.tabDoc.Asistente
+          };
+          break;
+
+        case 'agregado':
+          me.pagDoc = {
+            Agregado: me.tabDoc.Agregado
+          };
+          break;
+
+        case 'asociado':
+          me.pagDoc = {
+            Asociado: me.tabDoc.Asociado
+          };
+          break;
+
+        case 'titular':
+          me.pagDoc = {
+            Titular: me.tabDoc.Titular
+          };
+          break;
+
+        case 'auxiliar':
+          me.pagDoc = {
+            'Auxiliar Docente': me.tabDoc['Auxiliar Docente']
+          };
+          break;
+      }
+
+      ;
+    },
+    formatoDivisa: function formatoDivisa(number) {
+      var monto = new Intl.NumberFormat('en-US').format(number);
+      return monto;
+    },
+    hoverEdit: function hoverEdit(id, display) {
+      var element = document.getElementById(id);
+      element.style.display = display ? 'inline' : 'none';
+    },
+    validarCampo: function validarCampo(campo, id) {
+      var element = document.getElementById(id);
+
+      if (campo > 0 && campo != 0 && !isNaN(campo)) {
+        element.classList.remove('is-invalid');
+        element.classList.add('is-valid'); //Verifica si existe el indice
+
+        if (this.errors.includes(element.id)) {
+          this.errors.splice(element.id, 1);
+        }
+
+        ;
+      } else {
+        element.classList.add('is-invalid');
+
+        if (!this.errors.includes(element.id)) {
+          this.errors.push(element.id);
+        }
+
+        ;
+      }
+
+      ;
+    },
+    actualizarTab: function actualizarTab(tab, data) {
+      var me = this;
+
+      if (!me.errors.length) {
+        var url = '/tabuladores/update/' + tab;
+        axios.put(url, {
+          data: data
+        }).then(function (response) {
+          swal.fire('Actualizado exitosamente', '', 'success');
+          me.accion = "listar";
+          me.Tabuladores();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
+
+      ;
+    }
+  },
+  mounted: function mounted() {
+    this.tabuladores();
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/bootstrap/dist/js/bootstrap.js":
 /*!*****************************************************!*\
   !*** ./node_modules/bootstrap/dist/js/bootstrap.js ***!
@@ -55775,6 +56186,1130 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _c("section", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c(
+            "div",
+            { staticClass: "col-sm-6" },
+            [
+              _vm.accion == "listar" ? [_vm._m(0)] : _vm._e(),
+              _vm._v(" "),
+              _vm.accion == "editar"
+                ? [
+                    _c("ol", { staticClass: "breadcrumb" }, [
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Salarios")
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item active" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.accion = "listar"
+                              }
+                            }
+                          },
+                          [_vm._v("Tabuladores")]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "breadcrumb-item" }, [
+                        _vm._v("Editar")
+                      ])
+                    ])
+                  ]
+                : _vm._e()
+            ],
+            2
+          )
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c(
+          "div",
+          { staticClass: "card card-default", attrs: { id: "tabAdmin" } },
+          [
+            _c("div", { staticClass: "card-header" }, [
+              _c(
+                "h3",
+                {
+                  staticClass: "card-title",
+                  on: {
+                    mouseover: function($event) {
+                      return _vm.hoverEdit("admin", true)
+                    },
+                    mouseleave: function($event) {
+                      return _vm.hoverEdit("admin", false)
+                    }
+                  }
+                },
+                [
+                  _vm._v(
+                    "\r\n              Administrativo  \r\n              "
+                  ),
+                  _c(
+                    "a",
+                    {
+                      staticStyle: { display: "none" },
+                      attrs: { id: "admin", href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.accion = "editarTabAdmin"
+                          _vm.tabuladores()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "badge" }, [_vm._v("Editar")]),
+                      _c("i", {
+                        staticClass: "fas fa-pen",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(1)
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c(
+                "div",
+                { staticClass: "row" },
+                [
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table table-bordered",
+                      attrs: { id: "tab1" }
+                    },
+                    [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        [
+                          _vm._l(_vm.pagAdmin, function(tab, key) {
+                            return _vm._l(tab, function(sal, ind) {
+                              return _c(
+                                "tr",
+                                [
+                                  _c("td", [
+                                    _vm._v(
+                                      _vm._s(
+                                        key + " Nivel " + parseInt(ind + 1)
+                                      )
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _vm.accion == "editarTabAdmin"
+                                    ? [
+                                        _c("td", { attrs: { width: "40%" } }, [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass: "form-group row",
+                                              staticStyle: { margin: "0" }
+                                            },
+                                            [
+                                              _c(
+                                                "div",
+                                                { staticClass: "col-sm-4" },
+                                                [
+                                                  _c("input", {
+                                                    directives: [
+                                                      {
+                                                        name: "model",
+                                                        rawName: "v-model",
+                                                        value:
+                                                          _vm.tabAdmin[key][
+                                                            ind
+                                                          ],
+                                                        expression:
+                                                          "tabAdmin[key][ind]"
+                                                      }
+                                                    ],
+                                                    staticClass:
+                                                      "form-control form-control-sm",
+                                                    attrs: {
+                                                      id: "input" + key + ind,
+                                                      type: "text"
+                                                    },
+                                                    domProps: {
+                                                      value:
+                                                        _vm.tabAdmin[key][ind]
+                                                    },
+                                                    on: {
+                                                      change: function($event) {
+                                                        return _vm.validarCampo(
+                                                          _vm.tabAdmin[key][
+                                                            ind
+                                                          ],
+                                                          "input" + key + ind
+                                                        )
+                                                      },
+                                                      input: function($event) {
+                                                        if (
+                                                          $event.target
+                                                            .composing
+                                                        ) {
+                                                          return
+                                                        }
+                                                        _vm.$set(
+                                                          _vm.tabAdmin[key],
+                                                          ind,
+                                                          $event.target.value
+                                                        )
+                                                      }
+                                                    }
+                                                  })
+                                                ]
+                                              )
+                                            ]
+                                          )
+                                        ])
+                                      ]
+                                    : [
+                                        _c("td", { attrs: { width: "40%" } }, [
+                                          _vm._v(_vm._s(_vm.formatoDivisa(sal)))
+                                        ])
+                                      ]
+                                ],
+                                2
+                              )
+                            })
+                          })
+                        ],
+                        2
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.accion == "editarTabAdmin"
+                    ? [
+                        _c("div", { staticClass: "col col-md-3 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.actualizarTab(
+                                    _vm.tabAdmin_id,
+                                    _vm.tabAdmin
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Guardar cambios")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col col-md-2 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.accion = "listar"
+                                  _vm.tabuladores()
+                                }
+                              }
+                            },
+                            [_vm._v("Descartar")]
+                          )
+                        ])
+                      ]
+                    : [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "col col-md-6 btn-group",
+                            attrs: { role: "group" }
+                          },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagAdmin.Profesional
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaAdmin("profesional")
+                                  }
+                                }
+                              },
+                              [_vm._v("Profesional")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagAdmin.Técnico
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaAdmin("tecnico")
+                                  }
+                                }
+                              },
+                              [_vm._v("Técnico")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagAdmin.Apoyo
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaAdmin("apoyo")
+                                  }
+                                }
+                              },
+                              [_vm._v("Apoyo")]
+                            )
+                          ]
+                        )
+                      ]
+                ],
+                2
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-footer" })
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "card card-default", attrs: { id: "tabDoc" } },
+          [
+            _c("div", { staticClass: "card-header" }, [
+              _c(
+                "h3",
+                {
+                  staticClass: "card-title",
+                  on: {
+                    mouseover: function($event) {
+                      return _vm.hoverEdit("doc", true)
+                    },
+                    mouseleave: function($event) {
+                      return _vm.hoverEdit("doc", false)
+                    }
+                  }
+                },
+                [
+                  _vm._v("\r\n              Docente \r\n              "),
+                  _c(
+                    "a",
+                    {
+                      staticStyle: { display: "none" },
+                      attrs: { id: "doc", href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.accion = "editarTabDoc"
+                          _vm.tabuladores()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "badge" }, [_vm._v("Editar")]),
+                      _c("i", {
+                        staticClass: "fas fa-pen",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(3)
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c(
+                "div",
+                { staticClass: "row" },
+                [
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table table-bordered",
+                      attrs: { id: "tab2" }
+                    },
+                    [
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        [
+                          _vm._l(_vm.pagDoc, function(tab, key) {
+                            return [
+                              key == "Auxiliar Docente"
+                                ? [
+                                    _vm._l(tab, function(arrSal, dedic) {
+                                      return _vm._l(arrSal, function(sal, ind) {
+                                        return _c(
+                                          "tr",
+                                          [
+                                            _c("td", [
+                                              _vm._v(
+                                                _vm._s(
+                                                  key +
+                                                    " " +
+                                                    parseInt(ind + 1) +
+                                                    " " +
+                                                    dedic
+                                                )
+                                              )
+                                            ]),
+                                            _vm._v(" "),
+                                            _vm.accion == "editarTabDoc"
+                                              ? [
+                                                  _c(
+                                                    "td",
+                                                    { attrs: { width: "40%" } },
+                                                    [
+                                                      _c(
+                                                        "div",
+                                                        {
+                                                          staticClass:
+                                                            "form-group row",
+                                                          staticStyle: {
+                                                            margin: "0"
+                                                          }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "col-sm-4"
+                                                            },
+                                                            [
+                                                              _c("input", {
+                                                                directives: [
+                                                                  {
+                                                                    name:
+                                                                      "model",
+                                                                    rawName:
+                                                                      "v-model",
+                                                                    value:
+                                                                      _vm
+                                                                        .tabDoc[
+                                                                        key
+                                                                      ][dedic][
+                                                                        ind
+                                                                      ],
+                                                                    expression:
+                                                                      "tabDoc[key][dedic][ind]"
+                                                                  }
+                                                                ],
+                                                                staticClass:
+                                                                  "form-control form-control-sm",
+                                                                attrs: {
+                                                                  id:
+                                                                    "input" +
+                                                                    key +
+                                                                    ind,
+                                                                  type: "text"
+                                                                },
+                                                                domProps: {
+                                                                  value:
+                                                                    _vm.tabDoc[
+                                                                      key
+                                                                    ][dedic][
+                                                                      ind
+                                                                    ]
+                                                                },
+                                                                on: {
+                                                                  change: function(
+                                                                    $event
+                                                                  ) {
+                                                                    return _vm.validarCampo(
+                                                                      _vm
+                                                                        .tabDoc[
+                                                                        key
+                                                                      ][dedic][
+                                                                        ind
+                                                                      ],
+                                                                      "input" +
+                                                                        key +
+                                                                        ind
+                                                                    )
+                                                                  },
+                                                                  input: function(
+                                                                    $event
+                                                                  ) {
+                                                                    if (
+                                                                      $event
+                                                                        .target
+                                                                        .composing
+                                                                    ) {
+                                                                      return
+                                                                    }
+                                                                    _vm.$set(
+                                                                      _vm
+                                                                        .tabDoc[
+                                                                        key
+                                                                      ][dedic],
+                                                                      ind,
+                                                                      $event
+                                                                        .target
+                                                                        .value
+                                                                    )
+                                                                  }
+                                                                }
+                                                              })
+                                                            ]
+                                                          )
+                                                        ]
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              : [
+                                                  _c(
+                                                    "td",
+                                                    { attrs: { width: "40%" } },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          _vm.formatoDivisa(sal)
+                                                        )
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                          ],
+                                          2
+                                        )
+                                      })
+                                    })
+                                  ]
+                                : _vm._l(tab, function(sal, dedic) {
+                                    return _c(
+                                      "tr",
+                                      [
+                                        _c("td", [
+                                          _vm._v(_vm._s(key + " " + dedic))
+                                        ]),
+                                        _vm._v(" "),
+                                        _vm.accion == "editarTabDoc"
+                                          ? [
+                                              _c(
+                                                "td",
+                                                { attrs: { width: "40%" } },
+                                                [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "form-group row",
+                                                      staticStyle: {
+                                                        margin: "0"
+                                                      }
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "div",
+                                                        {
+                                                          staticClass:
+                                                            "col-sm-4"
+                                                        },
+                                                        [
+                                                          _c("input", {
+                                                            directives: [
+                                                              {
+                                                                name: "model",
+                                                                rawName:
+                                                                  "v-model",
+                                                                value:
+                                                                  _vm.tabDoc[
+                                                                    key
+                                                                  ][dedic],
+                                                                expression:
+                                                                  "tabDoc[key][dedic]"
+                                                              }
+                                                            ],
+                                                            staticClass:
+                                                              "form-control form-control-sm",
+                                                            attrs: {
+                                                              id:
+                                                                "input" +
+                                                                key +
+                                                                _vm.ind,
+                                                              type: "text"
+                                                            },
+                                                            domProps: {
+                                                              value:
+                                                                _vm.tabDoc[key][
+                                                                  dedic
+                                                                ]
+                                                            },
+                                                            on: {
+                                                              change: function(
+                                                                $event
+                                                              ) {
+                                                                return _vm.validarCampo(
+                                                                  _vm.tabDoc[
+                                                                    key
+                                                                  ][dedic],
+                                                                  "input" +
+                                                                    key +
+                                                                    _vm.ind
+                                                                )
+                                                              },
+                                                              input: function(
+                                                                $event
+                                                              ) {
+                                                                if (
+                                                                  $event.target
+                                                                    .composing
+                                                                ) {
+                                                                  return
+                                                                }
+                                                                _vm.$set(
+                                                                  _vm.tabDoc[
+                                                                    key
+                                                                  ],
+                                                                  dedic,
+                                                                  $event.target
+                                                                    .value
+                                                                )
+                                                              }
+                                                            }
+                                                          })
+                                                        ]
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                          : [
+                                              _c(
+                                                "td",
+                                                { attrs: { width: "40%" } },
+                                                [
+                                                  _vm._v(
+                                                    _vm._s(
+                                                      _vm.formatoDivisa(sal)
+                                                    )
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                      ],
+                                      2
+                                    )
+                                  })
+                            ]
+                          })
+                        ],
+                        2
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.accion == "editarTabDoc"
+                    ? [
+                        _c("div", { staticClass: "col col-md-3 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.actualizarTab(
+                                    _vm.tabDoc_id,
+                                    _vm.tabDoc
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Guardar cambios")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col col-md-2 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.accion = "listar"
+                                  _vm.tabuladores()
+                                }
+                              }
+                            },
+                            [_vm._v("Descartar")]
+                          )
+                        ])
+                      ]
+                    : [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "col col-md-6 btn-group mt-2",
+                            attrs: { role: "group" }
+                          },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc.Instructor
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("instructor")
+                                  }
+                                }
+                              },
+                              [_vm._v("Instructor")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc.Asistente
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("asistente")
+                                  }
+                                }
+                              },
+                              [_vm._v("Asistente")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc.Agregado
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("agregado")
+                                  }
+                                }
+                              },
+                              [_vm._v("Agregado")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc.Asociado
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("asociado")
+                                  }
+                                }
+                              },
+                              [_vm._v("Asociado")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc.Titular
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("titular")
+                                  }
+                                }
+                              },
+                              [_vm._v("Titular")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn",
+                                class: _vm.pagDoc["Auxiliar Docente"]
+                                  ? "btn-primary"
+                                  : "btn-light",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.paginaDoc("auxiliar")
+                                  }
+                                }
+                              },
+                              [_vm._v("Auxiliar")]
+                            )
+                          ]
+                        )
+                      ]
+                ],
+                2
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-footer" })
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "card card-default", attrs: { id: "tabObre" } },
+          [
+            _c("div", { staticClass: "card-header" }, [
+              _c(
+                "h3",
+                {
+                  staticClass: "card-title",
+                  on: {
+                    mouseover: function($event) {
+                      return _vm.hoverEdit("obre", true)
+                    },
+                    mouseleave: function($event) {
+                      return _vm.hoverEdit("obre", false)
+                    }
+                  }
+                },
+                [
+                  _vm._v("\r\n              Obrero  \r\n              "),
+                  _c(
+                    "a",
+                    {
+                      staticStyle: { display: "none" },
+                      attrs: { id: "obre", href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.accion = "editarTabObre"
+                          _vm.tabuladores()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { staticClass: "badge" }, [_vm._v("Editar")]),
+                      _c("i", {
+                        staticClass: "fas fa-pen",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(5)
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c(
+                "div",
+                { staticClass: "row" },
+                [
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table table-bordered",
+                      attrs: { id: "tab3" }
+                    },
+                    [
+                      _vm._m(6),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.tabObre, function(sal, key) {
+                          return _c(
+                            "tr",
+                            [
+                              _c("td", [_vm._v(_vm._s("Obrero Grado " + key))]),
+                              _vm._v(" "),
+                              _vm.accion == "editarTabObre"
+                                ? [
+                                    _c("td", { attrs: { width: "40%" } }, [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass: "form-group row",
+                                          staticStyle: { margin: "0" }
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            { staticClass: "col-sm-4" },
+                                            [
+                                              _c("input", {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value: _vm.tabObre[key],
+                                                    expression: "tabObre[key]"
+                                                  }
+                                                ],
+                                                staticClass:
+                                                  "form-control form-control-sm",
+                                                attrs: {
+                                                  id: "input" + key,
+                                                  type: "text"
+                                                },
+                                                domProps: {
+                                                  value: _vm.tabObre[key]
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    return _vm.validarCampo(
+                                                      _vm.tabObre[key],
+                                                      "input" + key
+                                                    )
+                                                  },
+                                                  input: function($event) {
+                                                    if (
+                                                      $event.target.composing
+                                                    ) {
+                                                      return
+                                                    }
+                                                    _vm.$set(
+                                                      _vm.tabObre,
+                                                      key,
+                                                      $event.target.value
+                                                    )
+                                                  }
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ])
+                                  ]
+                                : [
+                                    _c("td", { attrs: { width: "40%" } }, [
+                                      _vm._v(_vm._s(_vm.formatoDivisa(sal)))
+                                    ])
+                                  ]
+                            ],
+                            2
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.accion == "editarTabObre"
+                    ? [
+                        _c("div", { staticClass: "col col-md-3 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.actualizarTab(
+                                    _vm.tabObre_id,
+                                    _vm.tabObre
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Guardar cambios")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col col-md-2 mt-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.accion = "listar"
+                                  _vm.tabuladores()
+                                }
+                              }
+                            },
+                            [_vm._v("Descartar")]
+                          )
+                        ])
+                      ]
+                    : _vm._e()
+                ],
+                2
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-footer" })
+          ]
+        )
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ol", { staticClass: "breadcrumb" }, [
+      _c("li", { staticClass: "breadcrumb-item" }, [
+        _c("a", { attrs: { href: "#" } }, [_vm._v("Salarios")])
+      ]),
+      _vm._v(" "),
+      _c("li", { staticClass: "breadcrumb-item active" }, [
+        _vm._v("Tabuladores")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-tools" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-tool",
+          attrs: { type: "button", "data-card-widget": "collapse" }
+        },
+        [_c("i", { staticClass: "fas fa-minus" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Cargo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Salario base")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-tools" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-tool",
+          attrs: { type: "button", "data-card-widget": "collapse" }
+        },
+        [_c("i", { staticClass: "fas fa-minus" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Cargo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Salario base")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-tools" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-tool",
+          attrs: { type: "button", "data-card-widget": "collapse" }
+        },
+        [_c("i", { staticClass: "fas fa-minus" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Cargo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Salario base")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
 /*!********************************************************************!*\
   !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
@@ -68034,6 +69569,7 @@ Vue.component('Escritorio', __webpack_require__(/*! ./components/Escritorio.vue 
 Vue.component('Pdocente', __webpack_require__(/*! ./components/Pdocente.vue */ "./resources/js/components/Pdocente.vue")["default"]);
 Vue.component('Beneficios', __webpack_require__(/*! ./components/Beneficios.vue */ "./resources/js/components/Beneficios.vue")["default"]);
 Vue.component('Descuentos', __webpack_require__(/*! ./components/Descuentos.vue */ "./resources/js/components/Descuentos.vue")["default"]);
+Vue.component('Tabuladores', __webpack_require__(/*! ./components/Tabuladores.vue */ "./resources/js/components/Tabuladores.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -68043,7 +69579,7 @@ Vue.component('Descuentos', __webpack_require__(/*! ./components/Descuentos.vue 
 var app = new Vue({
   el: '#app',
   data: {
-    menu: 6
+    menu: 4
   }
 });
 
@@ -68558,6 +70094,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Pobrero_vue_vue_type_template_id_d9042750___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Pobrero_vue_vue_type_template_id_d9042750___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Tabuladores.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/components/Tabuladores.vue ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tabuladores.vue?vue&type=template&id=bf19d176& */ "./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176&");
+/* harmony import */ var _Tabuladores_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Tabuladores.vue?vue&type=script&lang=js& */ "./resources/js/components/Tabuladores.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Tabuladores_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Tabuladores.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Tabuladores.vue?vue&type=script&lang=js&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/components/Tabuladores.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Tabuladores_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Tabuladores.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tabuladores.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Tabuladores_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176& ***!
+  \********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Tabuladores.vue?vue&type=template&id=bf19d176& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Tabuladores.vue?vue&type=template&id=bf19d176&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Tabuladores_vue_vue_type_template_id_bf19d176___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

@@ -54,7 +54,9 @@ Route::delete('/descuentos/delete/{id}', 'descuentoController@destroy');
 Route::get('/descuentos/editar/{id}', 'descuentoController@edit');
 Route::put('/descuentos/actualizar', 'descuentoController@update');
 
-
+//Tabuladores
+Route::get('/tabuladores', 'tabuladorController@index');
+Route::put('/tabuladores/update/{tab}', 'tabuladorController@update');
 
 
 

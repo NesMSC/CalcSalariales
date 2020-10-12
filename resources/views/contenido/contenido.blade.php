@@ -13,7 +13,7 @@
 	<Pobrero></Pobrero>	
 </template>
 <template v-if="menu==4">
-	<h1>Tabuladores</h1>
+	<Tabuladores></Tabuladores>
 </template>
 <template v-if="menu==5">
 	<Beneficios></Beneficios>	

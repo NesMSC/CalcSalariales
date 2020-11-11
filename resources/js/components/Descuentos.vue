@@ -117,11 +117,11 @@
       </div>
       <div class="container-fluid" v-if="accion=='registrar' || accion=='editar'">
         <!-- Formulario de registro de -->
-          <!-- card datos Beneficio -->      
+          <!-- card datos Deducción -->      
           <div class="card card-default">
             <div class="card-header">
-              <h3 v-if="accion=='registrar'" class="card-title">Agregar Beneficio</h3>
-              <h3 v-else class="card-title">Editar Beneficio</h3>
+              <h3 v-if="accion=='registrar'" class="card-title">Agregar Deducción</h3>
+              <h3 v-else class="card-title">Editar Deducción</h3>
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
               </div>
@@ -265,7 +265,7 @@
         methods: {
           listarDescuentos(page, busqueda, criterio){
             let me = this;
-            var url= '/descuentos?page='+page+'&busqueda='+'&criterio='+criterio;
+            var url= '/descuentos?page='+page+'&busqueda='+busqueda+'&criterio='+criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data.descuentos.data;
                 me.arrayDescuentos = respuesta;
@@ -284,7 +284,7 @@
                 porcentaje: me.porcentaje
               }).then(function (response){
                 swal.fire(
-                        'Beneficio agregado exitosamente',
+                        'Deducción agregado exitosamente',
                         '',
                         'success'
                       )

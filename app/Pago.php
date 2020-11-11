@@ -11,4 +11,8 @@ class Pago extends Model
     public function empleado(){
         return $this->belongsTo('App\Empleado');
     }
+
+    public function nomina(){
+    	return $this->belongsTo('App\Nomina');
+    }
 }

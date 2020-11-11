@@ -1,5 +1,4 @@
 
-
 <template v-if="menu==0">
 	<Escritorio></Escritorio>
 </template>
@@ -21,4 +20,12 @@
 <template v-if="menu==6">
 	<Descuentos></Descuentos>	
 </template>
-
+<template v-if="menu==7">
+	<Nominas></Nominas>	
+</template>
+<template v-if="menu==8">
+	<Roles></Roles>	
+</template>
+<template v-if="menu==9">
+	<Usuarios></Usuarios>	
+</template>

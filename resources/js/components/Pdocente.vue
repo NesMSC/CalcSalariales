@@ -112,8 +112,8 @@
                       <td v-text="docente.dedicacion"></td>
                       <td>
                         <template v-if="docente.tipoPersonal=='Docente'">
-                          <a href="#" @click.prevent="accion='ver'; mostrarEmpleado(docente.id)"><i class="far fa-eye" ></i></a>
-                          <a href="#" @click.prevent="accion='editar'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
+                          <a href="#" style="color:#fff;" class="btn btn-info btn-sm" @click.prevent="accion='ver'; mostrarEmpleado(docente.id)"><i class="far fa-eye" ></i></a>
+                          <a href="#" style="color:#fff;" class="btn btn-success btn-sm" @click.prevent="accion='editar'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
                         </template>
                         <template v-else>
                           <a href="#" @click.prevent="accion='editarDocenteAdmin'; mostrarEmpleado(docente.id)"><i class="fas fa-edit"></i></a>
@@ -853,7 +853,7 @@
                     telefono:me.pre_telefono+me.telefono,
                     nacimiento:me.fecha_nacimiento,
                     categoria: (me.categoria=='Auxiliar Docente')?`${me.categoria} ${me.grado_auxiliar}`:me.categoria,
-                    dedicacion: (me.dedicacion=='Convencional')?`Tiempo ${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
+                    dedicacion: (me.dedicacion=='Convencional')?`${me.dedicacion} ${me.horas_convencional} Horas`:me.dedicacion,
                     fecha_ingreso: me.fecha_ingreso,
                     docente_pnf: me.docente_pnf,
                     instruccion:me.grado_instruccion,
@@ -1182,6 +1182,9 @@
             if (checkStatus) {
               return true;
             }else{
+
+              Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
+              
               let cardElement = document.getElementsByClassName('card-default');
                 for (var i = 0; i < 2; i++) {
                   if (!cardElement[i].classList.contains('collapsed-card')) {
@@ -1190,7 +1193,7 @@
                 }
 
                 cardElement[2].classList.remove('collapsed-card');
-                //Cambiar icono de minus a plus en la cabecera de la carta
+            /*    //Cambiar icono de minus a plus en la cabecera de la carta
               let elementIco = document.getElementsByClassName('fas');
                 for (var i = 11; i < 14; i++) {
                   if (elementIco[i].classList.contains('fa-minus')) {
@@ -1200,9 +1203,9 @@
                     elementIco[i].classList.remove('fa-plus');
                     elementIco[i].classList.add('fa-minus');
                   }
-                }
+                }*/
 
-                Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
+                
             }
           },
           datoSalario(){

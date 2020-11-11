@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="{{asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
   <link rel="stylesheet" href="{{asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
 
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper" id="app">
@@ -28,9 +29,6 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="index3.html" class="nav-link">Home</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Configuraciones</a>
       </li>
     </ul>
@@ -39,11 +37,18 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-user" aria-hidden="true"></i>
         </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownUser">
+          <a class="dropdown-item" href="{{ route('logout') }}" 
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fa fa-lock"></i> Cerrar sesión</a>
+        </div>      
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            {{ csrf_field() }}
+        </form>
       </li>
     </ul>
   </nav>
@@ -53,21 +58,15 @@
     <!-- Contenido Principal -->
         @include('contenido.contenido')
     <!-- /Fin del contenido principal -->
-
-      <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark">
-      <!-- Control sidebar content goes here -->
-    </aside>
-      <!-- /.control-sidebar -->
   </div>
 </div>
 <!-- ./wrapper -->
-
-  <script src="{{asset('js/app.js')}}"></script>    
-  
-  <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+  <script src="{{asset('js/app.js')}}"></script>      
   <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
-  <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+  <script>
+    $.widget.bridge('uibutton', $.ui.button)
+
+  </script>
   <script src="{{asset('plugins/chart.js/Chart.min.js')}}"></script>
   <script src="{{asset('plugins/jquery-knob/jquery.knob.min.js')}}"></script>
   <script src="{{asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')}}"></script>
@@ -75,9 +74,6 @@
   <!-- AdminLTE App -->
   <script src="{{asset('js/adminlte.js')}}"></script>
 
-  <script>
-    $.widget.bridge('uibutton', $.ui.button)
 
-  </script>
 </body>
 </html>

@@ -19,11 +19,11 @@ class CreatePagosTable extends Migration
             $table->foreign('id_empleado')->references('id')->on('empleados');
             $table->unsignedBigInteger('id_nomina');
             $table->foreign('id_nomina')->references('id')->on('nominas');
-            $table->float('sueldo');
-            $table->float('salarioNormal');
-            $table->integer('diasTrabajados');
-            $table->integer('quincena');
-            $table->date('fecha');
+            $table->string('sueldo');
+            $table->string('salarioNormal');
+            $table->json('asignaciones');
+            $table->json('deducciones');
+            $table->json('descuentos');
         });
     }
 

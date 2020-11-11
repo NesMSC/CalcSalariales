@@ -90,8 +90,8 @@
                       <td v-text="empleado.apellidos"></td>
                       <td v-text="'Obrero °'+empleado.grado"></td>
                       <td>
-                        <a href="#" @click="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
-                        <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
+                        <a href="#" style="color:#fff;" class="btn btn-info btn-sm" @click.prevent="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
+                        <a href="#" style="color:#fff;" class="btn btn-success btn-sm" @click.prevent="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
                       </td>
                     </tr>
                   </tbody>
@@ -870,15 +870,16 @@
             if (checkStatus) {
               return true;
             }else{
+              Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
               let cardElement = document.getElementsByClassName('card-default');
                 for (var i = 0; i < 2; i++) {
                   if (!cardElement[i].classList.contains('collapsed-card')) {
                     cardElement[i].classList.add('collapsed-card')
                   }       
                 }
-
                 cardElement[2].classList.remove('collapsed-card');
-                //Cambiar icono de minus a plus en la cabecera de la carta
+                
+                /*//Cambiar icono de minus a plus en la cabecera de la carta
               let elementIco = document.getElementsByClassName('fas');
                 for (var i = 11; i < 14; i++) {
                   if (elementIco[i].classList.contains('fa-minus')) {
@@ -888,9 +889,9 @@
                     elementIco[i].classList.remove('fa-plus');
                     elementIco[i].classList.add('fa-minus');
                   }
-                }
+                }*/
 
-                Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
+                
             }
           },
           datoSalario(){

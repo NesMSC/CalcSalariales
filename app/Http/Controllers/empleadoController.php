@@ -87,7 +87,8 @@ class empleadoController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     */    public function store(Request $request)
+     */    
+    public function store(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
         $cedula = $request->cedula;

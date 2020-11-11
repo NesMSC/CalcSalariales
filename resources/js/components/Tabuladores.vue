@@ -139,7 +139,7 @@
                           <td width="40%">
                             <div class="form-group row" style="margin:0;">
                               <div class="col-sm-4">
-                                <input :id="'input'+key+ind" @change="validarCampo(tabDoc[key][dedic], 'input'+key+ind)" v-model="tabDoc[key][dedic]" type="text" class="form-control form-control-sm">
+                                <input :id="'input'+key" @change="validarCampo(tabDoc[key][dedic], 'input'+key)" v-model="tabDoc[key][dedic]" type="text" class="form-control form-control-sm">
                               </div>
                             </div>
                           </td>
@@ -243,9 +243,81 @@
     export default {
         data() {
           return {
-            tabAdmin:{},
+            tabAdmin:{
+               "Apoyo": [],
+               "Técnico": [],
+               "Profesional": []
+            },
             tabAdmin_id:'',
-            tabDoc:{},
+            tabDoc:{
+              "Instructor":{
+                  "Exclusiva": 0,
+                  "Tiempo Completo": 0,
+                  "Medio Tiempo": 0,
+                  "Convencional 7 Horas": 0,
+                  "Convencional 6 Horas": 0,
+                  "Convencional 5 Horas": 0,
+                  "Convencional 4 Horas": 0,
+                  "Convencional 3 Horas": 0,
+                  "Convencional 2 Horas": 0
+              },
+              "Asistente":{
+                  "Exclusiva": 0,
+                  "Tiempo Completo": 0,
+                  "Medio Tiempo": 0,
+                  "Convencional 7 Horas": 0,
+                  "Convencional 6 Horas": 0,
+                  "Convencional 5 Horas": 0,
+                  "Convencional 4 Horas": 0,
+                  "Convencional 3 Horas": 0,
+                  "Convencional 2 Horas": 0
+              },
+              "Agregado":{
+                  "Exclusiva": 0,
+                  "Tiempo Completo": 0,
+                  "Medio Tiempo": 0,
+                  "Convencional 7 Horas": 0,
+                  "Convencional 6 Horas": 0,
+                  "Convencional 5 Horas": 0,
+                  "Convencional 4 Horas": 0,
+                  "Convencional 3 Horas": 0,
+                  "Convencional 2 Horas": 0
+              },
+              "Asociado":{
+                  "Exclusiva": 0,
+                  "Tiempo Completo": 0,
+                  "Medio Tiempo": 0,
+                  "Convencional 7 Horas": 0,
+                  "Convencional 6 Horas": 0,
+                  "Convencional 5 Horas": 0,
+                  "Convencional 4 Horas": 0,
+                  "Convencional 3 Horas": 0,
+                  "Convencional 2 Horas": 0
+                  
+              },
+              "Titular":{
+                  "Exclusiva": 0,
+                  "Tiempo Completo": 0,
+                  "Medio Tiempo": 0,
+                  "Convencional 7 Horas": 0,
+                  "Convencional 6 Horas": 0,
+                  "Convencional 5 Horas": 0,
+                  "Convencional 4 Horas": 0,
+                  "Convencional 3 Horas": 0,
+                  "Convencional 2 Horas": 0
+              },
+              "Auxiliar Docente":{
+                  "Exclusiva":[0, 0, 0],
+                  "Tiempo Completo":[0, 0, 0],
+                  "Medio Tiempo":[0, 0, 0],
+                  "Convencional 7 Horas":[0, 0, 0],
+                  "Convencional 6 Horas":[0, 0, 0],
+                  "Convencional 5 Horas":[0, 0, 0],
+                  "Convencional 4 Horas":[0, 0, 0],
+                  "Convencional 3 Horas":[0, 0, 0],
+                  "Convencional 2 Horas":[0, 0, 0]
+              }
+            },
             tabDoc_id:'',
             tabObre:{},
             tabObre_id:'',
@@ -349,7 +421,7 @@
                       'success');
 
                     me.accion = "listar";
-                    me.Tabuladores();
+                    me.tabuladores();
               }).catch((error)=>{
                 console.log(error);
               })

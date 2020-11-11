@@ -60,7 +60,6 @@ class descuentoController extends Controller
             ],
           "descuentos" => $descuentos
         ];
-        
     }
 
     /**

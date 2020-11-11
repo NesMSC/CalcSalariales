@@ -36,6 +36,10 @@ Vue.component('Pdocente', require('./components/Pdocente.vue').default);
 Vue.component('Beneficios', require('./components/Beneficios.vue').default);
 Vue.component('Descuentos', require('./components/Descuentos.vue').default);
 Vue.component('Tabuladores', require('./components/Tabuladores.vue').default);
+Vue.component('Roles', require('./components/Roles.vue').default);
+Vue.component('Usuarios', require('./components/Usuarios.vue').default);
+Vue.component('Nominas', require('./components/Nominas.vue').default);
+
 
 
 /**
@@ -47,7 +51,7 @@ Vue.component('Tabuladores', require('./components/Tabuladores.vue').default);
 const app = new Vue({
     el: '#app',
     data:{
-    	menu: 4
+    	menu: 0
     }
 });
  

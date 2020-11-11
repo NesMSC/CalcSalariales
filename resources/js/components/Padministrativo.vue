@@ -18,7 +18,7 @@
                 <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Administrativo</a></li>
                 <li class="breadcrumb-item">Registrar</li>
               </ol>
-            </template>
+            </template> 
             <template v-if="accion=='ver'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">Trabajadores</li>
@@ -92,8 +92,8 @@
                       <td v-text="empleado.grado+' '+empleado.nivel"></td>
                       <td v-text="empleado.departamento"></td>
                       <td>
-                        <a href="#" @click="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
-                        <a href="#" @click="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
+                        <a href="#" style="color:#fff;" class="btn btn-info btn-sm" @click.prevent="accion='ver'; editarEmpleado(empleado.id)"><i class="far fa-eye" ></i></a>
+                        <a href="#" style="color:#fff;" class="btn btn-success btn-sm" @click.prevent="accion='editar'; editarEmpleado(empleado.id)"><i class="fas fa-edit"></i></a>
                       </td>
                     </tr>
                   </tbody>
@@ -396,7 +396,6 @@
           <template v-if="accion=='editar'">
             <button @click="actualizarEmpleado()" type="button" class="btn btn-primary btn-lg">Actualizar</button>
           </template>
-          
       </div><!-- /.container-fluid -->
       <div class="container-fluid" v-if="accion=='ver'">
         <div class="row">
@@ -407,9 +406,9 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="table1" class="table">
+                <table class="table">
                   <thead>
-                    <tr>
+                    <tr >
                       <td><strong>Datos personales</strong></td>
                     </tr>
                   </thead>
@@ -420,13 +419,11 @@
                       <td v-text="'Número de teléfono: '+pre_telefono+telefono"></td>
                     </tr>
                     <tr >
-                      <td v-text="'Fecha de nacimiento: '+fecha_nacimiento"></td>
-                      <td> </td>
-                      <td> </td>
+                      <td colspan="3" v-text="'Fecha de nacimiento: '+fecha_nacimiento"> </td>
                     </tr>
                   </tbody>
                 </table>
-                <table id="table2" class="table">
+                <table class="table">
                   <thead>
                     <tr >
                       <td><strong>Datos de empleado</strong></td>
@@ -449,10 +446,70 @@
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
+            <div class="col-12">
+              <!-- card del listado de pagos-->
+            <div class="card">
+              <div class="card-header">
+                <h2><i>Historial de pagos</i></h2>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="form-group row">
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">
+                          <a href="#" ><i aria-hidden="true" class='fa fa-search'></i></a>
+                        </div>
+                      </div>
+                      <input id="searchPago" type="text" class="form-control" placeholder="Busqueda">
+                    </div>
+                  </div>
+                </div>
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Sueldo</th>
+                    <th>Pago</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="pago in arrayPagos" :key="pago.id">
+                      <td v-text="pago.codigo"></td>
+                      <td v-text="formatoDivisa(pago.sueldo)"></td>
+                      <td v-text="formatoDivisa(pago.pago)"></td>
+                      <td v-text="pago.fecha"></td>
+                      <td>
+                        <a href="#" @click.prevent="pagoPDF(pago.id, id_empleado)" style="color:#fff;" class="btn btn-danger btn-sm">PDF</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                
+                  <ul class="pagination btn-group mr-2 mt-4" role="group" aria-label="First group">
+                    <li v-if="pagination.current_page > 1">
+                      <button type="button" class="btn btn-light" @click.prevent="cambioPaginaPagos(pagination.current_page - 1)">Atras</button>
+                    </li>
+                    <li v-for="page in pageNumber" :key="page" :class="[page == 1 ? 'active' : '']">
+                      <button @click.prevent="cambioPaginaPagos(page)" :class="[page == isActive ? 'btn-primary' : 'btn-light']" v-text="page" type="button" class="btn"></button>
+                    </li>
+                    <li v-if="pagination.current_page < pagination.last_page">
+                      <button type="button" class="btn btn-light" @click.prevent="cambioPaginaPagos(pagination.current_page + 1)">Siguiente</button>
+                    </li>
+                  </ul>
+                
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
           </div>
         </div>
       </div>
-      <!-- Button trigger modal -->
+    <!-- Button trigger modal -->
     </section>
     <!-- /.content -->
     <!-- Modal Beneficios-->
@@ -595,6 +652,7 @@
             id_salario: 1,
             salarioTabla: 0,
             UT: '',
+            arrayPagos: [],
             arrayBeneficios: [],
             arrayDescuentos: [],
             beneficiosEmpleado: [],
@@ -649,15 +707,15 @@
         methods: {
           listarEmpleado(page, busqueda, criterio){
             let me=this;
-                var url= '/empleados?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data.empleados.data;
-                    me.arrayempleado = respuesta;
-                    me.pagination = response.data.pagination;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            var url= '/empleados?page='+page+'&busqueda='+busqueda+'&criterio='+criterio+'&tipo='+me.tipoPersonal;
+            axios.get(url).then(function (response) {
+                var respuesta= response.data.empleados.data;
+                me.arrayempleado = respuesta;
+                me.pagination = response.data.pagination;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
           },
           registrar(){
             let me = this;
@@ -752,11 +810,28 @@
               me.calculaAñosServicio();
 
               me.datoSalario();
-              
+              if (me.accion=='ver') {
+                me.arrayPagos = me.historialPagos(1, empleado.id_empleado);
+              }
               
             }).catch(function(error){
               console.log(error);
             });
+          },
+          historialPagos(page, id){
+            console.log(id);
+            let me = this;
+            const url = '/empleados/historialPagos/'+id+'?page='+page;
+
+            axios.get(url).then(function(response){
+              me.arrayPagos = response.data.pagos.data;
+              me.pagination = response.data.pagination;
+            }).catch(function(error){
+              console.log(error);
+            });
+          },
+          pagoPDF(id, id_empleado){
+            window.open('/pagos/pdf/'+id_empleado+'/'+id);
           },
           actualizarEmpleado(){
             let me = this;
@@ -912,15 +987,17 @@
             if (checkStatus) {
               return true;
             }else{
+
+              Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
+
               let cardElement = document.getElementsByClassName('card-default');
                 for (var i = 0; i < 2; i++) {
                   if (!cardElement[i].classList.contains('collapsed-card')) {
                     cardElement[i].classList.add('collapsed-card')
                   }       
                 }
-
                 cardElement[2].classList.remove('collapsed-card');
-                //Cambiar icono de minus a plus en la cabecera de la carta
+              /*  //Cambiar icono de minus a plus en la cabecera de la carta
               let elementIco = document.getElementsByClassName('fas');
                 for (var i = 11; i < 14; i++) {
                   if (elementIco[i].classList.contains('fa-minus')) {
@@ -930,9 +1007,9 @@
                     elementIco[i].classList.remove('fa-plus');
                     elementIco[i].classList.add('fa-minus');
                   }
-                }
+                }*/
 
-                Vue.toasted.info( 'Confirmar datos de salario del empleado', {duration:2000});
+                
             }
           },
           datoSalario(){
@@ -1150,6 +1227,10 @@
           cambioPagina(page){
             this.pagination.current_page = page;
             this.listarEmpleado(page, this.busqueda, this.criterio);
+          },
+          cambioPaginaPagos(page){
+            this.pagination.current_page = page;
+            this.historialPagos(page, this.id_empleado);
           }   
         }, 
         mounted() {

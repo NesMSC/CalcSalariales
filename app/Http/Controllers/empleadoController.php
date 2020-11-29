@@ -258,10 +258,22 @@ class empleadoController extends Controller
 
     public function descuentos(Request $request)
     {
-        if (!$request->ajax()) return redirect('/');
+        //if (!$request->ajax()) return redirect('/');
 
-        $descuentos = DB::table('descuentos')->get();
+        $descuentos = DB::table('descuentos')
+                      ->where('tipo', 'Descuento')
+                      ->get();
 
         return ["descuentos" => $descuentos];
+    }
+    public function deducciones(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $deducciones = DB::table('descuentos')
+                      ->where('tipo', '!=','Descuento')
+                      ->get();
+
+        return ["deducciones" => $deducciones];
     }
 }

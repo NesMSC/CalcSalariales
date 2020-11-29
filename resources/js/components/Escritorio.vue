@@ -20,13 +20,13 @@
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
+        <!-- Small boxes -->
         <div class="row">
           <div class="col-lg-4 col-6">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>3</h3>
+                <h3>24</h3>
 
                 <p>Administrativos</p>
               </div>
@@ -41,7 +41,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>0</h3>
+                <h3>16</h3>
 
                 <p>Docentes</p>
               </div>
@@ -56,7 +56,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>0</h3>
+                <h3>5</h3>
 
                 <p>Obreros</p>
               </div>
@@ -70,20 +70,47 @@
         <!-- /.row -->
         <div class="row">
           <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>Indicadores</h3>
-                <p>Salario minimo: 400000.00</p>
-                <p>Unidad Tributaria: 532.00</p>
-                <p>CestaTicket: 400000.00</p>
+          <div class="col-12">
+            <div class="card card-default">
+              <div class="card-header">
+                <h3 class="card-title">Indicadores Económicos</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                </div>
               </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Salario minimo</th>
+                    <th>CestaTicket</th>
+                    <th>Unidad Tributaria</th>
+                    <th>Gaceta</th>
+                    <th>Fecha</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>400.000</td>
+                      <td>400.000</td>
+                      <td>532.00</td>
+                      <td>N° 6.532</td>
+                      <td>2020-04-27 <strong>-</strong> <span class="text-success">Actual</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                
+                  <ul class="pagination btn-group mr-2 mt-4" role="group" aria-label="First group">
+                    <li>
+                      <button type="button" class="btn">1</button>
+                    </li>
+                  </ul>
+                
               </div>
-              <a href="#" class="small-box-footer">Ver <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
           <!-- ./col -->
         </div>
@@ -104,5 +131,5 @@
         },
         mounted() {
         }
-    }
+    };
 </script>

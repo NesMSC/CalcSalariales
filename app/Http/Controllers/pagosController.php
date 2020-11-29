@@ -62,7 +62,8 @@ class pagosController extends Controller
     	return round($pago, 2);
     }
 
-    public function pdf($id_empleado, $id){
+    public function pdf($id_empleado, $id)
+    {
 
         $pago_empleado = Pago::join('nominas', 'pagos.id_nomina', 'nominas.id')
                             ->join('empleados', 'pagos.id_empleado', 'empleados.id')
@@ -96,6 +97,7 @@ class pagosController extends Controller
         $arrayAsig = [];
         $totalAsig = 0;
 
+        
         for ($i=0; $i < count($asig); $i++) { 
 
             if ($asig[$i]->concepto == 'Prima de Profesionalización') {
@@ -136,7 +138,8 @@ class pagosController extends Controller
 
     }
 
-    public function calcArrayDeduc($deducciones, $salario){
+    public function calcArrayDeduc($deducciones, $salario)
+    {
 
         $arrayDeduc = [];
         $total = 0;
@@ -154,7 +157,8 @@ class pagosController extends Controller
 
     }
 
-    public function calcArrayDesc($desc, $salario){
+    public function calcArrayDesc($desc, $salario)
+    {
         $arrayDesc = [];
         $total = 0;
 
@@ -232,4 +236,5 @@ class pagosController extends Controller
 
         return $añosServ;
     }
+
 }

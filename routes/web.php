@@ -33,6 +33,7 @@ Route::group(['middleware'=>['auth']], function(){
 	Route::get('/empleados/beneficios', 'empleadoController@beneficios');
 	Route::get('/empleados/primaProfesional', 'empleadoController@primaProfesional');
 	Route::get('/empleados/primaAntiguedad', 'empleadoController@primaAntiguedad');
+	Route::get('/empleados/deducciones', 'empleadoController@deducciones');
 	Route::get('/empleados/descuentos', 'empleadoController@descuentos');
 	Route::get('/empleados/editarEmpleado/{id}', 'empleadoController@edit');
 	Route::put('/empleados/actualizarEmpleado', 'empleadoController@update');
@@ -49,6 +50,8 @@ Route::group(['middleware'=>['auth']], function(){
 	//Pagos
 	Route::get('/empleados/historialPagos/{id}', 'pagosController@historialPagos');
 	Route::get('/pagos/pdf/{id_empleado}/{id}', 'pagosController@pdf');
+	Route::get('/pagos/primaProfesional/{id}/{sueldo}', 'pagosController@primaProfesional');
+
 
 	Route::middleware(['Admin'])->group(function(){
 		//Beneficios
@@ -60,7 +63,6 @@ Route::group(['middleware'=>['auth']], function(){
 		Route::put('/beneficios/actualizar', 'beneficioController@update');
 		Route::get('/beneficios/primaProfesional', 'beneficioController@primaProfesional');
 		Route::put('/beneficios/primaProfesional/update', 'beneficioController@primaProUpdate');
-
 		//Descuentos
 		Route::get('/descuentos', 'descuentoController@index');
 		Route::post('/descuentos/agregarNuevo', 'descuentoController@store');

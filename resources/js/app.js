@@ -13,6 +13,10 @@ import Toasted from 'vue-toasted';
 import 'vue-select/dist/vue-select.css';
 import vSelect from 'vue-select';
 
+import Fragment from 'vue-fragment';
+
+Vue.use(Fragment.Plugin);
+
 Vue.use(Toasted);
 
 Vue.component('v-select', vSelect);
@@ -39,6 +43,7 @@ Vue.component('Tabuladores', require('./components/Tabuladores.vue').default);
 Vue.component('Roles', require('./components/Roles.vue').default);
 Vue.component('Usuarios', require('./components/Usuarios.vue').default);
 Vue.component('Nominas', require('./components/Nominas.vue').default);
+Vue.component('salarios', require('./components/salarios.vue').default);
 
 
 

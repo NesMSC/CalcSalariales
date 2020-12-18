@@ -36,4 +36,23 @@ class tabuladorController extends Controller
         DB::table('salarios')->where('id', $tab)->update(['tabulador'=>$tabulador]);
     }
 
+    public function indicadores(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $indicadores = DB::table('ind_economicos')
+                        ->select('id', 'salarioMin', 'UnTributaria', 'gaceta', 'fecha')
+                        ->get();
+        return ["indicadores" => $indicadores];
+
+    }
+
+    public function editarIndicador(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        DB::table('ind_economicos')->where('id', $request->id_ind)->update(["salarioMin"=>$request->salarioMin, "UnTributaria" => $request->ut, "gaceta" => $request->gaceta, "fecha" => $request->fecha]);
+
+    }
+
 }

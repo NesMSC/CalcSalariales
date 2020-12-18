@@ -26,7 +26,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>24</h3>
+                <h3 v-text="numAdmin"></h3>
 
                 <p>Administrativos</p>
               </div>
@@ -41,7 +41,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>16</h3>
+                <h3 v-text="numDoc"></h3>
 
                 <p>Docentes</p>
               </div>
@@ -56,7 +56,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>5</h3>
+                <h3 v-text="numObre"></h3>
 
                 <p>Obreros</p>
               </div>
@@ -84,19 +84,46 @@
                   <thead>
                   <tr>
                     <th>Salario minimo</th>
-                    <th>CestaTicket</th>
                     <th>Unidad Tributaria</th>
                     <th>Gaceta</th>
                     <th>Fecha</th>
+                    <th>Acción</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>400.000</td>
-                      <td>400.000</td>
-                      <td>532.00</td>
-                      <td>N° 6.532</td>
-                      <td>2020-04-27 <strong>-</strong> <span class="text-success">Actual</span></td>
+                    <tr v-for="indicador in indicadores" :key="indicador.id">
+                      <template v-if="accion=='editar'">
+                        <td>
+                          <div class="form-group row" style="margin:0;">
+                            <div class="col-sm-8">
+                              <input v-model="salarioMin" type="text" class="form-control form-control-sm">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="form-group row" style="margin:0;">
+                            <div class="col-sm-8">
+                              <input v-model="ut" type="text" class="form-control form-control-sm">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="form-group row" style="margin:0;">
+                            <div class="col-sm-8">
+                              <input v-model="gaceta" type="text" class="form-control form-control-sm">
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{indicador.fecha}}<strong>-</strong> <span class="text-success">Actual</span></td>
+                        <td><a class="btn btn-primary" @click.prevent="guardarInd(indicador.id)" href="#">Guardar</a></td>
+                      </template>
+                      <template v-else>
+                        <td v-text="formato(indicador.salarioMin)"></td>
+                        <td v-text="formato(indicador.UnTributaria)"></td>
+                        <td v-text="indicador.gaceta"></td>
+                        <td>{{indicador.fecha}}<strong>-</strong> <span class="text-success">Actual</span></td>
+                        <td><a class="btn btn-success" @click.prevent="accion='editar'" href="#"><i class="fas fa-pen" aria-hidden="true"></i></a></td>
+                      </template>
                     </tr>
                   </tbody>
                 </table>
@@ -125,11 +152,68 @@
     export default {
         data() {
           return {
+            accion: '',
+            numAdmin: 0,
+            numObre: 0,
+            numDoc: 0,
+            indicadores: [],
+            salarioMin: 0,
+            ut: 0,
+            gaceta: '',
+            fecha: ''
         }},
         methods: {
-          
+          contar(){
+            let url = 'empleados/contar';
+            axios.get(url).then((response)=>{
+              this.numAdmin = response.data.admin;
+              this.numObre = response.data.obrero;
+              this.numDoc = response.data.docente;
+            }).catch((error)=>{
+              console.log(error);
+            });
+          },
+          indEconomicos(){
+            axios.get('/indicadores').then((response)=>{
+              this.indicadores = response.data.indicadores;
+              this.salarioMin = response.data.indicadores[0].salarioMin;
+              this.ut = response.data.indicadores[0].UnTributaria;
+              this.gaceta = response.data.indicadores[0].gaceta;
+              this.fecha = response.data.indicadores[0].fecha;
+            }).catch((error)=>{
+              console.log(error);
+            });
+          },
+          guardarInd(id){
+            let url = '/indicadores/editar';
+            console.log(id)
+            let fecha = new Date;
+            axios.put(url, {
+                salarioMin: this.salarioMin,
+                ut: this.ut,
+                gaceta: this.gaceta,
+                fecha: `${fecha.getFullYear()}-${(fecha.getMonth()+1)}-${fecha.getDate()}`,
+                id_ind: id
+            }).then((response)=>{
+              swal.fire(
+                      'Actualizado exitosamente',
+                      '',
+                      'success');
+
+              this.accion = "";
+              this.indEconomicos();
+            }).catch((error)=>{
+              console.log(error);
+            });
+          },
+          formato(number){
+            let monto = new Intl.NumberFormat('en-US').format(number);
+            return monto;
+          },
         },
         mounted() {
+          this.contar();
+          this.indEconomicos();
         }
     };
 </script>

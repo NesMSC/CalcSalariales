@@ -51,9 +51,9 @@
                       <td v-text="nomina.id"></td>
                       <td v-text="nomina.quincena"></td>
                       <td v-text="nomina.fecha"></td>
-                      <td>
+                      <!-- <td>
                         <a href="#" style="color:#fff;" class="btn btn-success btn-sm" click.prevent=""><i class="fa fa-table" aria-hidden="true"></i></a>
-                      </td> 
+                      </td> --> 
                     </tr>
                   </tbody>
                 </table>

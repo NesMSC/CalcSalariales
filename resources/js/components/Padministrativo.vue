@@ -22,7 +22,8 @@
             <template v-if="accion=='aggDatosSalarios'">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item active"><a href="#" @click.prevent="accion='listar'; resetearInputs()">Administrativo</a></li>
-                <li class="breadcrumb-item" ><a href="#" @click.prevent="accion='registrar';">Registrar</a></li>
+                <li v-if="id_empleado==''" class="breadcrumb-item" ><a href="#" @click.prevent="accion='registrar';">Registrar</a></li>
+                <li v-else class="breadcrumb-item" ><a href="#" @click.prevent="accion='editar';">Editar</a></li>
                 <li class="breadcrumb-item">Agregar datos salariales</li>
 
               </ol>
@@ -318,6 +319,7 @@
             :avisar="checked"
             :personal="tipoPersonal"
             :idSalario="id_salario"
+            :instruccion="grado_instruccion"
         >
           
         </salarios>  
@@ -606,16 +608,6 @@
             let url = '/empleados/editarEmpleado/'+id;
             axios.get(url).then(function(response){
               let empleado = response.data.empleado[0];   
-              me.beneficiosEmpleado = response.data.beneficios;
-              me.descuentosEmpleado = response.data.descuentos;
-              
-              for (var i = 0; i < me.beneficiosEmpleado.length; i++) {
-                    me.id_beneficiosAgregados.push(me.beneficiosEmpleado[i].id);
-                  }
-
-              for (var i = 0; i < me.descuentosEmpleado.length; i++) {
-                    me.id_descuentosAgregados.push(me.descuentosEmpleado[i].id);
-                  }
 
               let cedula = empleado.cedula;
               me.nombres= empleado.nombres;
@@ -646,7 +638,6 @@
             });
           },
           historialPagos(page, id){
-            console.log(id);
             let me = this;
             const url = '/empleados/historialPagos/'+id+'?page='+page;
 
@@ -873,6 +864,10 @@
             me.beneficiosEmpleado= [];
             me.descuentosEmpleado= [];
             me.datosSalario=false;
+          },
+          formatoDivisa(number){
+           let monto = new Intl.NumberFormat('en-US').format(number);
+           return monto;
           },
           cambioPagina(page){
             this.pagination.current_page = page;

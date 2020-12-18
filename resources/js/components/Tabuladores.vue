@@ -32,7 +32,7 @@
           <div class="card-header" >
             <h3 class="card-title" @mouseover="hoverEdit('admin', true)" @mouseleave="hoverEdit('admin', false)">
               Administrativo  
-              <a id="admin" @click.prevent="accion='editarTabAdmin'; tabuladores()" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
+              <a id="admin" @click.prevent="accion='editarTabAdmin';" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
             </h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
@@ -95,7 +95,7 @@
           <div class="card-header">
             <h3 class="card-title" @mouseover="hoverEdit('doc', true)" @mouseleave="hoverEdit('doc', false)">
               Docente 
-              <a id="doc" @click.prevent="accion='editarTabDoc'; tabuladores()" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
+              <a id="doc" @click.prevent="accion='editarTabDoc';" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
             </h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
@@ -183,7 +183,7 @@
           <div class="card-header">
             <h3 class="card-title" @mouseover="hoverEdit('obre', true)" @mouseleave="hoverEdit('obre', false)">
               Obrero  
-              <a id="obre" @click.prevent="accion='editarTabObre'; tabuladores()" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
+              <a id="obre" @click.prevent="accion='editarTabObre';" style="display:none;" href="#"><span class="badge">Editar</span><i class="fas fa-pen" aria-hidden="true"></i></a>
             </h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>

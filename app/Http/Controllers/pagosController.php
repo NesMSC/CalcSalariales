@@ -73,7 +73,7 @@ class pagosController extends Controller
                             ->first();
 
         $asig= $this->calcArrayAsig(json_decode($pago_empleado->asignaciones), $pago_empleado->sueldo, $id_empleado);
-        $deduc=$this->calcArrayDeduc(json_decode($pago_empleado->deducciones), $pago_empleado->sueldo, $id_empleado);
+        $deduc=$this->calcArrayDeduc(json_decode($pago_empleado->asignaciones), json_decode($pago_empleado->deducciones), $pago_empleado->sueldo, $id_empleado);
         $desc=$this->calcArrayDesc(json_decode($pago_empleado->descuentos), $pago_empleado->sueldo, $id_empleado);
 
         $datos = ["datosEmpleado" => $pago_empleado, "asignaciones" => $asig, "deducciones" => $deduc, "descuentos" => $desc];
@@ -87,8 +87,10 @@ class pagosController extends Controller
         }
 
 
-        $pdf = \PDF::loadView('pdf.reportePago', $datos);
-        return $pdf->stream('Reporte.pdf');
+        /*$pdf = \PDF::loadView('pdf.reportePago', $datos);
+        return $pdf->stream('Reporte.pdf');*/
+
+        return $datos;
     }
 
     public function calcArrayAsig($asig, $sueldo, $id)
@@ -132,21 +134,28 @@ class pagosController extends Controller
         $antiguedad = $this->primaAntiguedad($id, $totalAsig+$sueldo);
 
         array_push($arrayAsig, ["concepto"=>"Prima de Antiguedad","valor"=>$antiguedad]);
-       
 
-        return ["arrayAsignaciones"=>$arrayAsig, "totalAsignaciones" => $totalAsig+$antiguedad];
+        return ["arrayAsignaciones"=>$arrayAsig, "totalAsignaciones" => $totalAsig+$antiguedad+$sueldo/2];
 
     }
 
-    public function calcArrayDeduc($deducciones, $salario)
+    public function calcArrayDeduc($beneficios, $deducciones, $salario, $id_empleado)
     {
-
+        $asignaciones = $this->calcArrayAsig($beneficios, $salario, $id_empleado);
+        $totalAsig = $asignaciones["totalAsignaciones"] + $salario/2;
         $arrayDeduc = [];
         $total = 0;
 
         for ($i=0; $i < count($deducciones); $i++) {
 
-            $calc = ($salario*$deducciones[$i]->porcentaje)/100;
+
+            if ($deducciones[$i]->concepto =='S.S.O' || $deducciones[$i]->concepto == 'R.P.E') {
+                $calc = $this->sso_rpe($deducciones[$i]->porcentaje, $totalAsig);
+            }else if($deducciones[$i]->concepto == 'V.H' || $deducciones[$i]->concepto == 'F.J'){
+                $calc = (($totalAsig*$deducciones[$i]->porcentaje)/100);
+            }else{
+                $calc = (($salarioTabla*$deducciones[$i]->porcentaje)/100);
+            };
 
             array_push($arrayDeduc, ["concepto" => $deducciones[$i]->concepto, "valor" => $calc]);
              
@@ -237,4 +246,10 @@ class pagosController extends Controller
         return $añosServ;
     }
 
+    public function sso_rpe($porcentaje, $totalAsig)
+    {
+        $valor = ((($totalAsig * 12)/52)*$porcentaje/100)*4;
+        
+        return $valor;
+    }
 }

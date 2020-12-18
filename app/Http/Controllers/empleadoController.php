@@ -162,11 +162,10 @@ class empleadoController extends Controller
                             ->where('personas.id', '=', $id)
                             ->get();
         
-        $empleado_id = Persona::find($id)->empleado->id;                      
-        $empleado_bene = Empleado::find($empleado_id)->beneficio;
-        $empleado_desc = Empleado::find($empleado_id)->descuento;
+        
 
-        return ["empleado"=>$empleado, "beneficios" => $empleado_bene, "descuentos" => $empleado_desc];
+        return ["empleado"=>$empleado];
+
     }
 
     /**
@@ -176,6 +175,27 @@ class empleadoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function editarSalarios($id)
+    {
+        $empleado_bene = Empleado::find($id)->beneficio;
+
+        $empleado_deduc = DB::table('descuentos')
+                          ->join('descuento_empleado', 'descuentos.id', 'descuento_empleado.descuento_id')
+                          ->select('descuentos.id as id','descuentos.concepto', 'descuentos.porcentaje', 'descuentos.tipo')
+                          ->where('descuentos.tipo', '!=' ,'Descuento')
+                          ->where('descuento_empleado.empleado_id', $id)->get();
+
+        $empleado_desc = DB::table('descuentos')
+                          ->join('descuento_empleado', 'descuentos.id', 'descuento_empleado.descuento_id')
+                          ->select('descuentos.id as id','descuentos.concepto', 'descuentos.porcentaje', 'descuentos.tipo')
+                          ->where('descuentos.tipo', 'Descuento')
+                          ->where('descuento_empleado.empleado_id', $id)->get();
+
+
+        return ["beneficios" => $empleado_bene, "descuentos" => $empleado_desc, "deducciones" => $empleado_deduc];
+    }
+
     public function update(Request $request)
     {
       DB::table('personas')
@@ -219,6 +239,7 @@ class empleadoController extends Controller
 
         return ["tabulador"=>$salario[0]->tabulador, "UT"=>$salario[0]->UnTributaria];
     }
+
     public function beneficios(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
@@ -228,20 +249,18 @@ class empleadoController extends Controller
         return ["beneficios" => $beneficios];
     }
 
-
-    public function primaProfesional(Request $request)
+    public function primaProfesional($instruccion, $salario)
     {
-        if (!$request->ajax()) return redirect('/');
 
         $json = file_get_contents('json/primaProfesional.json');
-        $json_primas=json_decode($json);
+        $porcentajes = json_decode($json, true);
 
-        $prima = DB::table('beneficios')
-                      ->select('id', 'concepto', 'tipo_valor', 'valor')
-                      ->where('valor', '=', 0)
-                      ->get();
+        if (!isset($porcentajes[$instruccion])) {
+            return 0;
+        }
+        $prima = $porcentajes[$instruccion];
 
-        return ["primaProfesional" => $json_primas, "prima" => $prima];
+        return ($prima*$salario)/100;
     }
 
     public function primaAntiguedad(Request $request)
@@ -258,7 +277,7 @@ class empleadoController extends Controller
 
     public function descuentos(Request $request)
     {
-        //if (!$request->ajax()) return redirect('/');
+        if (!$request->ajax()) return redirect('/');
 
         $descuentos = DB::table('descuentos')
                       ->where('tipo', 'Descuento')
@@ -266,6 +285,7 @@ class empleadoController extends Controller
 
         return ["descuentos" => $descuentos];
     }
+
     public function deducciones(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
@@ -275,5 +295,24 @@ class empleadoController extends Controller
                       ->get();
 
         return ["deducciones" => $deducciones];
+    }
+
+    public function contar(Request $request){
+
+      if (!$request->ajax()) return redirect('/');
+
+      $admin = DB::table('empleados')
+                ->where('tipoPersonal', 'Administrativo')
+                ->count();
+
+      $docente = DB::table('empleados')
+                ->where('tipoPersonal', 'Docente')
+                ->count();
+
+      $obrero = DB::table('empleados')
+                ->where('tipoPersonal', 'Obrero')
+                ->count();
+
+      return ["admin" => $admin, "docente" => $docente, "obrero" => $obrero];
     }
 }

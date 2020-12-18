@@ -41,7 +41,7 @@ class nominaController extends Controller
     		for ($i=0; $i < count($personal); $i++) { 
     			$nomina = new Nomina;
     			$nomina->quincena = $request->quincena;
-	    		$nomina->fecha = date('Y-d-m');
+	    		$nomina->fecha = '2020-11-28';
 	    		$nomina->nombre = $personal[$i];
 	    		$nomina->save();
 

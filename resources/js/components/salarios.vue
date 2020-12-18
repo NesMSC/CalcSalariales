@@ -16,7 +16,16 @@
 	                    <tr style="background-color: #CEEFCF5">
 	                      <td colspan="4">
 	                        <strong>Salario tabla para
-	                        <span v-if="grado!='Seleccionar' && nivel!='Seleccionar'" v-text="grado+' '+nivel+':'"></span>
+	                        	<template v-if="personal=='Administrativo'">
+	                        		<span v-if="grado!='Seleccionar' && nivel!='Seleccionar'" v-text="grado+' '+nivel+':'"></span>
+	                        	</template>
+	                        	<template v-else-if="personal=='Docente'">
+	                        		<span v-text="(categoria=='Auxiliar Docente')?`${categoria} ${gradoAuxiliar}`:categoria"></span>
+	                        		<span v-text="(dedicacion=='Convencional')?`Dedicación ${dedicacion} ${tiempoCon} Horas`:`Dedicación ${dedicacion}`"></span>
+	                        	</template>
+	                        	<template v-else>
+	                        		<span v-text="`Obrero grado ${grado}`"></span>
+	                        	</template>
 	                        </strong>
 	                      </td>
 	                      <td colspan="2">
@@ -45,7 +54,7 @@
 	                  	</tr>
 	                  	<tr v-if="beneficiosEmpleado.length != 0">
 	                    	<td colspan="4"><strong>Total de Beneficios:</strong></td>
-	                    	<strong><td colspan="2" v-text="formatoDivisa(totalAsig-salarioTabla)"></td></strong>
+	                    	<strong><td colspan="2" v-text="formatoDivisa(salarioNormal-salarioTabla)"></td></strong>
 	                  	</tr> 
 	                  	<tr>
 	                    	<td colspan="6" align="center">
@@ -92,7 +101,7 @@
                   	<tbody>
 	                    <tr style="background-color: #CEEFCF5">
 	                      <td colspan="4"><strong>Salario normal mensual</strong></td>
-	                      <td colspan="2" v-text="formatoDivisa(parseFloat(totalAsig).toFixed(2))"></td>
+	                      <td colspan="2" v-text="formatoDivisa(parseFloat(salarioNormal).toFixed(2))"></td>
 	                    </tr>
 	                    <tr style="background-color: #FFF !important">
 	                      <td colspan="6">
@@ -269,10 +278,15 @@ export default{
 		id : "",
 		grado: "",
 		nivel: "",
+		gradoAuxiliar: "",
+        categoria: "",
+        dedicacion: "",
+        tiempoCon: "",
 		anos: 0,
 		avisar: "",
 		personal: "",
-		idSalario: Number
+		idSalario: Number,
+		instruccion: ""
 	},
 	data(){
 		return {
@@ -287,6 +301,7 @@ export default{
             id_deduccionesAgregados: [],
             id_descuentosAgregados: [],
             totalAsig: 0,
+            salarioNormal: 0,
             totalDesc: Number,
             totalDeduc: Number,
             UT: 0,
@@ -326,20 +341,71 @@ export default{
            return monto;
         },
 		datoSalario(){
-		  let me = this;
-		  if (me.grado!='Seleccionar' && me.nivel!='Seleccionar') {
-		      let url = 'empleados/salarioTabla';
-		      axios.post(url, {id_salario:me.idSalario}).then(function(response){
-		      let grado = me.grado;
-		      let nivel = parseInt(me.nivel)-1;
-		      let salario = JSON.parse(response.data.tabulador);
-		      salario = salario[grado][nivel];
-		      me.salarioTabla = salario;
-		      me.UT = response.data.UT;		    
-		    }).catch(function(error){
-		      console.log(error);
-		    });
-		  }
+			let me = this;
+			
+
+			if (me.grado!='Seleccionar' && me.nivel!='Seleccionar') {
+	      		let url = 'empleados/salarioTabla';
+		      	axios.post(url, {id_salario:me.idSalario}).then(function(response){
+		      	let salario = JSON.parse(response.data.tabulador);
+		      	switch(me.personal){
+		      		case "Administrativo":
+		      			let grado = me.grado;
+			      		let nivel = parseInt(me.nivel)-1;
+			      		salario = salario[grado][nivel];
+		      		break;
+		      		case "Docente":
+		      			let categoria = me.categoria;
+	                  	let horas = me.tiempoCon;
+	                  	let dedicacion = me.dedicacion;
+	                  	if (categoria=='Auxiliar Docente') {
+	                    	salario = (dedicacion=='Convencional')?salario[categoria][`${dedicacion} ${horas} Horas`]:salario[categoria][dedicacion];
+	                    	salario = salario[parseInt(me.gradoAuxiliar)-1];
+	                  	}else{
+	                    	salario = (dedicacion=='Convencional')?salario[categoria][`${dedicacion} ${horas} Horas`]:salario[categoria][dedicacion];
+	                  	}
+		      		break;
+		      		case "Obrero":
+		      			let gradoObrero = me.grado;
+	                    salario = salario[gradoObrero];
+		      		break;
+		      	};
+			      					    
+			      me.salarioTabla = salario;
+			      me.UT = response.data.UT;		    
+			    }).catch(function(error){
+			      console.log(error);
+			    });
+		  	}
+
+		  	if(me.id !== ''){
+				me.editar(me.id);
+			}
+		},
+		editar(id){
+			let me = this;
+			let url = '/empleados/editarSalarios/'+id;
+            axios.get(url).then(function(response){
+
+
+              let beneficios = response.data.beneficios;
+              let descuentos = response.data.descuentos;
+              let deducciones = response.data.deducciones;
+              
+              for (var i = 0; i < beneficios.length; i++) {
+                    me.agregarBeneficio({id:beneficios[i].id,concepto:beneficios[i].concepto, tipo_valor:beneficios[i].tipo_valor, valor:beneficios[i].valor})
+                  };
+
+              for (var i = 0; i < descuentos.length; i++) {
+                    me.agregarDescuento({id:descuentos[i].id,concepto:descuentos[i].concepto, valor:0, tipo:descuentos[i].tipo, porcentaje:descuentos[i].porcentaje})
+                  };
+              for (var i = 0; i < deducciones.length; i++) {
+                    me.agregarDeduccion({id:deducciones[i].id, concepto:deducciones[i].concepto, valor:0, tipo:deducciones[i].tipo, porcentaje:deducciones[i].porcentaje})
+                  };
+              
+            }).catch(function(error){
+              console.log(error);
+            });
 		},
         validarDatosSalario(){
 			let checkStatus = document.getElementById('confirm_sal');
@@ -364,7 +430,7 @@ export default{
 				if(dato.tipo_valor == 'U.T') {
                     dato.valor = (dato.valor*this.UT).toFixed(2);
                 }else if(dato.tipo_valor == '%'){
-                    dato.valor= (dato.valor*this.salarioTabla/100).toFixed(2);
+                    dato.valor= ((dato.valor*this.salarioTabla)/100).toFixed(2);
                 };
 
                 this.beneficiosEmpleado.push(dato);
@@ -376,7 +442,7 @@ export default{
 			this.validarDatosSalario();
 		},
 		agregarDescuento(dato){
-			dato.valor = (this.salarioTabla*dato.porcentaje/100).toFixed(2);
+			dato.valor = ((this.salarioTabla*dato.porcentaje)/100).toFixed(2);
 			this.descuentosEmpleado.push(dato);
 			this.id_descuentosAgregados.push(dato.id);
 			this.listarDescuentos();
@@ -386,9 +452,9 @@ export default{
 			if (dato.concepto =='S.S.O' || dato.concepto == 'R.P.E') {
 				dato.valor = this.sso_rpe(dato)
 			}else if(dato.concepto == 'V.H' || dato.concepto == 'F.J'){
-				dato.valor = ((this.totalAsig*dato.porcentaje)/100).toFixed(2);
+				dato.valor = ((this.salarioNormal*dato.porcentaje)/100).toFixed(2);
 			}else{
-				dato.valor = ((this.salarioTabla*dato.porcentaje)/100).toFixed(2);
+				dato.valor = ((this.salarioNormal*dato.porcentaje)/100).toFixed(2);
 			}
 			this.deduccionesEmpleado.push(dato);
 			this.id_deduccionesAgregados.push(dato.id);
@@ -428,7 +494,8 @@ export default{
 			}
 		},
 		primaProfesional(dato){
-			let url = 'pagos/primaProfesional/'+this.id+'/'+this.salarioTabla;
+
+			let url = (this.id == '')?'/empleados/primaProfesional/' + this.instruccion + '/' + this.salarioTabla : 'pagos/primaProfesional/' + this.id + '/' + this.salarioTabla;
 
 			axios.get(url).then((response)=>{
 				
@@ -445,7 +512,7 @@ export default{
 		primaAntiguedad(dato){
 			let prima_valor = 0;
 
-			prima_valor = ((this.totalAsig*dato.valor)/100)*this.anos;
+			prima_valor = ((this.salarioNormal*dato.valor)/100)*this.anos;
 			dato.valor = prima_valor.toFixed(2);
 			this.beneficiosEmpleado.push(dato);
 			this.id_beneficiosAgregados.push(dato.id);
@@ -458,7 +525,8 @@ export default{
 				total += parseFloat(this.beneficiosEmpleado[i].valor);
 			};
 
-			this.totalAsig = total;
+			this.salarioNormal = total;
+			this.totalAsig = this.salarioNormal - (this.salarioTabla/2);
 		},
 		calcularTotalDesc(){
 			let total = 0;
@@ -480,7 +548,7 @@ export default{
 			this.totalDeduc = total;
 		},
 		sso_rpe(dato){
-			let valor = (((this.totalAsig * 12)/52)*dato.porcentaje/100)*4;
+			let valor = ((((this.salarioNormal) * 12)/52)*dato.porcentaje/100)*4;
 			return valor.toFixed(2);
 		}
 	},

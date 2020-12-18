@@ -31,12 +31,14 @@ Route::group(['middleware'=>['auth']], function(){
 	Route::post('/empleados/agregarNuevo', 'empleadoController@store');
 	Route::post('/empleados/salarioTabla', 'empleadoController@salarioTabla');
 	Route::get('/empleados/beneficios', 'empleadoController@beneficios');
-	Route::get('/empleados/primaProfesional', 'empleadoController@primaProfesional');
+	Route::get('/empleados/primaProfesional/{instruccion}/{salario}', 'empleadoController@primaProfesional');
 	Route::get('/empleados/primaAntiguedad', 'empleadoController@primaAntiguedad');
 	Route::get('/empleados/deducciones', 'empleadoController@deducciones');
 	Route::get('/empleados/descuentos', 'empleadoController@descuentos');
 	Route::get('/empleados/editarEmpleado/{id}', 'empleadoController@edit');
+	Route::get('/empleados/editarSalarios/{id}', 'empleadoController@editarSalarios');
 	Route::put('/empleados/actualizarEmpleado', 'empleadoController@update');
+	Route::get('/empleados/contar', 'empleadoController@contar');
 
 	Route::get('/docentes', 'docenteController@index');
 	Route::post('/docentes/agregarNuevo', 'docenteController@store');
@@ -52,6 +54,9 @@ Route::group(['middleware'=>['auth']], function(){
 	Route::get('/pagos/pdf/{id_empleado}/{id}', 'pagosController@pdf');
 	Route::get('/pagos/primaProfesional/{id}/{sueldo}', 'pagosController@primaProfesional');
 
+	//Indicadores
+	Route::get('/indicadores', 'tabuladorController@indicadores');
+	Route::put('/indicadores/editar', 'tabuladorController@editarIndicador');
 
 	Route::middleware(['Admin'])->group(function(){
 		//Beneficios
